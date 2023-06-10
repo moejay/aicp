@@ -21,10 +21,14 @@ Given some prompt, the AI will end up creating a video "suitable" for YouTube/Ru
 
 ## Installation and Running
 
-TBD
+* Make sure you got python and virtualenv installed
+* `make setup`
+* `make notebook` will launch jupyter
 
 
 ## Agent description
+
+Each of the agents should have a notebook associated with it, and how it's created.
 
 ### 🔍 Research Agent 
 
