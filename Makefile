@@ -1,3 +1,6 @@
+SHELL=/usr/bin/env bash
+
+
 setup:
 	@echo "Setting up Python virtual environment"
 	@if [ ! -d "venv" ]; then \
