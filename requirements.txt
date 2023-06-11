@@ -4,3 +4,8 @@ gpt4-openai-api==0.5.0
 faiss-gpu==1.7.2
 openai==0.27.7
 python-dotenv==1.0.0
+diffusers
+transformers
+scipy
+ftfy
+accelerate
