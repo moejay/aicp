@@ -9,12 +9,18 @@ setup:
 	fi
 	@echo "Installing dependencies"
 	@venv/bin/pip install -r requirements.txt
+	@echo "Build proxy docker"
+	@docker build -t chatgpt-proxy -f ProxyDockerfile .
 	@echo "Done"
 
-notebook: setup
+notebook: 
 	@echo "Starting Jupyter Notebook"
 	@venv/bin/python -m jupyter notebook
 
-video: setup
+proxy:
+	@echo "Starting Proxy"
+	@docker run -dp 9090:9090 chatgpt-proxy
+
+video: 
 	@echo "Starting AI Content Producer"
-	@venv/bin/python main.py
+	@CHATGPT_BASE_URL=http://localhost:9090/api/ venv/bin/python main.py

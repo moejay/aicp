@@ -21,13 +21,16 @@ Given some prompt, the AI will end up creating a video "suitable" for YouTube/Ru
 
 ## Installation and Running
 
+
 * create .env file and put `OPENAI_API_KEY` and `GPT4_TOKEN` variables in it
 
 * Make sure you got python and virtualenv installed
 * `make setup`
-* `make notebook` will launch jupyter
+* `make proxy` to run the chatgpt-proxy 
 
-* To run the thing, `python main.py`
+Then you can run either
+* `make notebook` will launch jupyter
+* `make video` is to run the whole thing, you will be asked to provide the topic to search
 
 
 ## Agent description
