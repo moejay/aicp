@@ -14,3 +14,7 @@ setup:
 notebook: setup
 	@echo "Starting Jupyter Notebook"
 	@venv/bin/python -m jupyter notebook
+
+video: setup
+	@echo "Starting AI Content Producer"
+	@venv/bin/python main.py

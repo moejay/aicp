@@ -21,9 +21,13 @@ Given some prompt, the AI will end up creating a video "suitable" for YouTube/Ru
 
 ## Installation and Running
 
+* create .env file and put `OPENAI_API_KEY` and `GPT4_TOKEN` variables in it
+
 * Make sure you got python and virtualenv installed
 * `make setup`
 * `make notebook` will launch jupyter
+
+* To run the thing, `python main.py`
 
 
 ## Agent description
