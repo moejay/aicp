@@ -1,14 +1,21 @@
 from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
 from langchain.agents import initialize_agent, AgentType
+
+from tools.producer import ProducerTool
 from tools.researcher import ResearcherTool
 from tools.script_writer import ScriptWriterTool
-from tools.storyboardartist import StoryBoardArtistTool 
-from tools.speechgenerator import SpeechGeneratorTool
-from tools.producer import ProducerTool
+from tools.storyboard_artist import StoryBoardArtistTool 
+from tools.voiceover_artist import VoiceOverArtistTool
 
 load_dotenv()
-tools = [ResearcherTool(), ScriptWriterTool(), StoryBoardArtistTool(), SpeechGeneratorTool(), ProducerTool()]
+tools = [
+  ProducerTool(),
+  ResearcherTool(),
+  ScriptWriterTool(),
+  StoryBoardArtistTool(),
+  VoiceOverArtistTool(),
+]
 llm = ChatOpenAI(temperature=0, streaming=True)
 mrkl = initialize_agent(tools, llm, agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
 

@@ -15,7 +15,7 @@ setup:
 
 notebook: 
 	@echo "Starting Jupyter Notebook"
-	@venv/bin/python -m jupyter notebook
+	@export CHATGPT_BASE_URL=http://localhost:9090/api/ && venv/bin/python -m jupyter notebook
 
 proxy:
 	@echo "Starting Proxy"
@@ -23,4 +23,4 @@ proxy:
 
 video: 
 	@echo "Starting AI Content Producer"
-	@CHATGPT_BASE_URL=http://localhost:9090/api/ venv/bin/python main.py
+	@export CHATGPT_BASE_URL=http://localhost:9090/api/ && venv/bin/python main.py
