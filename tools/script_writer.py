@@ -13,6 +13,7 @@ from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, Callback
 from langchain import LLMChain
 from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
 from langchain.tools import BaseTool
+from utils import utils
 
 class ScriptWriterTool(BaseTool):
     name = "scriptwriter"
@@ -26,9 +27,9 @@ class ScriptWriterTool(BaseTool):
         human_message_prompt = HumanMessagePromptTemplate.from_template("{text}")
         chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
         chain = LLMChain(llm=llm, prompt=chat_prompt)
-        research_text = open("research.txt", "r").read()
+        research_text = open(utils.RESEARCH, "r").read()
         result = chain.run(research_text)
-        with open("script.txt", "w") as f:
+        with open(utils.SCRIPT, "w") as f:
             f.write(result)
         return "File written to script.txt"
 

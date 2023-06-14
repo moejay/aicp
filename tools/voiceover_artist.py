@@ -14,6 +14,7 @@ from bark.generation import (
         )
 from bark.api import semantic_to_waveform
 from bark import SAMPLE_RATE
+from utils import utils
 
 class VoiceOverArtistTool(BaseTool):
     name = "voiceoverartist"
@@ -22,7 +23,7 @@ class VoiceOverArtistTool(BaseTool):
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
         preload_models()
-        script_lines = open("script.txt", "r").readlines()
+        script_lines = open(utils.SCRIPT, "r").readlines()
         script_lines = [line if not line.lower().startswith("[scene") else "[SCENE]." for line in script_lines]
         script = "\n".join(script_lines)
         script = script.replace("\n", " ").strip()
@@ -46,7 +47,7 @@ class VoiceOverArtistTool(BaseTool):
             pieces += [audio_array, silence]
         full_audio = np.concatenate(pieces)
         int_audio_arr = (full_audio * np.iinfo(np.int16).max).astype(np.int16)
-        wavfile.write("script.wav", SAMPLE_RATE, int_audio_arr)
+        wavfile.write(utils.VOICEOVER_WAV_FILE, SAMPLE_RATE, int_audio_arr)
         with open("script_timecodes.txt", "w") as f:
             f.write("\n".join([str(scene) for scene in scenes]))
 

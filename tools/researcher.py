@@ -14,7 +14,7 @@ from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, Callback
 from langchain import LLMChain
 from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
 from langchain.tools import BaseTool
-
+from utils import utils
 
 class ResearcherTool(BaseTool):
     name = "researcher"
@@ -31,7 +31,7 @@ class ResearcherTool(BaseTool):
         chain = LLMChain(llm=llm, prompt=chat_prompt)
 
         result = chain.run(query)
-        with open("research.txt", "w") as f:
+        with open(utils.RESEARCH, "w") as f:
             f.write(result)
         return "File written to research.txt"
 

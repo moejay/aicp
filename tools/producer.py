@@ -6,6 +6,7 @@ from langchain.tools import BaseTool
 import subprocess
 import wave
 import contextlib
+from utils import utils
 
 def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
     # Create video from images
@@ -45,30 +46,18 @@ class ProducerTool(BaseTool):
 
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
-        # Determine the video length
-        # Will add 4 seconds to the audio script length for now, as a naive approach
-        fname = 'script.wav'
-        with contextlib.closing(wave.open(fname,'r')) as f:
-            frames = f.getnframes()
-            rate = f.getframerate()
-            duration = frames / float(rate)
-        video_duration = int(duration) + 4
-        
-        scene_timecodes = open("script_timecodes.txt", "r").readlines()
         images_dict = {}
-        for idx, tc in enumerate(scene_timecodes):
-            tc = tc.strip()
-            if idx + 1 < len(scene_timecodes):
-                images_dict[f"scene_{idx + 1}.png"] = float(scene_timecodes[idx + 1].strip()) - float(tc)
-            else:
-                images_dict[f"scene_{idx + 1}.png"] = video_duration - float(tc)
+        scenes = utils.get_scenes()
+
+        for idx, scene in enumerate(scenes):
+            images_dict[f"scene_{idx + 1}.png"] = scene.duration
 
         audio_dict = {
-                "script.wav": 0
+                utils.FINAL_AUDIO_FILE: 0
         }
 
         resolution = (1920, 1080)
-        output_file = "output.mp4"
+        output_file = utils.FINAL_VIDEO_FILE
         create_video_with_audio(images_dict, audio_dict, resolution, output_file)
         return "Done producing video file"
 
