@@ -53,7 +53,7 @@ class ProducerTool(BaseTool):
             images_dict[f"scene_{idx + 1}.png"] = scene.duration
 
         audio_dict = {
-                utils.FINAL_AUDIO_FILE: 0
+                utils.VOICEOVER_WAV_FILE: 0
         }
 
         resolution = (1920, 1080)
