@@ -20,6 +20,9 @@ class StoryBoardArtistTool(BaseTool):
         scene_lines = [line.strip() for line in lines if line.startswith("[Scene")]
         for i, line in enumerate(scene_lines):
             pipe(line).images[0].save(f"scene_{i + 1}.png")
+
+        del pipe
+        torch.cuda.empty_cache()
         return "Done generating images"
 
     def _arun(self, query:str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None) -> str:

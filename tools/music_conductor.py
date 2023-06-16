@@ -127,7 +127,7 @@ class MusicConductorTool(BaseTool):
         scenes = get_scenes()
         if len(music_prompts) < len(scenes):
             return "Please try again, not enough music prompts"
-        model = MusicGen.get_pretrained("large")
+        model = MusicGen.get_pretrained("medium")
         music_outputs = []
         for scene, mp in zip(scenes, music_prompts):
             model.set_generation_params(
