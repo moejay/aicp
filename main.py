@@ -7,6 +7,8 @@ from tools.researcher import ResearcherTool
 from tools.script_writer import ScriptWriterTool
 from tools.storyboard_artist import StoryBoardArtistTool 
 from tools.voiceover_artist import VoiceOverArtistTool
+from tools.music_conductor import MusicConductorTool
+from tools.sound_engineer import SoundEngineerTool 
 
 load_dotenv()
 tools = [
@@ -15,6 +17,8 @@ tools = [
   ScriptWriterTool(),
   StoryBoardArtistTool(),
   VoiceOverArtistTool(),
+  MusicConductorTool(),
+  SoundEngineerTool()
 ]
 llm = ChatOpenAI(temperature=0, streaming=True)
 mrkl = initialize_agent(tools, llm, agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
@@ -26,5 +30,7 @@ mrkl.run(f"""
 2. Write a script using the scriptwriter tool.
 3. Generate images using the storyboardartist tool.
 4. Generate audio using the speechgenerator tool.
-5. Produce the video using the producer tool.
+5. Generate the music using the musicconductor tool.
+6. Finalize the audio using the soundengineer tool.
+7. Produce the video using the producer tool.
         """)
