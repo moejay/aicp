@@ -14,3 +14,4 @@ nltk==3.8.1
 xformers
 audiocraft
 pydub
+gradio==3.35.2

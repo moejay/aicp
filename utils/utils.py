@@ -32,6 +32,16 @@ class Scene:
     description: str # The description of the scene
     content: str # The content of the scene
 
+def set_prefix(prefix):
+    """Set the prefix of the project."""
+    global RESEARCH, SCRIPT, VOICEOVER_WAV_FILE, FINAL_AUDIO_FILE, VOICEOVER_TIMECODES, FINAL_VIDEO_FILE
+    RESEARCH = os.path.join(prefix, RESEARCH)
+    SCRIPT = os.path.join(prefix, SCRIPT)
+    VOICEOVER_WAV_FILE = os.path.join(prefix, VOICEOVER_WAV_FILE)
+    FINAL_AUDIO_FILE = os.path.join(prefix, FINAL_AUDIO_FILE)
+    VOICEOVER_TIMECODES = os.path.join(prefix, VOICEOVER_TIMECODES)
+    FINAL_VIDEO_FILE = os.path.join(prefix, FINAL_VIDEO_FILE)
+
 def get_voiceover_duration():
     """Get the duration of the voiceover script."""
     with contextlib.closing(wave.open(VOICEOVER_WAV_FILE,'r')) as f:
