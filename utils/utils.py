@@ -1,17 +1,27 @@
 # Description: Utility functions for the project.
 
 from dataclasses import dataclass
+from typing import Optional
+from yaml import load, dump
+
 import os
 import contextlib
 import wave
-from typing import Optional
 
-RESEARCH = 'research.txt'
-SCRIPT = 'script.txt'
+
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
+
+RESEARCH = 'research.yaml'
+SCRIPT = 'script.yaml'
 VOICEOVER_WAV_FILE = 'script.wav'
 FINAL_AUDIO_FILE = 'audio.wav'
 VOICEOVER_TIMECODES = 'script_timecodes.txt'
 FINAL_VIDEO_FILE = 'video.mp4'
+
 
 @dataclass
 class Scene:
@@ -32,34 +42,22 @@ def get_voiceover_duration():
 
 def get_script():
     """Retrieve the script from the script file."""
-    return open(SCRIPT, "r").read()
+    return load(SCRIPT, Loader=Loader)
 
 def get_scenes():
-    """Retrieve the scenes from the script file.
-       if available, use the time codes to add scene information.
-       Scenes files format:
-       [Scene n: title] - Description
-
-       NARRATOR: Content
-
-
-    """
-    lines = open(SCRIPT, "r").readlines()
+    """Retrieve the scenes from the script file."""
+    script = get_script()
     scenes = []
-    for line in lines:
-        if line.startswith("[Scene"):
-            scene_title, description = line.split("]")
-            scenes.append(
-                    Scene(
-                        scene_title=scene_title.strip(),
-                        description=description.strip(),
-                        content="",
+    for scene in script:
+        scenes.append(
+                Scene(
+                        scene_title=scene.title.strip(),
+                        description=scene.description.strip(),
+                        content=scene.narrator.strip(),
                         start_time=None,
                         duration=None
                     )
-                    )
-        elif line.strip() != "":
-            scenes[-1].content += f"{line}\n"
+                )
 
     # Check if timecodes are available
     if not os.path.exists(VOICEOVER_TIMECODES):
