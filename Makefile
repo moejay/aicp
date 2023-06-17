@@ -17,7 +17,7 @@ venv:
 
 python-deps: venv
 	@echo "Installing dependencies..."
-	@venv/bin/pip install -r requirements.txt
+	@venv/bin/pip install -r requirements.txt --upgrade
 
 docker-deps:
 	@echo "Building docker images..."
