@@ -1,26 +1,36 @@
 SHELL=/usr/bin/env bash
+CHATGPT_BASE_URL=http://127.0.0.1:9090/api/
 
 
-setup:
-	@echo "Setting up Python virtual environment"
+export CHATGPT_BASE_URL
+
+
+
+setup: python-deps docker-deps
+
+venv:
+	@echo "Setting up Python virtual environment..."
 	@if [ ! -d "venv" ]; then \
-		echo "Creating virtual environment"; \
+		echo "Creating virtual environment..."; \
 		python3 -m virtualenv venv; \
 	fi
-	@echo "Installing dependencies"
+
+python-deps: venv
+	@echo "Installing dependencies..."
 	@venv/bin/pip install -r requirements.txt
-	@echo "Build proxy docker"
-	@docker build -t chatgpt-proxy -f ProxyDockerfile .
-	@echo "Done"
 
-notebook: 
-	@echo "Starting Jupyter Notebook"
-	@export CHATGPT_BASE_URL=http://localhost:9090/api/ && venv/bin/python -m jupyter notebook
+docker-deps:
+	@echo "Building docker images..."
+	@docker-compose build
 
-proxy:
-	@echo "Starting Proxy"
-	@docker run -dp 9090:9090 chatgpt-proxy
+docker-compose:
+	@echo "Launching docker stack..."
+	@docker-compose up -d
 
-video: 
-	@echo "Starting AI Content Producer"
-	@export CHATGPT_BASE_URL=http://localhost:9090/api/ && venv/bin/python main.py
+notebook: docker-compose
+	@echo "Starting Jupyter Notebook..."
+	@venv/bin/python -m jupyter notebook
+
+video: docker-compose
+	@echo "Starting AI Content Producer..."
+	@venv/bin/python main.py
