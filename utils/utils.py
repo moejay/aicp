@@ -2,17 +2,12 @@
 
 from dataclasses import dataclass
 from typing import Optional
-from yaml import load, dump
 
 import os
 import contextlib
 import wave
+import yaml
 
-
-try:
-    from yaml import CLoader as Loader, CDumper as Dumper
-except ImportError:
-    from yaml import Loader, Dumper
 
 
 RESEARCH = 'research.yaml'
@@ -52,7 +47,8 @@ def get_voiceover_duration():
 
 def get_script():
     """Retrieve the script from the script file."""
-    return load(SCRIPT, Loader=Loader)
+    with open(SCRIPT, "r") as file:
+        return yaml.load(file, Loader=yaml.Loader)
 
 def get_scenes():
     """Retrieve the scenes from the script file."""
@@ -61,9 +57,9 @@ def get_scenes():
     for scene in script:
         scenes.append(
                 Scene(
-                        scene_title=scene.title.strip(),
-                        description=scene.description.strip(),
-                        content=scene.narrator.strip(),
+                        scene_title=scene['title'].strip(),
+                        description=scene['description'].strip(),
+                        content=scene['narrator'].strip(),
                         start_time=None,
                         duration=None
                     )

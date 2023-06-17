@@ -1,61 +1,31 @@
----
-- title: The Legacy of Pat Robertson
-  description: |-
-A series of clips featuring Pat Robertson at different stages of his life, intercut with a simple, respectful black screen.
-  narrator: |-
-"A religious leader, a media mogul, and a controversial figure, Pat Robertson has left an indelible mark on America's religious and political landscape. Today we delve into his story. What made him the man he was? Stay tuned..."
+- title: "A Shocking Loss"
+  description: "A somber set, with a backdrop of religious symbols and the iconic image of Pat Robertson. The screen briefly flashes with the date: June 8, 2023."
+  narrator: "A man whose name resonates in the religious and political circles of America, Pat Robertson, has left us at the age of 93. A broadcaster, a politician, an influencer. But what led to his end, and what legacy does he leave behind? Stay tuned as we delve deeper into his life."
 
-- title: A Life Remembered
-  description: |-
-A digital avatar of a news anchor appears in a virtual newsroom. Screens behind the avatar display images from Pat Robertson's life.
-  narrator: |-
-"Hello, dear viewers. I am your AI Narrator. Today, we remember the life and legacy of Pat Robertson, who passed away on June 8, 2023. Let's start at the beginning..."
+- title: "Introduction to the Man"
+  description: "A montage of Pat Robertson's early life, with images of his birthplace, his family, his time in the Marines, and his academic life."
+  narrator: "Hello, everyone. I'm your host AI. Born as Marion Gordon 'Pat' Robertson in Lexington, Virginia, Robertson's life was anything but ordinary. From serving as an assistant adjutant in Korea to failing the bar exam after graduating from Yale Law School, his life was full of unexpected turns."
 
-- title: The Early Years
-  description: |-
-Images of Pat Robertson's early life, his father, his time in the U.S. Marine Corps, and his studies at various universities.
-  narrator: |-
-"Born Marion Gordon Robertson, Pat was a significant figure in America. After a transformative religious awakening, he became an ordained Southern Baptist minister."
+- title: "A Life of Transformation"
+  description: "Visuals of a younger Pat Robertson with his wife, images of a New York commune, and his first steps into religious life."
+  narrator: "It was at Yale that he met his wife, Adelia 'Dede' Elmer, and a religious transformation followed. He gave up alcohol, moved to a commune in New York City’s Bedford-Stuyvesant neighborhood, and began his ministry to the poor."
 
-- title: The Christian Broadcasting Network
-  description: |-
-Images of the early Christian Broadcasting Network, clips from "The 700 Club", and a montage of famous politicians who appeared on the network.
-  narrator: |-
-"From a small Virginia television station, Robertson built the Christian Broadcasting Network, creating the innovative show, 'The 700 Club'."
+- title: "The Birth of CBN"
+  description: "Clips of the Christian Broadcasting Network, its shows, and a glimpse of the '700 Club'."
+  narrator: "Following his graduation from the New York Theological Seminary, Robertson bought a bankrupt UHF television station and launched the Christian Broadcasting Network in 1961. Many Americans got to know him through the '700 Club', a program that brought religion to a secular talk-show format."
 
-- title: Political Influence
-  description: |-
-Footage of the Christian Coalition, clips from Robertson's 1988 presidential bid, and photographs of conservative Christian political rallies.
-  narrator: |-
-"Robertson didn't stop at media. As the founder of the Christian Coalition, he mobilized American evangelicals into a powerful political bloc."
+- title: "Robertson's Political Journey"
+  description: "Visuals of Robertson's presidential campaign, his involvement with the Christian Coalition, and his influence on conservative politics."
+  narrator: "Robertson also made significant contributions to politics. He sought the GOP presidential nomination in 1988 and established the Christian Coalition in 1989. His work helped to strengthen the alliance between conservative Christians and the Republican Party."
 
-- title: Education Endeavors
-  description: |-
-Images of Regent University, students studying, and clips from graduation ceremonies.
-  narrator: |-
-"Robertson extended his influence into education, founding CBN University, which later became Regent University."
+- title: "A Legacy of Controversy and Influence"
+  description: "Images of Regent University, the American Center for Law and Justice, Operation Blessing, and clips of Robertson's controversial statements."
+  narrator: "He founded numerous influential enterprises, including Regent University and the American Center for Law and Justice. Despite controversies, such as blaming natural disasters on gays and feminists, Robertson was described as a 'happy warrior'."
 
-- title: A Divisive Figure
-  description: |-
-News clips and headlines showing some of Robertson's controversial public comments and political stances.
-  narrator: |-
-"But Robertson's legacy is not without controversy. His political views and public comments often sparked intense debate and criticism."
+- title: "Channel Identity"
+  description: "The scene shows the YouTube channel's logo and animations."
+  narrator: "Before we conclude, don't forget to like and subscribe. Remember, every piece of content you see here is completely generated and operated by artificial intelligence."
 
-- title: Channel Identification
-  description: |-
-The channel's digital logo appears with a call-to-action for viewers to 'like' and 'subscribe'.
-  narrator: |-
-"Before we conclude, remember this channel is fully generated by AI. If you enjoy our content, please 'like' and 'subscribe'. Now, back to our story."
-
-- title: The Legacy
-  description: |-
-A montage of Robertson's life and work, highlighting his impact on religion, politics, media, and education.
-  narrator: |-
-"Pat Robertson was a man of many roles. Admired and criticized, his influence on American society is undeniable."
-
-- title: Farewell
-  description: |-
-The screen fades to black with a simple message: "In memory of Pat Robertson (1930 - 2023)".
-  narrator: |-
-"As we say goodbye to Pat Robertson, we reflect on the profound impact he had on America and beyond. Thank you for watching, mommies. I love you."
----
+- title: "A Final Farewell"
+  description: "A return to the somber set from the first scene, this time featuring a photo of Pat Robertson in his later years."
+  narrator: "Pat Robertson, a man of many facets, leaves behind a legacy that will continue to shape religion and politics in America. Whether you agreed with him or not, his impact is undeniable. Thank you for watching mommies. I love you."

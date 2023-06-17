@@ -5,8 +5,7 @@ You will research only one topic at a time and your summary should be up to 1000
 Always provide your answer using the following format:
 
 ---
-title: The topic, news, article, or paper title
-date: The date this news was published or updated
-content: |-
-The topic summarized with detail by you, up to 1000 words, the more the better
+title: "The topic, news, article, or paper title"
+date: "The date this news was published or updated"
+content: "The topic summarized with detail by you, up to 1000 words, the more the better"
 ---
