@@ -16,6 +16,7 @@ from bark.generation import (
 from bark.api import semantic_to_waveform
 from bark import SAMPLE_RATE
 from utils import utils
+import math
 
 class VoiceOverArtistTool(BaseTool):
     name = "voiceoverartist"
@@ -28,20 +29,20 @@ class VoiceOverArtistTool(BaseTool):
         SPEAKER = "v2/en_speaker_6"
         silence = np.zeros(int(0.25 * SAMPLE_RATE))
         pieces = []
-		timecodes = [0] # Start at 0
-		for scene in utils.get_scenes():
-			print(f"Generating voiceover for scene {scene.scene_title}")
-			sentences = nltk.sent_tokenize(scene.content)	
-	        for sentence in sentences:
-				semantic_tokens = generate_text_semantic(
-						sentence,
-						history_prompt=SPEAKER,
-						temp=GEN_TEMP,
-						min_eos_p=0.05
-					)
-				audio_array = semantic_to_waveform(semantic_tokens, history_prompt=SPEAKER)
-				pieces += [audio_array, silence]
-			timecodes.append(ceil(sum([len(p)/SAMPLE_RATE for p in pieces])))
+        timecodes = [0] # Start at 0
+        for scene in utils.get_scenes():
+            print(f"Generating voiceover for scene {scene.scene_title}")
+            sentences = nltk.sent_tokenize(scene.content)    
+            for sentence in sentences:
+                semantic_tokens = generate_text_semantic(
+                        sentence,
+                        history_prompt=SPEAKER,
+                        temp=GEN_TEMP,
+                        min_eos_p=0.05
+                    )
+                audio_array = semantic_to_waveform(semantic_tokens, history_prompt=SPEAKER)
+                pieces += [audio_array, silence]
+            timecodes.append(math.ceil(sum([len(p)/SAMPLE_RATE for p in pieces])))
 
         full_audio = np.concatenate(pieces)
         int_audio_arr = (full_audio * np.iinfo(np.int16).max).astype(np.int16)
