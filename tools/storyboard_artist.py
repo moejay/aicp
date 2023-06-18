@@ -81,6 +81,10 @@ class StoryBoardArtistTool(BaseTool):
                         ).images[0]
                 image.save(f"scene_upscaled_{i+1}_{j+1}.png")
 
+        # release models from vram
+        del pipe
+        torch.cuda.empty_cache()
+
         return "Done generating images"
 
     def _arun(self, query:str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None) -> str:
