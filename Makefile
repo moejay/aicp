@@ -27,11 +27,15 @@ docker-compose:
 	@echo "Launching docker stack..."
 	@docker-compose up -d
 
+docker-kbe:
+	@echo "Building KBE container, this will take a while..."
+	@docker build -t ken-burns-effect -f dockerfiles/ken-burns-effect.Dockerfile .
+
 notebook: docker-compose
 	@echo "Starting Jupyter Notebook..."
 	@venv/bin/python -m jupyter notebook
 
-video: docker-compose
+video: docker-compose 
 	@echo "Starting AI Content Producer..."
 	@venv/bin/python main.py
 

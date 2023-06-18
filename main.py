@@ -1,32 +1,37 @@
+import gradio as gr
+import os
+
 from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
 from langchain.agents import initialize_agent, AgentType
 
+from tools.music_conductor import MusicConductorTool
 from tools.producer import ProducerTool
 from tools.researcher import ResearcherTool
 from tools.script_writer import ScriptWriterTool
+from tools.sound_engineer import SoundEngineerTool 
 from tools.storyboard_artist import StoryBoardArtistTool 
 from tools.voiceover_artist import VoiceOverArtistTool
-from tools.music_conductor import MusicConductorTool
-from tools.sound_engineer import SoundEngineerTool 
+
 from utils import utils
-import gradio as gr
-import os
 
 
 def make_video(prompt, working_dir):
     os.makedirs(working_dir, exist_ok=True)
     utils.set_prefix(working_dir)
     load_dotenv()
+
     tools = [
-      ProducerTool(),
-      ResearcherTool(),
-      ScriptWriterTool(),
-      StoryBoardArtistTool(),
-      VoiceOverArtistTool(),
-      MusicConductorTool(),
-      SoundEngineerTool()
-    ]
+        MusicConductorTool(),
+        ProducerTool(),
+        ResearcherTool(),
+        ScriptWriterTool(),
+        SoundEngineerTool()
+        StoryBoardArtistTool(),
+        VisualEffectsArtistTool(),
+        VoiceOverArtistTool(),
+        ]
+
     llm = ChatOpenAI(temperature=0, streaming=True)
     mrkl = initialize_agent(tools, llm, agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
 
