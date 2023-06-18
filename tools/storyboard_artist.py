@@ -70,7 +70,7 @@ class StoryBoardArtistTool(BaseTool):
 
         # enumerate over images and upscale
         for i, scene in enumerate(scenes):
-            for j in range(sd_num_images_per_prompt):
+            for j in range(1,sd_num_images_per_prompt+1):
                 low_res_image = Image.open(f"scene_{i+1}_{j+1}.png").convert("RGB")
                 image = pipeline(
                         prompt=f"{scene.description}, {positive_prompt}",
