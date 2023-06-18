@@ -34,15 +34,15 @@ WORKDIR /app
 RUN mkdir -p $HOME/.ssh && ssh-keyscan github.com >> $HOME/.ssh/known_hosts
 RUN mkdir -p $HOME/.cache/torch/hub/checkpoints
 
-RUN git clone https://github.com/jwmarshall/3d-ken-burns.git /app/3d-ken-burns
-RUN cd 3d-ken-burns && git checkout
-RUN cd 3d-ken-burns && pip install -r requirements.txt
-
 RUN wget -q https://download.pytorch.org/models/vgg19_bn-c79401a0.pth -O $HOME/.cache/torch/hub/checkpoints/vgg19_bn-c79401a0.pth
 RUN wget -q https://download.pytorch.org/models/maskrcnn_resnet50_fpn_coco-bf2d0c1e.pth -O $HOME/.cache/torch/hub/checkpoints/maskrcnn_resnet50_fpn_coco-bf2d0c1e.pth
 RUN wget -q http://content.sniklaus.com/kenburns/network-disparity.pytorch -O $HOME/.cache/torch/hub/checkpoints/kenburns-disparity
 RUN wget -q http://content.sniklaus.com/kenburns/network-inpainting.pytorch -O $HOME/.cache/torch/hub/checkpoints/kenburns-inpainting
 RUN wget -q http://content.sniklaus.com/kenburns/network-refinement.pytorch -O $HOME/.cache/torch/hub/checkpoints/kenburns-refinement
+
+RUN git clone https://github.com/jwmarshall/3d-ken-burns.git /app/3d-ken-burns
+RUN cd 3d-ken-burns && git checkout
+RUN cd 3d-ken-burns && pip install -r requirements.txt
 
 RUN git clone https://github.com/jwmarshall/ken-burns-effect.git /app/ken-burns-effect
 RUN cd ken-burns-effect && git checkout ed384d7eb42c27020a5dce622cb319ff04c20f5c
