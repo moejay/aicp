@@ -34,3 +34,7 @@ notebook: docker-compose
 video: docker-compose
 	@echo "Starting AI Content Producer..."
 	@venv/bin/python main.py
+
+clean:
+	@echo "Deleting virtualenv..."
+	@rm -rf venv
