@@ -26,7 +26,7 @@ def make_video(prompt, working_dir):
         ProducerTool(),
         ResearcherTool(),
         ScriptWriterTool(),
-        SoundEngineerTool()
+        SoundEngineerTool(),
         StoryBoardArtistTool(),
         VisualEffectsArtistTool(),
         VoiceOverArtistTool(),
