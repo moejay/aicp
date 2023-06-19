@@ -78,7 +78,7 @@ class StoryBoardArtistTool(BaseTool):
         pipe = pipe.to("cuda")
         pipe.enable_xformers_memory_efficient_attention(attention_op=MemoryEfficientAttentionFlashAttentionOp)
         pipe.vae.enable_xformers_memory_efficient_attention(attention_op=None)
-        pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipeline.scheduler.config)
+        pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
 
         # upscaler settings
         guidance_scale = 6.5
@@ -91,7 +91,7 @@ class StoryBoardArtistTool(BaseTool):
                 low_res_image = Image.open(f"scene_{i+1}_{j+1}.png").convert("RGB")
                 #low_res_image = low_res_image.resize((384,216))
 
-                image = pipeline(
+                image = pipe(
                         image=low_res_image,
                         prompt=f"{scene.description}, {positive_prompt}",
                         negative_prompt=negative_prompt,

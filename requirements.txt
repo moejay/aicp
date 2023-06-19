@@ -16,4 +16,4 @@ audiocraft
 pydub
 gradio==3.35.2
 python-on-whales
-revChatGPT==6.3.3
+git+https://github.com/moejay/ChatGPT@patched
