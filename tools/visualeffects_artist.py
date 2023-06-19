@@ -10,7 +10,7 @@ from PIL import Image
 from python_on_whales import docker
 from typing import Optional, Type
 from utils import utils
-from xformers.ops import MemoryEfficientFlashAttentionOp
+from xformers.ops import MemoryEfficientAttentionFlashAttentionOp
 
 
 class VisualEffectsArtistTool(BaseTool):
@@ -30,7 +30,7 @@ class VisualEffectsArtistTool(BaseTool):
                         "ken-burns-effect",
                         f"python3 autozoom.py --in /mnt/scene_{i+1}_{j+1}.png \
                                 --out /mnt/ken-burns-effect/scene_{i+1}_{j+1}.mp4",
-                        volumes=[("./", "/mnt")]
+                        volumes=[("./", "/mnt")],
                         auto_remote=True,
                         detach=False,
                         )

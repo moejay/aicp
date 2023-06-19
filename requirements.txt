@@ -15,3 +15,4 @@ xformers
 audiocraft
 pydub
 gradio==3.35.2
+python-on-whales

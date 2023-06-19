@@ -11,6 +11,7 @@ from tools.researcher import ResearcherTool
 from tools.script_writer import ScriptWriterTool
 from tools.sound_engineer import SoundEngineerTool 
 from tools.storyboard_artist import StoryBoardArtistTool 
+from tools.visualeffects_artist import VisualEffectsArtistTool
 from tools.voiceover_artist import VoiceOverArtistTool
 
 from utils import utils
