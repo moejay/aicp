@@ -31,6 +31,10 @@ docker-kbe:
 	@echo "Building KBE container, this will take a while..."
 	@docker build -t ken-burns-effect -f dockerfiles/ken-burns-effect.Dockerfile .
 
+docker-gfpgan:
+	@echo "Building GFPGAN container, this will take a while..."
+	@docker build -t gfpgan -f dockerfiles/GFPGAN.Dockerfile .
+
 notebook: docker-compose
 	@echo "Starting Jupyter Notebook..."
 	@venv/bin/python -m jupyter notebook
