@@ -43,7 +43,7 @@ class VoiceOverArtistTool(BaseTool):
         # Since we only have narrator at this point, no dialogue
         script_input = yaml.dump([{ "narrator": s["narrator"]} for s in utils.get_script()])
 
-        response = chain.run(characteristics=vo["characteristics"]
+        response = chain.run(characteristics=vo["characteristics"],
                            character_name=vo["name"],
                            script=script_input)
 

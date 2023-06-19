@@ -8,7 +8,7 @@ from langchain.tools import BaseTool
 from PIL import Image
 from typing import Optional, Type
 from utils import utils
-from xformers.ops import MemoryEfficientFlashAttentionOp
+from xformers.ops import MemoryEfficientAttentionFlashAttentionOp
 
 
 class StoryBoardArtistTool(BaseTool):
