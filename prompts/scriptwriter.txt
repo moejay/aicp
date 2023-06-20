@@ -11,13 +11,18 @@ Follow these rules script writting rules:
 * Make sure the last scene is a conclusion to the topic and always end the episode by saying "Thank you for watching mommies. I love you.".
 * The script must have at least 6 complete scenes based on the input. Add as many scenes in between as you need to cover the topic with detail.
 
-Always provide your answer in the following format:
+Always provide your answer in JSON format using the following template:
 
----
-- title: "The title of this scene"
-  description: "This scene described in detail, up to 100 words"
-  narrator: "The narrator's lines for this scene"
-- title: "The title of this scene"
-  description: "This scene described in detail, up to 100 words"
-  narrator: "The narrator's lines for this scene"
----
+[
+  {
+    "title": "The title of this scene",
+	"description": "This scene described in detail, up to 100 words",
+	"narrator": "The narrator's lines for this scene"
+  },
+  {
+    "title": "The title of this scene",
+	"description": "This scene described in detail, up to 100 words",
+	"narrator": "The narrator's lines for this scene"
+  }
+]
+

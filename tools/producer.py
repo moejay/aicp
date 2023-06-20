@@ -50,7 +50,7 @@ class ProducerTool(BaseTool):
         scenes = utils.get_scenes()
 
         for idx, scene in enumerate(scenes):
-            images_dict[f"scene_{idx + 1}.png"] = scene.duration
+            images_dict[f"scene_{idx + 1}_1.png"] = scene.duration
 
         audio_dict = {
                 utils.FINAL_AUDIO_FILE: 0

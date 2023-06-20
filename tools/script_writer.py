@@ -10,7 +10,7 @@ load_dotenv()
 
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from langchain import LLMChain
-from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
+from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate, SystemMessage)
 from langchain.tools import BaseTool
 from utils import utils, llms
 
@@ -22,7 +22,7 @@ class ScriptWriterTool(BaseTool):
         """Use the tool."""
         template = open("prompts/scriptwriter.txt", "r").read()
         llm = llms.RevGPTLLM(model=utils.get_config()["script_writer"]["model"])
-        system_message_prompt = SystemMessagePromptTemplate.from_template(template)
+        system_message_prompt = SystemMessage(content=template)
         human_message_prompt = HumanMessagePromptTemplate.from_template("{text}")
         chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
         chain = LLMChain(llm=llm, prompt=chat_prompt)
@@ -30,7 +30,7 @@ class ScriptWriterTool(BaseTool):
         result = chain.run(research_text)
         with open(utils.SCRIPT, "w") as f:
             f.write(result)
-        return "File written to script.txt"
+        return f"File written to {utils.SCRIPT}"
 
     def _arun(self, query:str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None) -> str:
         """Use the tool."""

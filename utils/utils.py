@@ -7,11 +7,11 @@ import os
 import contextlib
 import wave
 import yaml
+import json
 
 
-
-RESEARCH = 'research.yaml'
-SCRIPT = 'script.yaml'
+RESEARCH = 'research.json'
+SCRIPT = 'script.json'
 VOICEOVER_WAV_FILE = 'script.wav'
 FINAL_AUDIO_FILE = 'audio.wav'
 VOICEOVER_TIMECODES = 'script_timecodes.txt'
@@ -48,7 +48,7 @@ def get_voiceover_duration():
 def get_script():
     """Retrieve the script from the script file."""
     with open(SCRIPT, "r") as file:
-        return yaml.load(file, Loader=yaml.Loader)
+        return json.loads(file.read())
 
 def get_scenes():
     """Retrieve the scenes from the script file."""

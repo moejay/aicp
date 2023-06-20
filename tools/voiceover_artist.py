@@ -18,6 +18,7 @@ from bark import SAMPLE_RATE
 from utils import utils, llms
 import math
 import yaml
+import json
 from langchain import LLMChain
 from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
 
@@ -48,7 +49,7 @@ class VoiceOverArtistTool(BaseTool):
 
         # Use only the narrator lines to save tokens
         updated_scenes = []
-        for updated, old in zip(yaml.load(response, Loader=yaml.Loader), utils.get_scenes()):
+        for updated, old in zip(json.loads(response), utils.get_scenes()):
             updated_scene = old
             updated_scene.content = updated["narrator"]
             updated_scenes.append(updated_scene)
