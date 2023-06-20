@@ -1,7 +1,7 @@
 researcher:
-  model: "gpt-3.5"
+  model: "gpt-4-mobile"
 script_writer:
-  model: "gpt-3.5"
+  model: "gpt-4-mobile"
 voiceover_artist:
-  model: "gpt-3.5"
+  model: "gpt-4-mobile"
   voice_actor: "ahmed"

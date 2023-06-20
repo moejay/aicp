@@ -7,13 +7,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-from gpt4_openai import GPT4OpenAI
 
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from langchain import LLMChain
 from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
 from langchain.tools import BaseTool
-from utils import utils
+from utils import utils, llms
 
 class ScriptWriterTool(BaseTool):
     name = "scriptwriter"

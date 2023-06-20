@@ -15,10 +15,9 @@ from bark.generation import (
         )
 from bark.api import semantic_to_waveform
 from bark import SAMPLE_RATE
-from utils import utils
+from utils import utils, llms
 import math
 import yaml
-from gpt4_openai import GPT4OpenAI
 from langchain import LLMChain
 from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
 
