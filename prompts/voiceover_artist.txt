@@ -15,6 +15,6 @@ you can always CAPITALIZE your words for emphasis
 
 Do not add non speech tokens that are not specified here
 Preserve the YAML format, and keys in your output (eg: Keep the narrator: key)
-Wrap all string values in ""
-Remember to make sure your output is fully parseable, it's important.
+Wrap all string values in double quotes (eg: "This is a string")
+Remember to make sure your output is fully parseable YAML, it's important.
 

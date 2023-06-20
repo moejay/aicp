@@ -23,14 +23,14 @@ def make_video(prompt, working_dir):
     load_dotenv()
 
     tools = [
-        MusicConductorTool(),
-        ProducerTool(),
         ResearcherTool(),
         ScriptWriterTool(),
-        SoundEngineerTool(),
         StoryBoardArtistTool(),
-        VisualEffectsArtistTool(),
+        #VisualEffectsArtistTool(),
         VoiceOverArtistTool(),
+        MusicConductorTool(),
+        SoundEngineerTool(),
+        ProducerTool(),
         ]
 
     llm = ChatOpenAI(temperature=0, streaming=True)
@@ -40,7 +40,7 @@ def make_video(prompt, working_dir):
     1. Research {prompt} using researcher tool.
     2. Write a script using the scriptwriter tool.
     3. Generate images using the storyboardartist tool.
-    4. Generate audio using the speechgenerator tool.
+    4. Generate audio using the voiceoverartist tool.
     5. Generate the music using the musicconductor tool.
     6. Finalize the audio using the soundengineer tool.
     7. Produce the video using the producer tool.

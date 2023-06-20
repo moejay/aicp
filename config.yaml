@@ -4,4 +4,4 @@ script_writer:
   model: "gpt-3.5"
 voiceover_artist:
   model: "gpt-3.5"
-
+  voice_actor: "ahmed"

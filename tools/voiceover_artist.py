@@ -3,7 +3,7 @@
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from langchain.tools import BaseTool
 from typing import Optional, Type
-
+import os
 import nltk
 import numpy as np
 from scipy.io import wavfile
@@ -32,7 +32,7 @@ class VoiceOverArtistTool(BaseTool):
         # First rewerite the script in the voiceactor's voice
         llm = GPT4OpenAI(token=os.environ["GPT4_TOKEN"], auto_continue=False, model=utils.get_config()["voiceover_artist"]["model"])
         template = open("prompts/voiceover_artist.txt").read()
-        voice_actor = "ahmed" # Will expose this as a param at some point
+        voice_actor = utils.get_config()["voiceover_artist"]["voice_actor"]
         vo = yaml.load(open(f"voiceover_actors/{voice_actor}/vo.yaml").read(), Loader=yaml.Loader)
         system_message_prompt = SystemMessagePromptTemplate.from_template(template)
         human_message_prompt = HumanMessagePromptTemplate.from_template("{script}")
@@ -49,7 +49,7 @@ class VoiceOverArtistTool(BaseTool):
 
         # Use only the narrator lines to save tokens
         updated_scenes = []
-        for updated, old in zip(yaml.load(response, Loader=yaml.Loader), scenes):
+        for updated, old in zip(yaml.load(response, Loader=yaml.Loader), utils.get_scenes()):
             updated_scene = old
             updated_scene.content = updated["narrator"]
             updated_scenes.append(updated_scene)

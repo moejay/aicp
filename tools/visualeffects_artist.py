@@ -24,14 +24,14 @@ class VisualEffectsArtistTool(BaseTool):
         scenes = utils.get_scenes()
         images_per_scene = 5
         for i, scene in enumerate(scenes):
-            for j in range(0,n):
+            for j in range(0, images_per_scene):
                 # generate "autozoom boomerangs"
                 docker.run(
                         "ken-burns-effect",
-                        f"python3 autozoom.py --in /mnt/scene_{i+1}_{j+1}.png \
-                                --out /mnt/ken-burns-effect/scene_{i+1}_{j+1}.mp4",
-                        volumes=[("./", "/mnt")],
-                        auto_remote=True,
+                        command=[f"python3 autozoom.py --in /mnt/scene_{i+1}_{j+1}.png \
+                                --out /mnt/ken-burns-effect/scene_{i+1}_{j+1}.mp4"],
+                        volumes=[(os.getcwd(), "/mnt")],
+                        remove=True,
                         detach=False,
                         )
                 # cut boomerangs into in/out clips
