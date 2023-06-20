@@ -30,7 +30,7 @@ class VoiceOverArtistTool(BaseTool):
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
         # First rewerite the script in the voiceactor's voice
-        llm = GPT4OpenAI(token=os.environ["GPT4_TOKEN"], auto_continue=False, model=utils.get_config()["voiceover_artist"]["model"])
+        llm = llms.RevGPTLLM(model=utils.get_config()["voiceover_artist"]["model"])
         template = open("prompts/voiceover_artist.txt").read()
         voice_actor = utils.get_config()["voiceover_artist"]["voice_actor"]
         vo = yaml.load(open(f"voiceover_actors/{voice_actor}/vo.yaml").read(), Loader=yaml.Loader)

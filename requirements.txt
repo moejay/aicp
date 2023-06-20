@@ -1,6 +1,5 @@
 jupyter==1.0.0
 langchain==0.0.201
-gpt4-openai-api
 faiss-gpu==1.7.2
 openai==0.27.7
 python-dotenv==1.0.0
@@ -16,4 +15,4 @@ audiocraft
 pydub
 gradio==3.35.2
 python-on-whales
-git+https://github.com/moejay/ChatGPT@patched
+revChatGPT
