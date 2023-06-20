@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import torch
-
+import os
 from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline, StableDiffusionUpscalePipeline
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from langchain.tools import BaseTool
@@ -108,8 +108,8 @@ def upscale_gfpgan():
     # use gfpgan "restore faces" upscaler 
     docker.run(
             "gfpgan:latest",
-            "for i in /mnt/*.png; do python3 inference_gfpgan.py -i $i -o /mnt -v 1.3 -s 2; done",
-            volumes=[("./", "/mnt")],
+            ["/bin/bash", "-c", "for i in /mnt/*.png; do python3 GFPGAN/inference_gfpgan.py -i $i -o /mnt -v 1.3 -s 2; done"],
+            volumes=[(os.getcwd(), "/mnt")],
             remove=True,
             detach=False,
             )

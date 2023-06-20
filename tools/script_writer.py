@@ -22,7 +22,7 @@ class ScriptWriterTool(BaseTool):
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
         template = open("prompts/scriptwriter.txt", "r").read()
-        llm = GPT4OpenAI(token=os.environ["GPT4_TOKEN"], model='gpt-4-scriptwriter', auto_continue=True)
+        llm = GPT4OpenAI(token=os.environ["GPT4_TOKEN"], model=utils.get_config()["script_writer"]["model"], auto_continue=True)
         system_message_prompt = SystemMessagePromptTemplate.from_template(template)
         human_message_prompt = HumanMessagePromptTemplate.from_template("{text}")
         chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])

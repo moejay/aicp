@@ -30,12 +30,12 @@ class Scene:
 def set_prefix(prefix):
     """Set the prefix of the project."""
     global RESEARCH, SCRIPT, VOICEOVER_WAV_FILE, FINAL_AUDIO_FILE, VOICEOVER_TIMECODES, FINAL_VIDEO_FILE
-    RESEARCH = os.path.join(prefix, RESEARCH)
-    SCRIPT = os.path.join(prefix, SCRIPT)
-    VOICEOVER_WAV_FILE = os.path.join(prefix, VOICEOVER_WAV_FILE)
-    FINAL_AUDIO_FILE = os.path.join(prefix, FINAL_AUDIO_FILE)
-    VOICEOVER_TIMECODES = os.path.join(prefix, VOICEOVER_TIMECODES)
-    FINAL_VIDEO_FILE = os.path.join(prefix, FINAL_VIDEO_FILE)
+    RESEARCH = os.path.join(prefix, RESEARCH.split('/')[-1])
+    SCRIPT = os.path.join(prefix, SCRIPT.split('/')[-1])
+    VOICEOVER_WAV_FILE = os.path.join(prefix, VOICEOVER_WAV_FILE.split('/')[-1] )
+    FINAL_AUDIO_FILE = os.path.join(prefix, FINAL_AUDIO_FILE.split('/')[-1])
+    VOICEOVER_TIMECODES = os.path.join(prefix, VOICEOVER_TIMECODES.split('/')[-1] )
+    FINAL_VIDEO_FILE = os.path.join(prefix, FINAL_VIDEO_FILE.split('/')[-1])
 
 def get_voiceover_duration():
     """Get the duration of the voiceover script."""
@@ -80,3 +80,8 @@ def get_scenes():
         scene.start_time = timecodes[i]
 
     return scenes
+
+def get_config():
+    """Retrieve the research config."""
+    with open("config.yaml", "r") as file:
+        return yaml.load(file, Loader=yaml.Loader)

@@ -1,0 +1,7 @@
+researcher:
+  model: "gpt-3.5"
+script_writer:
+  model: "gpt-3.5"
+voiceover_artist:
+  model: "gpt-3.5"
+
