@@ -17,12 +17,12 @@ from tools.voiceover_artist import VoiceOverArtistTool
 from utils import utils
 
 
-def make_video(prompt, working_dir):
+def make_video(prompt, working_dir, step):
     os.makedirs(working_dir, exist_ok=True)
     utils.set_prefix(working_dir)
     load_dotenv()
 
-    tools = [
+    all_tools = [
         ResearcherTool(),
         ScriptWriterTool(),
         StoryBoardArtistTool(),
@@ -31,28 +31,51 @@ def make_video(prompt, working_dir):
         MusicConductorTool(),
         SoundEngineerTool(),
         ProducerTool(),
-        ]
+    ] 
+    
+    # create tools only from step onwards
+    tools = []
+    starting_tool_idx = -1
+    for tool_idx, tool in enumerate(all_tools):
+        if tool.name == step.lower().replace(" ", ""):
+            starting_tool_idx = tool_idx
+            tools.append(tool)
+        elif len(tools) > 0:
+            tools.append(tool)
 
     llm = ChatOpenAI(temperature=0, streaming=True)
     mrkl = initialize_agent(tools, llm, agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
 
-    mrkl.run(f"""
-    1. Research {prompt} using researcher tool.
-    2. Write a script using the scriptwriter tool.
-    3. Generate images using the storyboardartist tool.
-    4. Generate audio using the voiceoverartist tool.
-    5. Generate the music using the musicconductor tool.
-    6. Finalize the audio using the soundengineer tool.
-    7. Produce the video using the producer tool.
-            """)
+    task_list = [
+     "Research {prompt} using researcher tool.",
+     "Write a script using the scriptwriter tool.",
+     "Generate images using the storyboardartist tool.",
+     "Generate audio using the voiceoverartist tool.",
+     "Generate the music using the musicconductor tool.",
+     "Finalize the audio using the soundengineer tool.",
+     "Produce the video using the producer tool.",
+            ]
+    # Add the prompts as a numbered task list
+    # based on the step the user chose
+    final_tasks = ""
+    for i, task in enumerate(task_list):
+        if i < starting_tool_idx:
+            continue
+        final_tasks += f"{i+1}. {task}\n"
+
+    mrkl.run(final_tasks.format(prompt=prompt))
     return utils.FINAL_VIDEO_FILE
 
 
 with gr.Blocks() as app:
     video_prompt = gr.Textbox(lines=1, label="Video Prompt", value="Your Mom")
     working_dir = gr.Textbox(label="Working Directory", value="output")
+    ## Ask the user which step to start at
+    step = gr.Dropdown(label="Start At", choices=["Researcher", "Script Writer", "Storyboard Artist", "Voiceover Artist", "Music Conductor", "Sound Engineer", "Producer"])
+
     output = gr.Video(label="Your Video")
+
     submit = gr.Button(label="Submit")
-    submit.click(make_video, inputs=[video_prompt, working_dir], outputs=output)
+    submit.click(make_video, inputs=[video_prompt, working_dir, step], outputs=output)
 
 app.launch()
