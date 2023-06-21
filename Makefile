@@ -1,9 +1,7 @@
 SHELL=/usr/bin/env bash
 CHATGPT_BASE_URL=http://127.0.0.1:9090/api/
 
-
 export CHATGPT_BASE_URL
-
 
 
 setup: python-deps docker-deps
@@ -27,13 +25,15 @@ docker-compose:
 	@echo "Launching docker stack..."
 	@docker-compose up -d
 
+docker-gfpgan:
+	@echo "Building GFPGAN container, this will take a while..."
+	@docker build -t gfpgan -f dockerfiles/GFPGAN.Dockerfile .
+
 docker-kbe:
 	@echo "Building KBE container, this will take a while..."
 	@docker build -t ken-burns-effect -f dockerfiles/ken-burns-effect.Dockerfile .
 
-docker-gfpgan:
-	@echo "Building GFPGAN container, this will take a while..."
-	@docker build -t gfpgan -f dockerfiles/GFPGAN.Dockerfile .
+docker-vendor: docker-gfpgan docker-kbe 
 
 notebook: docker-compose
 	@echo "Starting Jupyter Notebook..."

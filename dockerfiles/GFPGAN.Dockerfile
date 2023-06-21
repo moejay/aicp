@@ -49,6 +49,8 @@ RUN cd GFPGAN \
 && python3 setup.py develop \
 && pip install realesrgan
 
+WORKDIR /app/GFPGAN
+
 RUN wget -q https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth -O /app/GFPGAN/gfpgan/weights/detection_Resnet50_Final.pth
 RUN wget -q https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth -O /app/GFPGAN/gfpgan/weights/parsing_parsenet.pth
 RUN wget -q https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth -O /app/GFPGAN/gfpgan/weights/GFPGANv1.3.pth
