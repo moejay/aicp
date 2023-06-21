@@ -50,8 +50,9 @@ class VoiceOverArtistTool(BaseTool):
         # Use only the narrator lines to save tokens
         updated_scenes = []
         for updated, old in zip(json.loads(response), utils.get_scenes()):
+            print(updated)
             updated_scene = old
-            updated_scene.content = updated["narrator"]
+            updated_scene.content = updated[vo["name"]]
             updated_scenes.append(updated_scene)
         # Save the updated script
         with open(f"{utils.SCRIPT}.voiceover", "w") as f:

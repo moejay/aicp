@@ -1,13 +1,15 @@
+import json
+import os
+import subprocess
+
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from langchain.tools import BaseTool
 from typing import Optional, Type
 from langchain import OpenAI
-import json
 from utils.utils import get_scenes, get_script
 from audiocraft.models import MusicGen
 from audiocraft.data.audio import audio_write
 from pydub import AudioSegment
-import subprocess
 from utils import utils
 
 class MusicConductorTool(BaseTool):
@@ -47,6 +49,7 @@ class MusicConductorTool(BaseTool):
             return "Please try again, not enough music prompts"
         model = MusicGen.get_pretrained("medium")
         for i, ( scene, mp ) in enumerate(zip(scenes, music_prompts)):
+            print(f"SCENE: {scene}")
             model.set_generation_params(
                     use_sampling=True,
                     top_k=250,
@@ -56,7 +59,7 @@ class MusicConductorTool(BaseTool):
                         descriptions=[mp],
                         progress=True,
             )
-            filename = f"music-{i}.wav"
+            filename = os.path.join(utils.MUSIC_PATH, f"music-{i}.wav")
             audio_write(filename,
                     output[0].to("cpu"), 
                     model.sample_rate,

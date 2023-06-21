@@ -1,14 +1,17 @@
+import os
+import json
+import subprocess
+
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from langchain.tools import BaseTool
 from typing import Optional, Type
 from langchain import OpenAI
-import json
 from utils.utils import get_scenes, get_script
 from audiocraft.models import MusicGen
 from audiocraft.data.audio import audio_write
 from pydub import AudioSegment
-import subprocess
 from utils import utils
+
 
 def pad_audio_with_fade(audio_path, output_path, fade_duration, silence_duration):
     """Pad the wav file, fade out and add silence at the end."""
@@ -113,14 +116,15 @@ class SoundEngineerTool(BaseTool):
         scenes = get_scenes()
         music_files = []
         for i, scene in enumerate(scenes):
-            filename = f"music-{i}.wav"
+            filename = os.path.join(utils.MUSIC_PATH, f"music-{i}.wav")
+            print(filename)
             music_files.append(filename)
             if scene.duration > 30:
                 pad_audio_with_fade(filename, filename, 1000, 1000 * (scene.duration -  30))
 
-        combine_music_with_crossfade(music_files, "music.wav")
+        combine_music_with_crossfade(music_files, os.path.join(utils.MUSIC_PATH, "music.wav"))
 
-        duck(utils.VOICEOVER_WAV_FILE, "music.wav", utils.FINAL_AUDIO_FILE, chunk_duration=1000, hold_duration=1500)
+        duck(utils.VOICEOVER_WAV_FILE, os.path.join(utils.MUSIC_PATH, "music.wav"), utils.FINAL_AUDIO_FILE, chunk_duration=1000, hold_duration=1500)
 
         return "Done generating final audio"
 

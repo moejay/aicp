@@ -1,27 +1,30 @@
 #!/usr/bin/env python
 
-from typing import Optional, Type
-from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-from langchain.tools import BaseTool
+import contextlib
+import os
 import subprocess
 import wave
-import contextlib
+
+from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
+from langchain.tools import BaseTool
+from typing import Optional, Type
 from utils import utils
+
 
 def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
     # Create video from images
-    temp_video_file = "temp_video.mp4"
     sorted_images = images_dict.items()
 
     # Create a temporary file with the list of images and durations
-    with open('images_list.txt', 'w') as f:
+    images_list_file = os.path.join(utils.STORYBOARD_PATH, 'images_list.txt')
+    with open(images_list_file, 'w') as f:
         for image_path, duration in sorted_images:
             f.write(f"file '{image_path}'\n")
             f.write(f"duration {duration}\n")
 
     # Construct the ffmpeg command for video creation
     scale_filter = f"scale=w={resolution[0]}:h={resolution[1]}:force_original_aspect_ratio=1,pad={resolution[0]}:{resolution[1]}:(ow-iw)/2:(oh-ih)/2"
-    ffmpeg_cmd = f"ffmpeg -f concat -i images_list.txt -vf '{scale_filter}' -r 30 -y '{temp_video_file}'"
+    ffmpeg_cmd = f"ffmpeg -f concat -i {images_list_file} -vf '{scale_filter}' -r 30 -y '{utils.TEMP_VIDEO_FILE}'"
     subprocess.run(ffmpeg_cmd, shell=True)
 
     # Add audio to the video
@@ -37,7 +40,7 @@ def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
     audio_filter_str += f"{audio_streams_str}amix=inputs={len(sorted_audio)}[a]"
 
     # Construct the ffmpeg command for audio addition
-    ffmpeg_cmd = f"ffmpeg -i {temp_video_file} {audio_input_str}-filter_complex '{audio_filter_str}' -map 0:v -map '[a]' -c:v copy -y '{output_file}'"
+    ffmpeg_cmd = f"ffmpeg -i {utils.TEMP_VIDEO_FILE} {audio_input_str}-filter_complex '{audio_filter_str}' -map 0:v -map '[a]' -c:v copy -y '{output_file}'"
     subprocess.run(ffmpeg_cmd, shell=True)
 
 class ProducerTool(BaseTool):
