@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import contextlib
+import glob
 import os
 import subprocess
 import wave
@@ -52,8 +53,14 @@ class ProducerTool(BaseTool):
         images_dict = {}
         scenes = utils.get_scenes()
 
-        for idx, scene in enumerate(scenes):
-            images_dict[f"scene_{idx + 1}_1.png"] = scene.duration
+
+        for i, scene in enumerate(scenes):
+            scene_images = glob.glob(
+                        os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
+                    )
+            duration_per_image = scene.duration // len(scene_images)
+            for image in scene_images:
+                images_dict[os.path.basename(image)] = duration_per_image
 
         audio_dict = {
                 utils.FINAL_AUDIO_FILE: 0
