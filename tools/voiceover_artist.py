@@ -52,7 +52,12 @@ class VoiceOverArtistTool(BaseTool):
         for updated, old in zip(json.loads(response), utils.get_scenes()):
             print(updated)
             updated_scene = old
-            updated_scene.content = updated[vo["name"]]
+            if "narrator" in updated.keys():
+                updated_scene.content = updated["narrator"]
+            elif vo["name"] in updated.keys():
+                updated_scene.content = updated[vo["name"]]
+            else:    
+                print("Malformed output from llm")
             updated_scenes.append(updated_scene)
         # Save the updated script
         with open(f"{utils.SCRIPT}.voiceover", "w") as f:
