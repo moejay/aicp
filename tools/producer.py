@@ -53,7 +53,6 @@ class ProducerTool(BaseTool):
         images_dict = {}
         scenes = utils.get_scenes()
 
-
         for i, scene in enumerate(scenes):
             scene_images = glob.glob(
                         os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
