@@ -12,8 +12,8 @@ from audiocraft.data.audio import audio_write
 from pydub import AudioSegment
 from utils import utils
 
-class MusicConductorTool(BaseTool):
-    name = "musicconductor"
+class MusicComposerTool(BaseTool):
+    name = "musiccomposer"
     description = "Useful when you need to generate a music score for the script"
 
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
@@ -51,21 +51,23 @@ class MusicConductorTool(BaseTool):
         for i, ( scene, mp ) in enumerate(zip(scenes, music_prompts)):
             print(f"SCENE: {scene}")
             model.set_generation_params(
-                    use_sampling=True,
-                    top_k=250,
-                    duration=min(30, scene.duration)
+                        use_sampling=True,
+                        top_k=250,
+                        duration=min(30, scene.duration)
                     )
             output = model.generate(
                         descriptions=[mp],
                         progress=True,
-            )
+                    )
             filename = os.path.join(utils.MUSIC_PATH, f"music-{i}.wav")
-            audio_write(filename,
-                    output[0].to("cpu"), 
-                    model.sample_rate,
-                    strategy="loudness",
-                    loudness_headroom_db=16,
-                    add_suffix=False)
+            audio_write(
+                        filename,
+                        output[0].to("cpu"), 
+                        model.sample_rate,
+                        strategy="rms",
+                        rms_headroom_db=16,
+                        add_suffix=False
+                    )
 
         return "Done generating music score"
 

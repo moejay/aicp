@@ -36,7 +36,7 @@ class StoryBoardArtistTool(BaseTool):
 
         chain = LLMChain(llm=llm, prompt=chat_prompt)
         script_input = yaml.dump([
-                { "description": s["description"]} \
+                {"description": s["description"]} \
                    for s in utils.get_script()
             ])
         response = chain.run(script=script_input)
@@ -79,14 +79,14 @@ class StoryBoardArtistTool(BaseTool):
         # settings
         guidance_scale = 7.5
         num_inference_steps = 50
-        num_images_per_prompt = 5
+        num_images_per_prompt = 10
         image_height = 432
         image_width = 768
 
         # enumerate scenes and generate image set
         #scenes = utils.get_scenes()
         for i, scene in enumerate(scenes):
-            prompt = f"{scene.description}, {positive_prompt}"
+            prompt = f"{scene.content}, {positive_prompt}"
             prompt_count = len(prompt.split(" "))
 
             # create tensor based on whichever is longer

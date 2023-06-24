@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
 from langchain.agents import initialize_agent, AgentType
 
-from tools.music_conductor import MusicConductorTool
+from tools.music_composer import MusicComposerTool
 from tools.producer import ProducerTool
 from tools.researcher import ResearcherTool
 from tools.script_writer import ScriptWriterTool
@@ -28,7 +28,7 @@ def make_video(prompt, working_dir, step):
         StoryBoardArtistTool(),
         #VisualEffectsArtistTool(),
         VoiceOverArtistTool(),
-        MusicConductorTool(),
+        MusicComposerTool(),
         SoundEngineerTool(),
         ProducerTool(),
     ] 
@@ -78,4 +78,4 @@ with gr.Blocks() as app:
     submit = gr.Button(label="Submit")
     submit.click(make_video, inputs=[video_prompt, working_dir, step], outputs=output)
 
-app.launch()
+app.launch(share=True)
