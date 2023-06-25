@@ -72,6 +72,10 @@ def duck(voiceover_path, music_path, output_path, duck_dB=-10.0, threshold=-40, 
     voiceover = AudioSegment.from_file(voiceover_path)
     background_music = AudioSegment.from_file(music_path)
 
+    # Boost volume  (+db)
+    background_music = background_music + 6
+    voiceover = voiceover + 12
+
     # Analyze voiceover to find segments of speech
     num_chunks = len(voiceover) // chunk_duration
     is_speech = [voiceover[i * chunk_duration : (i + 1) * chunk_duration].dBFS > threshold for i in range(num_chunks)]

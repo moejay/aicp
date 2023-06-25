@@ -3,8 +3,8 @@ researcher:
 script_writer:
   model: "gpt-3.5"
 voiceover_artist:
-  model: "gpt-3.5"
-  voice_actor: "ahmed"
+  ego_model: "gpt-3.5"
+  voice_actor: "zane"
 storyboard_artist:
-  model: SG161222/Realistic_Vision_V2.0
-  scheduler: DPMSolverMultistepScheduler
+  ego_model: "gpt-3.5"
+  sd_model: SG161222/Realistic_Vision_V2.0

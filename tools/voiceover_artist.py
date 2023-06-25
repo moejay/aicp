@@ -27,13 +27,30 @@ class VoiceOverArtistTool(BaseTool):
     name = "voiceoverartist"
     description = "Useful when you need to generate a voiceover for the script"
 
-    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
-        """Use the tool."""
-        # First rewerite the script in the voiceactor's voice
-        llm = llms.RevGPTLLM(model=utils.get_config()["voiceover_artist"]["model"])
+    actor = {}
+    speaker = ""
+
+
+    def load_actor(self):
+        """ Load voice actor specific files and configuration """
+        actor = utils.get_config()["voiceover_artist"]["voice_actor"]
+        with open(os.path.join(utils.VOICEOVER_ACTOR_PATH, f"{actor}.yaml")) as f:
+            self.actor = yaml.load(f.read(), Loader=yaml.Loader)
+
+        print(self.actor)
+
+        if "vo_file" in self.actor.keys():
+            self.speaker = os.path.join(utils.VOICEOVER_ACTOR_PATH, self.actor["vo_file"])
+        elif "speaker" in self.actor.keys():
+            self.speaker = self.actor["speaker"]
+
+        return True
+
+    def ego(self):
+        """ Personalize the dialog according to the selected voice actor """
+        llm = llms.RevGPTLLM(model=utils.get_config()["voiceover_artist"]["ego_model"])
+
         template = open("prompts/voiceover_artist.txt").read()
-        voice_actor = utils.get_config()["voiceover_artist"]["voice_actor"]
-        vo = yaml.load(open(f"voiceover_actors/{voice_actor}/vo.yaml").read(), Loader=yaml.Loader)
         system_message_prompt = SystemMessagePromptTemplate.from_template(template)
         human_message_prompt = HumanMessagePromptTemplate.from_template("{script}")
 
@@ -43,35 +60,45 @@ class VoiceOverArtistTool(BaseTool):
         # Since we only have narrator at this point, no dialogue
         script_input = yaml.dump([{ "narrator": s["narrator"]} for s in utils.get_script()])
 
-        response = chain.run(characteristics=vo["characteristics"],
-                           character_name=vo["name"],
-                           script=script_input)
+        response = chain.run(
+                character_bio=self.actor["character_bio"],
+                script=script_input
+            )
 
         # Use only the narrator lines to save tokens
+        #print(response)
         updated_scenes = []
         for updated, old in zip(json.loads(response), utils.get_scenes()):
-            print(updated)
             updated_scene = old
-            if "narrator" in updated.keys():
-                updated_scene.content = updated["narrator"]
-            elif vo["name"] in updated.keys():
-                updated_scene.content = updated[vo["name"]]
-            else:    
-                print("Malformed output from llm")
+            updated_scene.content = updated["dialog"]
             updated_scenes.append(updated_scene)
+    
         # Save the updated script
         with open(f"{utils.SCRIPT}.voiceover", "w") as f:
             f.write(yaml.dump(updated_scenes))
 
+        return updated_scenes
+           
+
+    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+        """Use the tool."""
+        # load actor personality
+        self.load_actor()
+
+        # update dialog based on actor
+        scenes = self.ego()
+
         # then generate the voiceover
         preload_models()
         GEN_TEMP = 0.7
-        SPEAKER = f"voiceover_actors/{voice_actor}/vo.npz"
+        SPEAKER = self.speaker
         silence = np.zeros(int(0.25 * SAMPLE_RATE))
         pieces = []
         timecodes = [0] # Start at 0
-        for scene in updated_scenes:
+        for scene in scenes:
             print(f"Generating voiceover for scene {scene.scene_title}")
+            print("---")
+            print(scene.content)
             sentences = nltk.sent_tokenize(scene.content)    
             for sentence in sentences:
                 semantic_tokens = generate_text_semantic(

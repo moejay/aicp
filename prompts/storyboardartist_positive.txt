@@ -1,2 +1,1 @@
-(high detailed skin:1.2, high quality, reportage, journalism),
-8k uhd, dslr, soft lighting, film grain, Fujifilm XT3
+(high detailed skin:1.2, high quality), reportage, journalism, 8k uhd, dslr

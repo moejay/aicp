@@ -17,7 +17,15 @@ def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
     sorted_images = images_dict.items()
 
     # Create a temporary file with the list of images and durations
+    if os.path.exists(os.path.join(utils.STORYBOARD_PATH, 'restored_imgs')):
+        # use gfpgan upscaled images if they exist
+        image_path = os.path.join(utils.STORYBOARD_PATH, 'restored_imgs')
+    else:
+        image_path = utils.STORYBOARD_PATH
+
+    print(f"IMAGE_PATH={image_path}")
     images_list_file = os.path.join(utils.STORYBOARD_PATH, 'images_list.txt')
+
     with open(images_list_file, 'w') as f:
         for image_path, duration in sorted_images:
             f.write(f"file '{image_path}'\n")
@@ -48,18 +56,31 @@ class ProducerTool(BaseTool):
     name = "producer"
     description = "Useful when you want to finalize the video file"
 
-    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
-        """Use the tool."""
+    def get_scene_images(self, scenes):
         images_dict = {}
-        scenes = utils.get_scenes()
+
+        if os.path.exists(os.path.join(utils.STORYBOARD_PATH, 'restored_imgs')):
+            # use gfpgan upscaled images if they exist
+            upscaler_path = "restored_imgs"
+        else:
+            upscaler_path = ""
 
         for i, scene in enumerate(scenes):
             scene_images = glob.glob(
                         os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
                     )
             duration_per_image = scene.duration // len(scene_images)
-            for image in scene_images:
-                images_dict[os.path.basename(image)] = duration_per_image
+
+            for img in scene_images:
+                image = os.path.join(upscaler_path, os.path.basename(img))
+                images_dict[image] = duration_per_image
+
+        return images_dict
+
+    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+        """Use the tool."""
+        scenes = utils.get_scenes()
+        images = self.get_scene_images(scenes)
 
         audio_dict = {
                 utils.FINAL_AUDIO_FILE: 0
@@ -67,7 +88,7 @@ class ProducerTool(BaseTool):
 
         resolution = (1920, 1080)
         output_file = utils.FINAL_VIDEO_FILE
-        create_video_with_audio(images_dict, audio_dict, resolution, output_file)
+        create_video_with_audio(images, audio_dict, resolution, output_file)
         return "Done producing video file"
 
     def _arun(self, query:str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None) -> str:
