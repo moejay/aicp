@@ -69,7 +69,8 @@ class StoryBoardArtistTool(BaseTool):
                 "-i", "/mnt/output/storyboard",
                 "-o", "/mnt/output/storyboard",
                 "-v", "1.3",
-                "-s", "2"
+                "-s", "2",
+                "--ext", "png"
             ],
             user=os.getuid(),
             volumes=[(os.getcwd(), "/mnt")],
