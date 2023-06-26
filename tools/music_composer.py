@@ -21,7 +21,7 @@ class MusicComposerTool(BaseTool):
 
         llm = OpenAI(temperature=0.5)
         response = llm(f"""
-                Given the following script,
+            Given the following script,
             your task is to analyze the general mood of the script and create appropriate 
             background music for it.
             You should generate one description per scene in the script.

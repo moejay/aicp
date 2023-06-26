@@ -51,7 +51,7 @@ def make_video(prompt, working_dir, step):
      "Write a script using the scriptwriter tool.",
      "Generate images using the storyboardartist tool.",
      "Generate audio using the voiceoverartist tool.",
-     "Generate the music using the musicconductor tool.",
+     "Generate the music using the musiccomposer tool.",
      "Finalize the audio using the soundengineer tool.",
      "Produce the video using the producer tool.",
             ]
@@ -71,7 +71,7 @@ with gr.Blocks() as app:
     video_prompt = gr.Textbox(lines=1, label="Video Prompt", value="Your Mom")
     working_dir = gr.Textbox(label="Working Directory", value="output")
     ## Ask the user which step to start at
-    step = gr.Dropdown(label="Start At", choices=["Researcher", "Script Writer", "Storyboard Artist", "Voiceover Artist", "Music Conductor", "Sound Engineer", "Producer"])
+    step = gr.Dropdown(label="Start At", choices=["Researcher", "Script Writer", "Storyboard Artist", "Voiceover Artist", "Music Composer", "Sound Engineer", "Producer"])
 
     output = gr.Video(label="Your Video")
 
