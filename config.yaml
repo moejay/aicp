@@ -8,3 +8,5 @@ voiceover_artist:
 storyboard_artist:
   ego_model: "gpt-3.5"
   sd_model: SG161222/Realistic_Vision_V2.0
+music_composer:
+  ego_model: "gpt-3.5"

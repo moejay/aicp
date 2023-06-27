@@ -2,6 +2,7 @@
 
 import contextlib
 import glob
+import math
 import os
 import subprocess
 import wave
@@ -69,7 +70,7 @@ class ProducerTool(BaseTool):
             scene_images = glob.glob(
                         os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
                     )
-            duration_per_image = scene.duration // len(scene_images)
+            duration_per_image = math.ceil(scene.duration / len(scene_images))
 
             for img in scene_images:
                 image = os.path.join(upscaler_path, os.path.basename(img))
