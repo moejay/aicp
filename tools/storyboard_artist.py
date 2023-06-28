@@ -133,15 +133,12 @@ class StoryBoardArtistTool(BaseTool):
         # setup stable diffusion pipeline
         pipe = StableDiffusionPipeline.from_pretrained(
                     utils.get_config()["storyboard_artist"]["sd_model"],
+                    custom_pipeline="lpw_stable_diffusion",
                     torch_dtype=torch.float16,
                 )
         pipe = pipe.to("cuda")
         pipe.enable_xformers_memory_efficient_attention()
         pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
-
-        # tokenizers
-        max_length = pipe.tokenizer.model_max_length
-        negative_prompt_count = len(self.negative_prompt.split(" "))
 
         # settings
         guidance_scale = 7.5
@@ -151,57 +148,15 @@ class StoryBoardArtistTool(BaseTool):
         image_width = 768
 
         # enumerate scenes and generate image set
-        #scenes = utils.get_scenes()
         for i, scene in enumerate(scenes):
             prompt = f"{scene.description}, {self.positive_prompt}"
-            prompt_count = len(prompt.split(" "))
 
             print(f"PP={prompt}")
             print(f"NP={self.negative_prompt}")
 
-            # create tensor based on whichever is longer
-            if prompt_count >= negative_prompt_count:
-                input_ids = pipe.tokenizer(
-                        prompt,
-                        return_tensors="pt",
-                        truncation=False
-                    ).input_ids.to("cuda")
-                shape_max_length = input_ids.shape[-1]
-                negative_ids = pipe.tokenizer(
-                        self.negative_prompt,
-                        truncation=False,
-                        padding="max_length",
-                        max_length=shape_max_length,
-                        return_tensors="pt"
-                    ).input_ids.to("cuda")
-            else:
-                negative_ids = pipe.tokenizer(
-                        self.negative_prompt,
-                        return_tensors="pt",
-                        truncation=False
-                    ).input_ids.to("cuda")
-                shape_max_length = negative_ids.shape[-1]
-                input_ids = pipe.tokenizer(
-                        prompt,
-                        return_tensors="pt",
-                        truncation=False,
-                        padding="max_length",
-                        max_length=shape_max_length
-                    ).input_ids.to("cuda")
-
-            # embeds
-            concat_embeds = []
-            neg_embeds = []
-            for j in range(0, shape_max_length, max_length):
-                concat_embeds.append(pipe.text_encoder(input_ids[:, j: j + max_length])[0])
-                neg_embeds.append(pipe.text_encoder(negative_ids[:, j: j + max_length])[0])
-
-            prompt_embeds = torch.cat(concat_embeds, dim=1)
-            negative_prompt_embeds = torch.cat(neg_embeds, dim=1)
-
             images = pipe(
-                    prompt_embeds=prompt_embeds,
-                    negative_prompt_embeds=negative_prompt_embeds,
+                    prompt=prompt,
+                    negative_prompt=self.negative_prompt,
                     width=image_width,
                     height=image_height,
                     num_inference_steps=num_inference_steps,
