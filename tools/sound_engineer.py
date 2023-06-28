@@ -94,7 +94,12 @@ def duck(voiceover_path, music_path, output_path, duck_dB=-10.0, threshold=-40, 
             if not last_chunk_was_speech:
                 ducked_chunk = ducked_chunk.fade_in(fade_duration)
             output += ducked_chunk
-            hold_counter = hold_duration // chunk_duration
+            # Find next speech segment and make hold_counter the half of the distance
+            for j in range(i + 1, num_chunks):
+                if is_speech[j]:
+                    hold_counter = (j - i) // 2
+                    break
+
         else:
             if last_chunk_was_speech or hold_counter > 0:
                 output += (chunk + duck_dB).fade_out(fade_duration) if hold_counter == 0 else chunk + duck_dB
@@ -121,14 +126,26 @@ class SoundEngineerTool(BaseTool):
         music_files = []
         for i, scene in enumerate(scenes):
             filename = os.path.join(utils.MUSIC_PATH, f"music-{i}.wav")
-            print(filename)
             music_files.append(filename)
             if scene.duration > 30:
                 pad_audio_with_fade(filename, filename, 1000, 1000 * (scene.duration -  30))
 
         combine_music_with_crossfade(music_files, os.path.join(utils.MUSIC_PATH, "music.wav"))
 
-        duck(utils.VOICEOVER_WAV_FILE, os.path.join(utils.MUSIC_PATH, "music.wav"), utils.FINAL_AUDIO_FILE, chunk_duration=1000, hold_duration=1500)
+        voiceover = AudioSegment.from_file(utils.VOICEOVER_WAV_FILE)
+        background_music = AudioSegment.from_file(os.path.join(utils.MUSIC_PATH, "music.wav"))
+        
+        # Reduce background music volume to 30% of voiceover's max volume
+        voiceover += 12
+        # Background music's dbfs should be 0.3 * voiceover's max dbfs
+        background_music -= 4
+
+
+
+        combined = voiceover.overlay(background_music)
+        combined.fade_in(800)
+        combined.fade_out(800)
+        combined.export(utils.FINAL_AUDIO_FILE, format="wav")
 
         return "Done generating final audio"
 
