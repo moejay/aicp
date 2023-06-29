@@ -1,18 +1,13 @@
 import json
 import os
-import subprocess
 import yaml
 
 from audiocraft.models import MusicGen
 from audiocraft.data.audio import audio_write
-from langchain import LLMChain
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
-from langchain.tools import BaseTool
-from pydub import AudioSegment
-from typing import Optional, Type
-from utils.utils import get_scenes, get_script
-from utils import utils, llms
+from typing import Optional
+from utils.parsers import get_scenes
+from utils import utils, llms, parsers
 from .base import AICPBaseTool
 
 class MusicComposerTool(AICPBaseTool):
@@ -38,10 +33,10 @@ class MusicComposerTool(AICPBaseTool):
             self.scene_prompts = self.ego()
 
     def ego(self):
-        template = open("prompts/music_composer.txt").read()
-        chain = llms.get_llm(model=utils.get_config()["music_composer"]["ego_model"], template=template)
+        cast_member = self.director.get_music_composer()
+        chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
 
-        script_input = yaml.dump([{ "description": s["description"]} for s in utils.get_script()])
+        script_input = yaml.dump([{ "description": s["description"]} for s in parsers.get_script()])
 
         response = chain.run(
             script_input

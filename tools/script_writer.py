@@ -1,17 +1,11 @@
 #!/usr/bin/env python
 
-import os
-from typing import Optional, Type
+from typing import Optional
 
 from dotenv import load_dotenv
 load_dotenv()
 
-
-
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-from langchain import LLMChain
-from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate, SystemMessage)
-from langchain.tools import BaseTool
 from utils import utils, llms
 
 from .base import AICPBaseTool
@@ -21,8 +15,9 @@ class ScriptWriterTool(AICPBaseTool):
 
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
-        template = open("prompts/scriptwriter.txt", "r").read()
-        chain = llms.get_llm(model=utils.get_config()["script_writer"]["model"], template=template)
+        cast_member = self.director.get_script_writer()
+        chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
+
         research_text = open(utils.RESEARCH, "r").read()
         result = chain.run(research_text)
         with open(utils.SCRIPT, "w") as f:

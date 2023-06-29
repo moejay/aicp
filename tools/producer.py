@@ -1,16 +1,12 @@
 #!/usr/bin/env python
 
-import contextlib
 import glob
-import math
 import os
 import subprocess
-import wave
 
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-from langchain.tools import BaseTool
-from typing import Optional, Type
-from utils import utils
+from typing import Optional
+from utils import utils, parsers 
 from .base import AICPBaseTool
 
 
@@ -84,7 +80,7 @@ class ProducerTool(AICPBaseTool):
 
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
-        scenes = utils.get_scenes()
+        scenes = parsers.get_scenes()
         images = self.get_scene_images(scenes)
 
         audio_dict = {

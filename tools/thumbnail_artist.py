@@ -1,14 +1,11 @@
 from typing import Optional
 import os
 import yaml
-from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline, StableDiffusionImg2ImgPipeline, StableDiffusionUpscalePipeline
-from xformers.ops import MemoryEfficientAttentionFlashAttentionOp
+from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-from langchain import LLMChain
-from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
 import json
 
-from utils import utils, llms
+from utils import utils, llms, parsers
 from .base import AICPBaseTool
 
 import torch
@@ -29,8 +26,9 @@ class ThumbnailArtistTool(AICPBaseTool):
 
     def load_prompts(self):
         # load additive prompts
-        self.positive_prompt = open("prompts/storyboard_artist/positive.txt", "r").read().strip()
-        self.negative_prompt = open("prompts/storyboard_artist/negative.txt", "r").read().strip()
+        cast_member = self.director.get_thumbnail_artist()
+        self.positive_prompt = cast_member.positive_prompt
+        self.negative_prompt = cast_member.negative_prompt
     
         # load storyboard artist prompts if they exist or create them 
         prompts_file = os.path.join(utils.PATH_PREFIX, "thumbnail_prompts.json")
@@ -45,12 +43,12 @@ class ThumbnailArtistTool(AICPBaseTool):
     def ego(self):
         """ Run the script through the mind of the storyboard artist
             to generate more descriptive prompts """
-        template = open("prompts/thumbnail_artist.txt").read()
-        chain = llms.get_llm(model=utils.get_config()["thumbnail_artist"]["ego_model"], template=template)
+        cast_member = self.director.get_thumbnail_artist()
+        chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
         # Use only the description lines to save tokens
         script_input = yaml.dump([
                 {"description": s["description"]} \
-                   for s in utils.get_script()
+                   for s in parsers.get_script()
             ])
 
         response = chain.run(script_input)
@@ -63,8 +61,9 @@ class ThumbnailArtistTool(AICPBaseTool):
         return json.loads(response)
     def stable_diffusion(self):
         # setup stable diffusion pipeline
+        cast_member = self.director.get_thumbnail_artist()
         pipe = StableDiffusionPipeline.from_pretrained(
-                    utils.get_config()["thumbnail_artist"]["sd_model"],
+                    cast_member.sd_model,
                     custom_pipeline="lpw_stable_diffusion",
                     torch_dtype=torch.float16,
                 )
