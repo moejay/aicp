@@ -137,8 +137,14 @@ class SoundEngineerTool(BaseTool):
         
         # Reduce background music volume to 30% of voiceover's max volume
         voiceover += 12
-        # Background music's dbfs should be 0.3 * voiceover's max dbfs
-        background_music -= 4
+
+        average_loudness_voiceover = voiceover.dBFS
+
+        max_loudness_background_music = background_music.max_dBFS
+        desired_loudness_background_music = average_loudness_voiceover - 3
+
+        gain_change = desired_loudness_background_music - max_loudness_background_music
+        background_music = background_music.apply_gain(gain_change)
 
 
 
