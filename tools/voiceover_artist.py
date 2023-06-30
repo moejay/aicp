@@ -33,16 +33,16 @@ class VoiceOverArtistTool(BaseTool):
 
     def load_actor(self):
         """ Load voice actor specific files and configuration """
-        actor = utils.get_config()["voiceover_artist"]["voice_actor"]
-        with open(os.path.join(utils.VOICEOVER_ACTOR_PATH, f"{actor}.yaml")) as f:
+        actor = utils.get_config()["voiceover_artist"]["actor"]
+        with open(os.path.join(utils.ACTOR_PATH, f"{actor}.yaml")) as f:
             self.actor = yaml.load(f.read(), Loader=yaml.Loader)
 
         print(self.actor)
 
-        if "vo_file" in self.actor.keys():
-            self.speaker = os.path.join(utils.VOICEOVER_ACTOR_PATH, self.actor["vo_file"])
-        elif "speaker" in self.actor.keys():
-            self.speaker = self.actor["speaker"]
+        #if "vo_file" in self.actor.keys():
+        #    self.speaker = os.path.join(utils.VOICEOVER_ACTOR_PATH, self.actor["vo_file"])
+        #elif "speaker" in self.actor.keys():
+        self.speaker = self.actor["speaker"]
 
         return True
 
