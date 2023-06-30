@@ -1,5 +1,6 @@
 import gradio as gr
 import os
+import logging
 
 from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
@@ -13,8 +14,11 @@ from tools.sound_engineer import SoundEngineerTool
 from tools.storyboard_artist import StoryBoardArtistTool 
 from tools.visualeffects_artist import VisualEffectsArtistTool
 from tools.voiceover_artist import VoiceOverArtistTool
+from tools.youtube_distributor import YoutubeDistributorTool
 
 from utils import utils
+
+logger = logging.getLogger(__name__)
 
 
 def make_video(prompt, working_dir, step):
@@ -31,6 +35,7 @@ def make_video(prompt, working_dir, step):
         MusicComposerTool(),
         SoundEngineerTool(),
         ProducerTool(),
+        YoutubeDistributorTool(),
     ] 
     
     # create tools only from step onwards
@@ -43,6 +48,7 @@ def make_video(prompt, working_dir, step):
         elif len(tools) > 0:
             tools.append(tool)
 
+    logger.info("Starting at tool %s", tools[0].name)
     llm = ChatOpenAI(temperature=0, streaming=True)
     mrkl = initialize_agent(tools, llm, agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
 
@@ -54,6 +60,7 @@ def make_video(prompt, working_dir, step):
      "Generate the music using the musiccomposer tool.",
      "Finalize the audio using the soundengineer tool.",
      "Produce the video using the producer tool.",
+     "Distribute the produced video using the youtubedistributor tool.",
             ]
     # Add the prompts as a numbered task list
     # based on the step the user chose
@@ -71,9 +78,9 @@ with gr.Blocks() as app:
     video_prompt = gr.Textbox(lines=1, label="Video Prompt", value="Your Mom")
     working_dir = gr.Textbox(label="Working Directory", value="output")
     ## Ask the user which step to start at
-    step = gr.Dropdown(label="Start At", choices=["Researcher", "Script Writer", "Storyboard Artist", "Voiceover Artist", "Music Composer", "Sound Engineer", "Producer"])
+    step = gr.Dropdown(label="Start At", choices=["Researcher", "Script Writer", "Storyboard Artist", "Voiceover Artist", "Music Composer", "Sound Engineer", "Producer", "Youtube Distributor" ])
 
-    output = gr.Video(label="Your Video")
+    output = gr.Video(label="Your Video", format="mp4")
 
     submit = gr.Button(label="Submit")
     submit.click(make_video, inputs=[video_prompt, working_dir, step], outputs=output)

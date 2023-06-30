@@ -10,3 +10,5 @@ storyboard_artist:
   sd_model: SG161222/Realistic_Vision_V2.0
 music_composer:
   ego_model: "gpt-3.5"
+youtube_distributor:
+  ego_model: "gpt-3.5"
