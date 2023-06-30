@@ -10,6 +10,7 @@ import yaml
 import json
 
 
+PATH_PREFIX = ''
 RESEARCH = 'research.json'
 SCRIPT = 'script.json'
 STORYBOARD_PATH = 'storyboard'
@@ -27,13 +28,15 @@ class Scene:
     """A scene object."""
     start_time: Optional[float] # The scene starting
     duration: Optional[float] # The duration of the scene in seconds
+
     scene_title: str # The title of the scene
     description: str # The description of the scene
     content: str # The content of the scene
 
 def set_prefix(prefix):
     """Set the prefix of the project."""
-    global  RESEARCH, \
+    global  PATH_PREFIX, \
+            RESEARCH, \
             SCRIPT, \
             STORYBOARD_PATH, \
             VOICEOVER_WAV_FILE, \
@@ -43,6 +46,7 @@ def set_prefix(prefix):
             FINAL_VIDEO_FILE, \
             MUSIC_PATH 
 
+    PATH_PREFIX = prefix
     RESEARCH = os.path.join(prefix, RESEARCH.split('/')[-1])
     SCRIPT = os.path.join(prefix, SCRIPT.split('/')[-1])
     VOICEOVER_WAV_FILE = os.path.join(prefix, VOICEOVER_WAV_FILE.split('/')[-1] )

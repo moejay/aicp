@@ -22,6 +22,7 @@ class StoryBoardArtistTool(BaseTool):
     name = "storyboardartist"
     description = "Useful when you need to generate images for the script"
 
+    scene_prompts = []
     positive_prompt = ""
     negative_prompt = ""
 
@@ -34,31 +35,27 @@ class StoryBoardArtistTool(BaseTool):
 
         system_message_prompt = SystemMessagePromptTemplate.from_template(template)
         human_message_prompt = HumanMessagePromptTemplate.from_template("{script}")
+
         chat_prompt = ChatPromptTemplate.from_messages([
                 system_message_prompt,
                 human_message_prompt
             ])
 
-        chain = LLMChain(llm=llm, prompt=chat_prompt)
+        # Use only the description lines to save tokens
         script_input = yaml.dump([
                 {"description": s["description"]} \
                    for s in utils.get_script()
             ])
+
+        chain = LLMChain(llm=llm, prompt=chat_prompt)
         response = chain.run(script=script_input)
         print(response)
 
-        # Use only the description lines to save tokens
-        updated_scenes = []
-        for updated, old in zip(json.loads(response), utils.get_scenes()):
-            updated_scene = old
-            updated_scene.description = updated["prompt"]
-            updated_scenes.append(updated_scene)
-
         # Save the updated script
-        with open(f"{utils.SCRIPT}.storyboard", "w") as f:
-            f.write(yaml.dump(updated_scenes))
+        with open(os.path.join(utils.PATH_PREFIX, "prompts.json"), "w") as f:
+            f.write(response)
 
-        return updated_scenes
+        return json.loads(response)
 
     def gfp_upscaler(self):
         """ Upscale images with the GFPGAN ("restore faces") """
@@ -105,7 +102,7 @@ class StoryBoardArtistTool(BaseTool):
 
         # images/scenes
         for i, scene in enumerate(scenes):
-            prompt = f"{scene.description} {self.positive_prompt}"
+            prompt = f"{scene.storyboard_prompt} {self.positive_prompt}"
             for image in glob.glob(os.path.join(utils.STORYBOARD_PATH, f"scene_{i}_*.png")):
                 file_name = os.path.basename(image)
                 low_res_img = Image.open(image).convert("RGB")
@@ -129,7 +126,7 @@ class StoryBoardArtistTool(BaseTool):
         self.positive_prompt = open("prompts/storyboardartist_positive.txt", "r").read().strip()
         self.negative_prompt = open("prompts/storyboardartist_negative.txt", "r").read().strip()
 
-    def stable_diffusion(self, scenes):
+    def stable_diffusion(self):
         # setup stable diffusion pipeline
         pipe = StableDiffusionPipeline.from_pretrained(
                     utils.get_config()["storyboard_artist"]["sd_model"],
@@ -138,18 +135,21 @@ class StoryBoardArtistTool(BaseTool):
                 )
         pipe = pipe.to("cuda")
         pipe.enable_xformers_memory_efficient_attention()
-        pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
+        scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
+        scheduler.config.algorithm_type = "sde-dpmsolver++"
+        pipe.scheduler = scheduler
+
 
         # settings
         guidance_scale = 7.5
-        num_inference_steps = 50
+        num_inference_steps = 50 
         num_images_per_prompt = 10
         image_height = 432
         image_width = 768
 
         # enumerate scenes and generate image set
-        for i, scene in enumerate(scenes):
-            prompt = f"{scene.description}, {self.positive_prompt}"
+        for i, scene in enumerate(self.scene_prompts):
+            prompt = f"{scene['prompt']}, {self.positive_prompt}"
 
             print(f"PP={prompt}")
             print(f"NP={self.negative_prompt}")
@@ -176,14 +176,14 @@ class StoryBoardArtistTool(BaseTool):
 
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
-        # improvise prompts from script
-        scenes = self.ego()
+        # improvise prompts from script descriptions
+        self.scene_prompts = self.ego()
 
         # load prompt add-ons
         self.load_prompts()
 
         # generate images
-        self.stable_diffusion(scenes)
+        self.stable_diffusion()
 
         # upscale images
         #self.upscaler(scenes)
