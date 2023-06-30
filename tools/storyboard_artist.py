@@ -135,9 +135,9 @@ class StoryBoardArtistTool(BaseTool):
                 )
         pipe = pipe.to("cuda")
         pipe.enable_xformers_memory_efficient_attention()
-        scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
-        scheduler.config.algorithm_type = "sde-dpmsolver++"
-        pipe.scheduler = scheduler
+        pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
+#        scheduler.config.algorithm_type = "sde-dpmsolver++"
+#        pipe.scheduler = scheduler
 
 
         # settings
