@@ -58,8 +58,8 @@ def make_video(prompt, working_dir, step):
      "Using the script, Generate images using the storyboardartist tool.",
      "Using the script, Generate audio using the voiceoverartist tool.",
      "Using the script, Generate the music using the musiccomposer tool.",
-     "Using the audio and music generated, as a single input, finalize the audio using the soundengineer tool.",
-     "Using the audio and images generated, as a single input, produce the video using the producer tool.",
+     "Finalize the audio using the soundengineer tool.",
+     "Produce the video using the producer tool.",
      "Distribute the produced video using the youtubedistributor tool.",
             ]
     # Add the prompts as a numbered task list
