@@ -4,7 +4,7 @@ script_writer:
   model: "gpt-3.5"
 voiceover_artist:
   ego_model: "gpt-3.5"
-  actor: "oliver"
+  actor: "zane"
 storyboard_artist:
   ego_model: "gpt-3.5"
   sd_model: SG161222/Realistic_Vision_V3.0

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!usr/bin/env python
 
 import glob
 import json
@@ -6,7 +6,7 @@ import os
 import torch
 import yaml
 
-from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline, StableDiffusionUpscalePipeline
+from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline, StableDiffusionImg2ImgPipeline, StableDiffusionUpscalePipeline
 from langchain import LLMChain
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
@@ -26,6 +26,22 @@ class StoryBoardArtistTool(BaseTool):
     positive_prompt = ""
     negative_prompt = ""
 
+
+    def initialize_agent(self):
+        self.load_prompts()
+
+    def load_prompts(self):
+        # load additive prompts
+        self.positive_prompt = open("prompts/storyboard_artist/positive.txt", "r").read().strip()
+        self.negative_prompt = open("prompts/storyboard_artist/negative.txt", "r").read().strip()
+    
+        # load storyboard artist prompts if they exist or create them 
+        prompts_file = os.path.join(utils.PATH_PREFIX, "storyboard_prompts.json")
+        if os.path.exists(prompts_file):
+            with open(prompts_file) as prompts:
+                self.scene_prompts = json.loads(prompts.read().strip())
+        else:
+            self.scene_prompts = self.ego()
 
     def ego(self):
         """ Run the script through the mind of the storyboard artist
@@ -52,7 +68,7 @@ class StoryBoardArtistTool(BaseTool):
         print(response)
 
         # Save the updated script
-        with open(os.path.join(utils.PATH_PREFIX, "prompts.json"), "w") as f:
+        with open(os.path.join(utils.PATH_PREFIX, "storyboard_prompts.json"), "w") as f:
             f.write(response)
 
         return json.loads(response)
@@ -79,52 +95,65 @@ class StoryBoardArtistTool(BaseTool):
         print(out)
         return True
 
-    def upscaler(self, scenes):
-        """ Upscale images using the upscale diffuser (memory exhaustion issues) """
-        #os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:512"
-        out_path = os.path.join(utils.STORYBOARD_PATH, "upscaled")
-        os.makedirs(out_path, exist_ok=True)
+    def img2img_upscaler(self):
+        # setup stable diffusion pipeline
+        os.makedirs(os.path.join(utils.STORYBOARD_PATH, "img2img"), exist_ok=True)
 
-        model_id = "stabilityai/stable-diffusion-x4-upscaler"
-        pipe = StableDiffusionUpscalePipeline.from_pretrained(
-                model_id,
-                revision="fp16",
-                torch_dtype=torch.float16
-            ).to("cuda")
-        pipe.enable_xformers_memory_efficient_attention(attention_op=MemoryEfficientAttentionFlashAttentionOp)
-        pipe.vae.enable_xformers_memory_efficient_attention(attention_op=None)
+        pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
+                    utils.get_config()["storyboard_artist"]["sd_model"],
+                    custom_pipeline="lpw_stable_diffusion",
+                    torch_dtype=torch.float16,
+                )
+        pipe = pipe.to("cuda")
+
+        pipe.enable_xformers_memory_efficient_attention()
         pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
+#        scheduler.config.algorithm_type = "sde-dpmsolver++"
+#        pipe.scheduler = scheduler
 
         # settings
         guidance_scale = 7.5
-        num_inference_steps = 20
+        noise_strength = 0.75
+        num_inference_steps = 30 
         num_images_per_prompt = 1
+        num_images_per_scene = 10
+        image_height = 1080
+        image_width = 1920
 
-        # images/scenes
-        for i, scene in enumerate(scenes):
-            prompt = f"{scene.storyboard_prompt} {self.positive_prompt}"
-            for image in glob.glob(os.path.join(utils.STORYBOARD_PATH, f"scene_{i}_*.png")):
-                file_name = os.path.basename(image)
-                low_res_img = Image.open(image).convert("RGB")
+        # enumerate scenes and generate image set
+        for i, scene in enumerate(self.scene_prompts):
+            prompt = f"{scene['prompt']}, {self.positive_prompt}"
+            print(f"PP={prompt}")
+            print(f"NP={self.negative_prompt}")
 
-                upscaled_image = pipe(
+            for j in range(0, num_images_per_scene):
+                # dont recreate images, its expensive
+                if os.path.exists(os.path.join(utils.STORYBOARD_PATH, "img2img", f"scene_{i+1}_{j+1}.png")):
+                    continue
+
+                file = os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_{j+1}.png")
+                scene_image = Image.open(file).convert("RGB")
+                scene_image = scene_image.resize((image_width, image_height))
+
+                image = pipe(
                         prompt=prompt,
-                        image=low_res_img,
+                        negative_prompt=self.negative_prompt,
+                        image=scene_image,
+                        height=image_height,
+                        width=image_width,
                         num_inference_steps=num_inference_steps,
                         num_images_per_prompt=num_images_per_prompt,
                         guidance_scale=guidance_scale,
-                    ).image[0]
-                upscaled_image.save(os.path.join(out_path, file_name))
+                        strength=noise_strength,
+                    ).images[0]
+
+                image.save(os.path.join(utils.STORYBOARD_PATH, "img2img", f"scene_{i+1}_{j+1}.png"))
 
         # release models from vram
-        del pipe, upscaled_image
+        del pipe, scene_image, image
         torch.cuda.empty_cache()
 
-        return True
-
-    def load_prompts(self):
-        self.positive_prompt = open("prompts/storyboardartist_positive.txt", "r").read().strip()
-        self.negative_prompt = open("prompts/storyboardartist_negative.txt", "r").read().strip()
+        return "Done generating images"
 
     def stable_diffusion(self):
         # setup stable diffusion pipeline
@@ -176,20 +205,17 @@ class StoryBoardArtistTool(BaseTool):
 
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
-        # improvise prompts from script descriptions
-        self.scene_prompts = self.ego()
-
-        # load prompt add-ons
-        self.load_prompts()
+        # initialize agent
+        self.initialize_agent()
 
         # generate images
         self.stable_diffusion()
 
-        # upscale images
-        #self.upscaler(scenes)
+        # upscale images with img2img
+        self.img2img_upscaler()
 
         # upscale with restore faces
-        self.gfp_upscaler()
+        #self.gfp_upscaler()
 
         return "Done generating storyboard"
 

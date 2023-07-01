@@ -3,21 +3,25 @@
 Given some prompt, the AI will end up creating a video "suitable" for YouTube/Rumble
 
 
-## 🕵️Agent Roadmap 
+## 🕵️ Agent Roadmap 
 
-[ ] 🔍 Research Agent
+[X] 🔍 Research Agent
 
-[ ] ✍️  Script Writer Agent
+[X] ✍️  Script Writer Agent
 
-[ ] 🔉 TTS Agent
+[X] 🔉 Voiceover Artist Agent
 
-[ ] 🖼️ Image generation Agent
+[X] 🖼️ Storyboard Artist Agent
+
+[X] - Music Composer Agent
+
+[X] - Sound Engineer Agent
+
+[X] 📦 Producer Agent
 
 [ ] 🎬 Director Agent
 
-[ ] 📦 Distributor Agent
-
-[ ] 📹 Video Creator Agent 
+[/] 📦 Distributor Agent
 
 ## Installation and Running
 
@@ -39,30 +43,36 @@ Each of the agents should have a notebook associated with it, and how it's creat
 
 ### 🔍 Research Agent 
 
-This agent will research the topic obviously
+This agent will research the topic obviously.
 
 ### ✍️  Script Writer Agent
 
-This agent will write the script based on the research 
-done by Research Agent
+This agent will write the script based on the research done by Research Agent.
 
-### 🔉 TTS Agent
+### 🔉 Voiceover Artist Agent
 
-This agent will create the audio based on the script 
+This agent will rewrite the script lines in their own words according to their character bio and create the audio voice lines.
 
-### 🖼️ Image generation Agent
+### 🖼️ Storyboard Artist Agent
 
-This agent will generate images based on the script
+This agent will rewrite the scene descriptions as text-to-image prompts and create X images per scene.
 
-### 🎬 Director Agent
+### - Music Composer Agent
 
-The director will put it all together and create the final video file
+This agent will rewrite the scene descriptions into prompts for text-to-music models.
+
+### - Sound Engineer Agent
+
+This agent assembles the audio components into a single wav file.
+
+### - Producer Agent
+
+This agent assembles the audio and visual components of into the final video file.
 
 ### 📦 Distributor Agent
 
-This agent will upload the video file to its final destination, and fill
-in any metadata/thumbnails/etc..
+This agent will provide the title, description, and tags for the video
 
 ### 📹 Video Creator Agent [Future]
 
-This agent will create video clips to be used instead of just images
+This agent will create video clips to be used instead of just image

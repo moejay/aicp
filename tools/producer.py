@@ -18,9 +18,13 @@ def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
     sorted_images = images_dict.items()
 
     # Create a temporary file with the list of images and durations
+
     if os.path.exists(os.path.join(utils.STORYBOARD_PATH, 'restored_imgs')):
         # use gfpgan upscaled images if they exist
         image_path = os.path.join(utils.STORYBOARD_PATH, 'restored_imgs')
+    elif os.path.exists(os.path.join(utils.STORYBOARD_PATH, 'img2img')):
+        # use img2img upscaled images if they exist
+        image_path = os.path.join(utils.STORYBOARD_PATH, 'img2img')
     else:
         image_path = utils.STORYBOARD_PATH
 
