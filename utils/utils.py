@@ -105,7 +105,7 @@ def get_scenes():
 
     return scenes
 
-def get_config():
+def get_config(file="config.yaml"):
     """Retrieve the research config."""
-    with open("config.yaml", "r") as file:
+    with open(file, "r") as file:
         return yaml.load(file, Loader=yaml.Loader)
