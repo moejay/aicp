@@ -29,7 +29,12 @@ class VoiceOverArtistTool(BaseTool):
 
     actor = {}
     speaker = ""
+    scene_prompts = []
 
+
+    def initialize_agent(self):
+        self.load_actor()
+        self.load_prompts()
 
     def load_actor(self):
         """ Load voice actor specific files and configuration """
@@ -44,7 +49,18 @@ class VoiceOverArtistTool(BaseTool):
         #elif "speaker" in self.actor.keys():
         self.speaker = self.actor["speaker"]
 
-        return True
+    def load_prompts(self):
+        # load additive prompts
+        self.positive_prompt = open("prompts/storyboard_artist/positive.txt", "r").read().strip()
+        self.negative_prompt = open("prompts/storyboard_artist/negative.txt", "r").read().strip()
+    
+        # load voiceover artist prompts if they exist or create them 
+        prompts_file = os.path.join(utils.PATH_PREFIX, "voiceover_prompts.json")
+        if os.path.exists(prompts_file):
+            with open(prompts_file) as prompts:
+                self.scene_prompts = json.loads(prompts.read().strip())
+        else:
+            self.scene_prompts = self.ego()
 
     def ego(self):
         """ Personalize the dialog according to the selected voice actor """
@@ -74,7 +90,7 @@ class VoiceOverArtistTool(BaseTool):
             updated_scenes.append(updated_scene)
     
         # Save the updated script
-        with open(f"{utils.SCRIPT}.voiceover", "w") as f:
+        with open(os.path.join(utils.PATH_PREFIX, "voiceover_prompts.json"), "w") as f:
             f.write(yaml.dump(updated_scenes))
 
         return updated_scenes
@@ -82,11 +98,8 @@ class VoiceOverArtistTool(BaseTool):
 
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
-        # load actor personality
-        self.load_actor()
-
-        # update dialog based on actor
-        scenes = self.ego()
+        # initialize
+        self.initialize_agent()
 
         # then generate the voiceover
         preload_models()
@@ -95,7 +108,7 @@ class VoiceOverArtistTool(BaseTool):
         silence = np.zeros(int(0.25 * SAMPLE_RATE))
         pieces = []
         timecodes = [0] # Start at 0
-        for scene in scenes:
+        for scene in self.scene_prompts:
             print(f"Generating voiceover for scene {scene.scene_title}")
             print("---")
             print(scene.content)
