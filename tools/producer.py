@@ -18,22 +18,21 @@ def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
     sorted_images = images_dict.items()
 
     # Create a temporary file with the list of images and durations
-
     if os.path.exists(os.path.join(utils.STORYBOARD_PATH, 'restored_imgs')):
         # use gfpgan upscaled images if they exist
-        image_path = os.path.join(utils.STORYBOARD_PATH, 'restored_imgs')
+        image_set = 'restored_imgs'
     elif os.path.exists(os.path.join(utils.STORYBOARD_PATH, 'img2img')):
         # use img2img upscaled images if they exist
-        image_path = os.path.join(utils.STORYBOARD_PATH, 'img2img')
+        image_set = 'img2img'
     else:
-        image_path = utils.STORYBOARD_PATH
+        image_set = ""
 
-    print(f"IMAGE_PATH={image_path}")
+    print(f"IMAGE_SET={image_set}")
     images_list_file = os.path.join(utils.STORYBOARD_PATH, 'images_list.txt')
 
     with open(images_list_file, 'w') as f:
         for image_path, duration in sorted_images:
-            f.write(f"file '{image_path}'\n")
+            f.write(f"file '{image_set}/{image_path}'\n")
             f.write(f"duration {duration}\n")
 
     # Construct the ffmpeg command for video creation
