@@ -45,7 +45,7 @@ video: docker-compose
 
 rsync:
 	@echo "Syncing files to remote server..."
-	@gsutil -m rsync -r -d ./output gs://aicp-outputs/outputs
+	@gsutil -m rsync -r ./output gs://aicp-outputs/outputs
 
 clean:
 	@echo "Deleting virtualenv..."
