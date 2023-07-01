@@ -91,7 +91,7 @@ class VoiceOverArtistTool(BaseTool):
     
         # Save the updated script
         with open(os.path.join(utils.PATH_PREFIX, "voiceover_prompts.json"), "w") as f:
-            f.write(yaml.dump(updated_scenes))
+            f.write(json.dumps(updated_scenes))
 
         return updated_scenes
            
