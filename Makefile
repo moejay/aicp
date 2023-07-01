@@ -43,6 +43,10 @@ video: docker-compose
 	@echo "Starting AI Content Producer..."
 	@venv/bin/python main.py
 
+rsync:
+	@echo "Syncing files to remote server..."
+	@gsutil -m rsync -r -d ./output gs://aicp-outputs/outputs
+
 clean:
 	@echo "Deleting virtualenv..."
 	@rm -rf venv
