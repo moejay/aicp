@@ -45,6 +45,8 @@ class YoutubeDistributorTool(BaseTool):
         """Use the tool."""
         ego_response = self.ego()
         print(ego_response)
+        with open(utils.DISTRIBUTION_METADATA_FILE, "w") as file:
+            file.write(json.dumps(ego_response))
 #        upload_yt.upload_video(upload_yt.Options(
 #            file=utils.FINAL_VIDEO_FILE,
 #            title=ego_response["title"],

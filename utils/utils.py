@@ -21,6 +21,7 @@ ACTOR_PATH = 'actors'
 TEMP_VIDEO_FILE = 'temp_video.mp4'
 FINAL_VIDEO_FILE = 'video.mp4'
 MUSIC_PATH = 'music'
+DISTRIBUTION_METADATA_FILE = 'distribution_metadata.json'
 
 
 @dataclass
@@ -44,7 +45,8 @@ def set_prefix(prefix):
             VOICEOVER_TIMECODES, \
             TEMP_VIDEO_FILE, \
             FINAL_VIDEO_FILE, \
-            MUSIC_PATH 
+            MUSIC_PATH, \
+            DISTRIBUTION_METADATA_FILE
 
     PATH_PREFIX = prefix
     RESEARCH = os.path.join(prefix, RESEARCH.split('/')[-1])
@@ -54,6 +56,7 @@ def set_prefix(prefix):
     VOICEOVER_TIMECODES = os.path.join(prefix, VOICEOVER_TIMECODES.split('/')[-1] )
     FINAL_VIDEO_FILE = os.path.join(prefix, FINAL_VIDEO_FILE.split('/')[-1])
     TEMP_VIDEO_FILE = os.path.join(prefix, TEMP_VIDEO_FILE.split('/')[-1])
+    DISTRIBUTION_METADATA_FILE = os.path.join(prefix, DISTRIBUTION_METADATA_FILE.split('/')[-1])
 
     STORYBOARD_PATH = os.path.join(prefix, STORYBOARD_PATH.split('/')[-1])
     os.makedirs(STORYBOARD_PATH, exist_ok=True)
