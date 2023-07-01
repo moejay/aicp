@@ -15,7 +15,7 @@ audiocraft
 pydub
 gradio==3.35.2
 python-on-whales
-revChatGPT
+revChatGPT==6.7.5
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib

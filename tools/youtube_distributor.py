@@ -45,14 +45,14 @@ class YoutubeDistributorTool(BaseTool):
         """Use the tool."""
         ego_response = self.ego()
         print(ego_response)
-        upload_yt.upload_video(upload_yt.Options(
-            file=utils.FINAL_VIDEO_FILE,
-            title=ego_response["title"],
-            description=ego_response["description"],
-            tags=",".join(ego_response["tags"]),
-            privacy_status="private"
-            ))
-
+#        upload_yt.upload_video(upload_yt.Options(
+#            file=utils.FINAL_VIDEO_FILE,
+#            title=ego_response["title"],
+#            description=ego_response["description"],
+#            tags=",".join(ego_response["tags"]),
+#            privacy_status="private"
+#            ))
+#
         return "Done uploading video file to youtube, check your channel"
 
     def _arun(self, query:str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None) -> str:

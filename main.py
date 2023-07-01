@@ -54,12 +54,12 @@ def make_video(prompt, working_dir, step):
 
     task_list = [
      "Research {prompt} using researcher tool.",
-     "Write a script using the scriptwriter tool.",
-     "Generate images using the storyboardartist tool.",
-     "Generate audio using the voiceoverartist tool.",
-     "Generate the music using the musiccomposer tool.",
-     "Finalize the audio using the soundengineer tool.",
-     "Produce the video using the producer tool.",
+     "Using the research, write a script using the scriptwriter tool.",
+     "Using the script, Generate images using the storyboardartist tool.",
+     "Using the script, Generate audio using the voiceoverartist tool.",
+     "Using the script, Generate the music using the musiccomposer tool.",
+     "Using the audio and music generated, as a single input, finalize the audio using the soundengineer tool.",
+     "Using the audio and images generated, as a single input, produce the video using the producer tool.",
      "Distribute the produced video using the youtubedistributor tool.",
             ]
     # Add the prompts as a numbered task list

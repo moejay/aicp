@@ -119,7 +119,7 @@ class SoundEngineerTool(BaseTool):
     name = "soundengineer"
     description = "Useful when you need to create the final audio for the video"
 
-    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None ) -> str:
         """Use the tool."""
 
         scenes = get_scenes()
