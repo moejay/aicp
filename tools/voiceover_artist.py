@@ -50,10 +50,6 @@ class VoiceOverArtistTool(BaseTool):
         self.speaker = self.actor["speaker"]
 
     def load_prompts(self):
-        # load additive prompts
-        self.positive_prompt = open("prompts/storyboard_artist/positive.txt", "r").read().strip()
-        self.negative_prompt = open("prompts/storyboard_artist/negative.txt", "r").read().strip()
-    
         # load voiceover artist prompts if they exist or create them 
         prompts_file = os.path.join(utils.PATH_PREFIX, "voiceover_prompts.json")
         if os.path.exists(prompts_file):
