@@ -63,8 +63,8 @@ class StoryBoardArtistTool(BaseTool):
             "gfpgan:latest",
             [
                 "python3", "/app/GFPGAN/inference_gfpgan.py",
-                "-i", "/mnt/output/storyboard",
-                "-o", "/mnt/output/storyboard",
+                "-i", f"/mnt/{utils.PATH_PREFIX}/storyboard",
+                "-o", f"/mnt/{utils.PATH_PREFIX}/storyboard",
                 "-v", "1.3",
                 "-s", "2",
                 "--ext", "png"
