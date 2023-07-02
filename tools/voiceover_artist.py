@@ -54,7 +54,7 @@ class VoiceOverArtistTool(BaseTool):
                 self.scene_prompts = json.loads(prompts.read().strip())
         else:
             print("Generating new dialog prompts...")
-            self.scene_prompts = self.ego()
+            self.scene_prompts = json.loads(self.ego())
 
     def ego(self):
         """ Personalize the dialog according to the selected voice actor """
