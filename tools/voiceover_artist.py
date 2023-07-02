@@ -42,11 +42,6 @@ class VoiceOverArtistTool(BaseTool):
         with open(os.path.join(utils.ACTOR_PATH, f"{actor}.yaml")) as f:
             self.actor = yaml.load(f.read(), Loader=yaml.Loader)
 
-        print(self.actor)
-
-        #if "vo_file" in self.actor.keys():
-        #    self.speaker = os.path.join(utils.VOICEOVER_ACTOR_PATH, self.actor["vo_file"])
-        #elif "speaker" in self.actor.keys():
         self.speaker = self.actor["speaker"]
 
     def load_prompts(self):
@@ -67,8 +62,8 @@ class VoiceOverArtistTool(BaseTool):
         human_message_prompt = HumanMessagePromptTemplate.from_template("{script}")
 
         chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
-
         chain = LLMChain(llm=llm, prompt=chat_prompt)
+
         # Since we only have narrator at this point, no dialogue
         script_input = yaml.dump([{ "narrator": s["narrator"]} for s in utils.get_script()])
 
@@ -76,22 +71,14 @@ class VoiceOverArtistTool(BaseTool):
                 character_bio=self.actor["character_bio"],
                 script=script_input
             )
+        print(response)
 
-        # Use only the narrator lines to save tokens
-        #print(response)
-        updated_scenes = []
-        for updated, old in zip(json.loads(response), utils.get_scenes()):
-            updated_scene = old
-            updated_scene.content = updated["dialog"]
-            updated_scenes.append(updated_scene)
-    
         # Save the updated script
         with open(os.path.join(utils.PATH_PREFIX, "voiceover_prompts.json"), "w") as f:
-            f.write(json.dumps(updated_scenes))
+            f.write(response)
 
-        return updated_scenes
+        return response
            
-
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
         # initialize
@@ -105,10 +92,9 @@ class VoiceOverArtistTool(BaseTool):
         pieces = []
         timecodes = [0] # Start at 0
         for scene in self.scene_prompts:
-            print(f"Generating voiceover for scene {scene.scene_title}")
-            print("---")
-            print(scene.content)
-            sentences = nltk.sent_tokenize(scene.content)    
+            print("--- SCENE ---")
+            print(f"DIALOG: {scene['dialog']}")
+            sentences = nltk.sent_tokenize(scene['dialog'])    
             for sentence in sentences:
                 semantic_tokens = generate_text_semantic(
                         sentence,

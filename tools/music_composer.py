@@ -18,6 +18,20 @@ class MusicComposerTool(BaseTool):
     name = "musiccomposer"
     description = "Useful when you need to generate a music score for the script"
 
+    scene_prompts = []
+
+    def initialize_agent(self):
+        self.load_prompts()
+
+    def load_prompts(self):
+        # load voiceover artist prompts if they exist or create them 
+        prompts_file = os.path.join(utils.PATH_PREFIX, "music_prompts.json")
+        if os.path.exists(prompts_file):
+            with open(prompts_file) as prompts:
+                self.scene_prompts = json.loads(prompts.read().strip())
+        else:
+            self.scene_prompts = self.ego()
+
     def ego(self):
         llm = llms.RevGPTLLM(model=utils.get_config()["music_composer"]["ego_model"])
 
@@ -35,32 +49,38 @@ class MusicComposerTool(BaseTool):
             )
         print(response)
 
-        music_prompts = json.loads(response)
+        scene_prompts = json.loads(response)
         scenes = get_scenes()
 
-        if len(music_prompts) < len(scenes):
+        if len(scene_prompts) < len(scenes):
             return "Please try again, not enough music prompts"
-        else:
-            return music_prompts
+
+        # Save the prompts
+        with open(os.path.join(utils.PATH_PREFIX, "music_prompts.json"), "w") as f:
+            f.write(response)
+
+        return scene_prompts
 
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
-        music_prompts = self.ego()
-        scenes = get_scenes()
+        self.initialize_agent()
 
         model = MusicGen.get_pretrained("medium")
+        scenes = get_scenes()
 
-        for i, ( scene, mp ) in enumerate(zip(scenes, music_prompts)):
-            print(f"SCENE: {scene}")
-            print(f"PROMPT: {mp}")
+        for i, scene in enumerate(scenes):
+            print(f"PROMPT: {self.scene_prompts[i]['prompt']}")
+
             model.set_generation_params(
                         use_sampling=True,
                         top_k=250,
                         duration=min(30, scene.duration)
                     )
+
             output = model.generate(
-                        descriptions=[mp["prompt"]],
+                        descriptions=[self.scene_prompts[i]["prompt"]],
                         progress=True,
                     )
+
             filename = os.path.join(utils.MUSIC_PATH, f"music-{i}.wav")
             audio_write(
                         filename,
