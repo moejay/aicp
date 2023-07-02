@@ -14,7 +14,8 @@ from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTempl
 from langchain.tools import BaseTool
 from utils import utils, llms
 
-class ScriptWriterTool(BaseTool):
+from .base import AICPBaseTool
+class ScriptWriterTool(AICPBaseTool):
     name = "scriptwriter"
     description = "Useful when you need to write a script, pass the file containing the research"
 

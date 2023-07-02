@@ -25,6 +25,12 @@ DISTRIBUTION_METADATA_FILE = 'distribution_metadata.json'
 
 
 @dataclass
+class ProgramConfig:
+    """An object representing the configuration of the program."""
+    prompt: str
+    actor: str
+
+@dataclass
 class Scene:
     """A scene object."""
     start_time: Optional[float] # The scene starting

@@ -13,14 +13,17 @@ from pydub import AudioSegment
 from typing import Optional, Type
 from utils.utils import get_scenes, get_script
 from utils import utils, llms
+from .base import AICPBaseTool
 
-class MusicComposerTool(BaseTool):
+class MusicComposerTool(AICPBaseTool):
     name = "musiccomposer"
     description = "Useful when you need to generate a music score for the script"
 
     scene_prompts = []
 
     def initialize_agent(self):
+        """ Initialize the agent """
+        super().initialize_agent()
         self.load_prompts()
 
     def load_prompts(self):

@@ -21,9 +21,10 @@ import yaml
 import json
 from langchain import LLMChain
 from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
+from dataclasses import dataclass
+from .base import AICPBaseTool
 
-
-class VoiceOverArtistTool(BaseTool):
+class VoiceOverArtistTool(AICPBaseTool):
     name = "voiceoverartist"
     description = "Useful when you need to generate a voiceover for the script"
 
@@ -31,16 +32,16 @@ class VoiceOverArtistTool(BaseTool):
     speaker = ""
     scene_prompts = []
 
-
     def initialize_agent(self):
+        """ Initialize the agent """
+        super().initialize_agent()
         self.load_actor()
         self.load_prompts()
 
     def load_actor(self):
         """ Load voice actor specific files and configuration """
-        actor = utils.get_config()["voiceover_artist"]["actor"]
-        with open(os.path.join(utils.ACTOR_PATH, f"{actor}.yaml")) as f:
-            print(f"Loading VO actor: {actor}")
+        with open(os.path.join(utils.ACTOR_PATH, f"{self.config.actor}.yaml")) as f:
+            print(f"Loading VO actor: {self.config.actor}")
             self.actor = yaml.load(f.read(), Loader=yaml.Loader)
 
         self.speaker = self.actor["speaker"]

@@ -43,6 +43,10 @@ video: docker-compose
 	@echo "Starting AI Content Producer..."
 	@venv/bin/python main.py
 
+dev: docker-compose
+	@echo "Starting development server..."
+	@venv/bin/gradio main.py
+
 rsync:
 	@echo "Syncing files to remote server..."
 	@gsutil -m rsync -r ./output gs://aicp-outputs/outputs

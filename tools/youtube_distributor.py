@@ -10,12 +10,13 @@ from langchain import LLMChain
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate, SystemMessage)
 
+from .base import AICPBaseTool
 from typing import Optional, Type
 from utils import utils, llms, upload_yt
 
 logger = logging.getLogger(__name__)
 
-class YoutubeDistributorTool(BaseTool):
+class YoutubeDistributorTool(AICPBaseTool):
     name = "youtubedistributor"
     description = "Useful for distributing videos to youtube"
 

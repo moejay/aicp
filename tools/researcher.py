@@ -12,8 +12,9 @@ from langchain import LLMChain
 from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
 from langchain.tools import BaseTool
 from utils import utils, llms
+from .base import AICPBaseTool
 
-class ResearcherTool(BaseTool):
+class ResearcherTool(AICPBaseTool):
     name = "researcher"
     description = "Useful when you need to research a topic"
 

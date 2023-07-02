@@ -12,8 +12,9 @@ from typing import Optional, Type
 from utils import utils
 from xformers.ops import MemoryEfficientAttentionFlashAttentionOp
 
+from .base import AICPBaseTool
 
-class VisualEffectsArtistTool(BaseTool):
+class VisualEffectsArtistTool(AICPBaseTool):
     name = "visualeffectsartist"
     description = "Useful for generating visual effects and animations from still images"
 

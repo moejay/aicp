@@ -11,6 +11,7 @@ from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, Callback
 from langchain.tools import BaseTool
 from typing import Optional, Type
 from utils import utils
+from .base import AICPBaseTool
 
 
 def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
@@ -56,7 +57,7 @@ def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
     ffmpeg_cmd = f"ffmpeg -i {utils.TEMP_VIDEO_FILE} {audio_input_str}-filter_complex '{audio_filter_str}' -map 0:v -map '[a]' -c:v copy -y '{output_file}'"
     subprocess.run(ffmpeg_cmd, shell=True)
 
-class ProducerTool(BaseTool):
+class ProducerTool(AICPBaseTool):
     name = "producer"
     description = "Useful when you want to finalize the video file"
 

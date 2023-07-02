@@ -17,8 +17,9 @@ from typing import Optional, Type
 from utils import llms, utils
 from xformers.ops import MemoryEfficientAttentionFlashAttentionOp
 
+from .base import AICPBaseTool
 
-class StoryBoardArtistTool(BaseTool):
+class StoryBoardArtistTool(AICPBaseTool):
     name = "storyboardartist"
     description = "Useful when you need to generate images for the script"
 

@@ -12,6 +12,7 @@ from audiocraft.data.audio import audio_write
 from pydub import AudioSegment
 from utils import utils
 
+from .base import AICPBaseTool
 
 def pad_audio_with_fade(audio_path, output_path, fade_duration, silence_duration):
     """Pad the wav file, fade out and add silence at the end."""
@@ -115,7 +116,7 @@ def duck(voiceover_path, music_path, output_path, duck_dB=-10.0, threshold=-40, 
     # Save the final output
     combined.export(output_path, format="wav")
 
-class SoundEngineerTool(BaseTool):
+class SoundEngineerTool(AICPBaseTool):
     name = "soundengineer"
     description = "Useful when you need to create the final audio for the video"
 

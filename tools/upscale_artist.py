@@ -13,10 +13,11 @@ from typing import Optional, Type
 from utils import utils
 from xformers.ops import MemoryEfficientAttentionFlashAttentionOp
 
+from .base import AICPBaseTool
 PREFIX = pathlib.Path(__file__).parent.parent.resolve()
 
 
-class UpscaleArtistTool(BaseTool):
+class UpscaleArtistTool(AICPBaseTool):
     name = "storyboardartist"
     description = "Useful when you need to generate images for the script"
 
