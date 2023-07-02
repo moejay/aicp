@@ -12,6 +12,7 @@ from tools.researcher import ResearcherTool
 from tools.script_writer import ScriptWriterTool
 from tools.sound_engineer import SoundEngineerTool 
 from tools.storyboard_artist import StoryBoardArtistTool 
+from tools.thumbnail_artist import ThumbnailArtistTool
 from tools.visualeffects_artist import VisualEffectsArtistTool
 from tools.voiceover_artist import VoiceOverArtistTool
 from tools.youtube_distributor import YoutubeDistributorTool
@@ -41,6 +42,7 @@ def make_video(prompt, actor, working_dir, step):
         MusicComposerTool(),
         SoundEngineerTool(),
         ProducerTool(),
+        ThumbnailArtistTool(),
         YoutubeDistributorTool(),
     ] 
     
@@ -70,7 +72,7 @@ with gr.Blocks() as app:
     actor = gr.Dropdown(label="Actor", choices=actors, value=actors[0], interactive=True)
     working_dir = gr.Textbox(label="Working Directory", value="output")
     ## Ask the user which step to start at
-    step = gr.Dropdown(label="Start At", choices=["Researcher", "Script Writer", "Storyboard Artist", "Voiceover Artist", "Music Composer", "Sound Engineer", "Producer", "Youtube Distributor" ])
+    step = gr.Dropdown(label="Start At", choices=["Researcher", "Script Writer", "Storyboard Artist", "Voiceover Artist", "Music Composer", "Sound Engineer", "Producer", "Thumbnail Artist" , "Youtube Distributor" ])
 
     output = gr.Video(label="Your Video", format="mp4")
 

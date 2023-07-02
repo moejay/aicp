@@ -14,6 +14,7 @@ PATH_PREFIX = ''
 RESEARCH = 'research.json'
 SCRIPT = 'script.json'
 STORYBOARD_PATH = 'storyboard'
+THUMBNAILS_PATH = 'thumbnails'
 VOICEOVER_WAV_FILE = 'script.wav'
 FINAL_AUDIO_FILE = 'audio.wav'
 VOICEOVER_TIMECODES = 'voiceover_timecodes.txt'
@@ -52,7 +53,8 @@ def set_prefix(prefix):
             TEMP_VIDEO_FILE, \
             FINAL_VIDEO_FILE, \
             MUSIC_PATH, \
-            DISTRIBUTION_METADATA_FILE
+            DISTRIBUTION_METADATA_FILE, \
+            THUMBNAILS_PATH
 
     PATH_PREFIX = prefix
     RESEARCH = os.path.join(prefix, RESEARCH.split('/')[-1])
@@ -66,6 +68,9 @@ def set_prefix(prefix):
 
     STORYBOARD_PATH = os.path.join(prefix, STORYBOARD_PATH.split('/')[-1])
     os.makedirs(STORYBOARD_PATH, exist_ok=True)
+    
+    THUMBNAILS_PATH = os.path.join(prefix, THUMBNAILS_PATH.split('/')[-1])
+    os.makedirs(THUMBNAILS_PATH, exist_ok=True)
 
     MUSIC_PATH = os.path.join(prefix, MUSIC_PATH.split('/')[-1])
     os.makedirs(MUSIC_PATH, exist_ok=True)
