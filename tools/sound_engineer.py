@@ -125,7 +125,7 @@ class SoundEngineerTool(BaseTool):
         scenes = get_scenes()
         music_files = []
         for i, scene in enumerate(scenes):
-            filename = os.path.join(utils.MUSIC_PATH, f"music-{i}.wav")
+            filename = os.path.join(utils.MUSIC_PATH, f"music-{i+1}.wav")
             music_files.append(filename)
             if scene.duration > 30:
                 pad_audio_with_fade(filename, filename, 1000, 1000 * (scene.duration -  30))

@@ -40,6 +40,7 @@ class VoiceOverArtistTool(BaseTool):
         """ Load voice actor specific files and configuration """
         actor = utils.get_config()["voiceover_artist"]["actor"]
         with open(os.path.join(utils.ACTOR_PATH, f"{actor}.yaml")) as f:
+            print(f"Loading VO actor: {actor}")
             self.actor = yaml.load(f.read(), Loader=yaml.Loader)
 
         self.speaker = self.actor["speaker"]
@@ -49,8 +50,10 @@ class VoiceOverArtistTool(BaseTool):
         prompts_file = os.path.join(utils.PATH_PREFIX, "voiceover_prompts.json")
         if os.path.exists(prompts_file):
             with open(prompts_file) as prompts:
+                print("Loading existing prompt file: voiceover_prompts")
                 self.scene_prompts = json.loads(prompts.read().strip())
         else:
+            print("Generating new dialog prompts...")
             self.scene_prompts = self.ego()
 
     def ego(self):
@@ -91,26 +94,34 @@ class VoiceOverArtistTool(BaseTool):
         silence = np.zeros(int(0.25 * SAMPLE_RATE))
         pieces = []
         timecodes = [0] # Start at 0
-        for scene in self.scene_prompts:
-            print("--- SCENE ---")
-            print(f"DIALOG: {scene['dialog']}")
-            sentences = nltk.sent_tokenize(scene['dialog'])    
-            for sentence in sentences:
-                semantic_tokens = generate_text_semantic(
-                        sentence,
-                        history_prompt=SPEAKER,
-                        temp=GEN_TEMP,
-                        min_eos_p=0.05
-                    )
-                audio_array = semantic_to_waveform(semantic_tokens, history_prompt=SPEAKER)
-                pieces += [audio_array, silence]
-            timecodes.append(math.ceil(sum([len(p)/SAMPLE_RATE for p in pieces])))
 
-        full_audio = np.concatenate(pieces)
-        int_audio_arr = (full_audio * np.iinfo(np.int16).max).astype(np.int16)
-        wavfile.write(utils.VOICEOVER_WAV_FILE, SAMPLE_RATE, int_audio_arr)
-        with open(utils.VOICEOVER_TIMECODES, "w") as f:
-            f.write("\n".join(map(str, timecodes)))
+        # dont recreate voiceover, its expensive
+        if os.path.exists(utils.VOICEOVER_WAV_FILE):
+            print("Skipping VO generation...")
+        else:
+            for scene in self.scene_prompts:
+                print("--- SCENE ---")
+                print(f"DIALOG: {scene['dialog']}")
+    
+                sentences = nltk.sent_tokenize(scene['dialog'])    
+                for sentence in sentences:
+                    semantic_tokens = generate_text_semantic(
+                            sentence,
+                            history_prompt=SPEAKER,
+                            temp=GEN_TEMP,
+                            min_eos_p=0.05
+                        )
+                    audio_array = semantic_to_waveform(semantic_tokens, history_prompt=SPEAKER)
+                    pieces += [audio_array, silence]
+                timecodes.append(math.ceil(sum([len(p)/SAMPLE_RATE for p in pieces])))
+
+            full_audio = np.concatenate(pieces)
+            int_audio_arr = (full_audio * np.iinfo(np.int16).max).astype(np.int16)
+            wavfile.write(utils.VOICEOVER_WAV_FILE, SAMPLE_RATE, int_audio_arr)
+
+            with open(utils.VOICEOVER_TIMECODES, "w") as f:
+                f.write("\n".join(map(str, timecodes)))
+
         # Due to bug in clean_models
         while True:
             try:

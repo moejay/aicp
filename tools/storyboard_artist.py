@@ -39,8 +39,10 @@ class StoryBoardArtistTool(BaseTool):
         prompts_file = os.path.join(utils.PATH_PREFIX, "storyboard_prompts.json")
         if os.path.exists(prompts_file):
             with open(prompts_file) as prompts:
+                print("Loading existing prompts from: storyboard_prompts.json")
                 self.scene_prompts = json.loads(prompts.read().strip())
         else:
+            print("Generating text-to-image prompts for storyboard artist...")
             self.scene_prompts = self.ego()
 
     def ego(self):
@@ -129,6 +131,7 @@ class StoryBoardArtistTool(BaseTool):
             for j in range(0, num_images_per_scene):
                 # dont recreate images, its expensive
                 if os.path.exists(os.path.join(utils.STORYBOARD_PATH, "img2img", f"scene_{i+1}_{j+1}.png")):
+                    print(f"Skipping: img2img/scene_{i+1}_{j+1}.png")
                     continue
 
                 file = os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_{j+1}.png")
@@ -150,6 +153,7 @@ class StoryBoardArtistTool(BaseTool):
                 image.save(os.path.join(utils.STORYBOARD_PATH, "img2img", f"scene_{i+1}_{j+1}.png"))
 
         # release models from vram
+        pipe, scene_image, image = None, None, None
         del pipe, scene_image, image
         torch.cuda.empty_cache()
 
@@ -178,6 +182,11 @@ class StoryBoardArtistTool(BaseTool):
 
         # enumerate scenes and generate image set
         for i, scene in enumerate(self.scene_prompts):
+            # dont recreate images, its expensive
+            if os.path.exists(os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_{num_images_per_prompt}.png")):
+                print(f"Skipping: scene_{i+1}_{num_images_per_prompt}.png")
+                continue
+
             prompt = f"{scene['prompt']}, {self.positive_prompt}"
 
             print(f"PP={prompt}")
@@ -198,6 +207,7 @@ class StoryBoardArtistTool(BaseTool):
                 image.save(os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_{j+1}.png"))
 
         # release models from vram
+        pipe, images, image = None, None, None
         del pipe, images, image
         torch.cuda.empty_cache()
 

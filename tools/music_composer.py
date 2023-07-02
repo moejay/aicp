@@ -28,8 +28,10 @@ class MusicComposerTool(BaseTool):
         prompts_file = os.path.join(utils.PATH_PREFIX, "music_prompts.json")
         if os.path.exists(prompts_file):
             with open(prompts_file) as prompts:
+                print("Loading existing music prompts: music_prompts.json")
                 self.scene_prompts = json.loads(prompts.read().strip())
         else:
+            print("Generating new music prompts...")
             self.scene_prompts = self.ego()
 
     def ego(self):
@@ -68,6 +70,11 @@ class MusicComposerTool(BaseTool):
         scenes = get_scenes()
 
         for i, scene in enumerate(scenes):
+            # dont recreate music, its expensive
+            if os.path.exists(os.path.join(utils.MUSIC_PATH, f"music-{i+1}.wav")):
+                print(f"Skipping: music-{i+1}.wav")
+                continue
+ 
             print(f"PROMPT: {self.scene_prompts[i]['prompt']}")
 
             model.set_generation_params(
@@ -81,7 +88,7 @@ class MusicComposerTool(BaseTool):
                         progress=True,
                     )
 
-            filename = os.path.join(utils.MUSIC_PATH, f"music-{i}.wav")
+            filename = os.path.join(utils.MUSIC_PATH, f"music-{i+1}.wav")
             audio_write(
                         filename,
                         output[0].to("cpu"), 
