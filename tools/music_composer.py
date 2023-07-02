@@ -32,7 +32,7 @@ class MusicComposerTool(BaseTool):
                 self.scene_prompts = json.loads(prompts.read().strip())
         else:
             print("Generating new music prompts...")
-            self.scene_prompts = self.ego()
+            self.scene_prompts = json.loads(self.ego())
 
     def ego(self):
         llm = llms.RevGPTLLM(model=utils.get_config()["music_composer"]["ego_model"])
