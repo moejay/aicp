@@ -7,7 +7,7 @@ Respond in JSON format with the following fields:
 - tags
 
 example:
-{
+{{
   "title": "My video title",
   "description": "My video description",
   "tags": [
@@ -16,7 +16,7 @@ example:
     "tag3"
   ],
   "categoryId": 22
-}
+}}
 
 Here is the video script:
 

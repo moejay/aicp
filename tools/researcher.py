@@ -22,11 +22,7 @@ class ResearcherTool(AICPBaseTool):
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
         template = open("prompts/researcher.txt", "r").read()
-        llm = llms.RevGPTLLM(model=utils.get_config()["researcher"]["model"])
-        system_message_prompt = SystemMessagePromptTemplate.from_template(template)
-        human_message_prompt = HumanMessagePromptTemplate.from_template("{text}")
-        chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
-        chain = LLMChain(llm=llm, prompt=chat_prompt)
+        chain = llms.get_llm(model=utils.get_config()["researcher"]["model"], template=template)
 
         result = chain.run(query)
         with open(utils.RESEARCH, "w") as f:

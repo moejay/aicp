@@ -22,19 +22,12 @@ class YoutubeDistributorTool(AICPBaseTool):
 
     def ego(self):
         logger.info("Running ego")
-        llm = llms.RevGPTLLM(model=utils.get_config()["youtube_distributor"]["ego_model"])
-
         template = open("prompts/youtube_distributor.txt").read()
-        system_message_prompt = SystemMessage(content=template)
-        human_message_prompt = HumanMessagePromptTemplate.from_template("{script}")
-
-        chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
-
-        chain = LLMChain(llm=llm, prompt=chat_prompt) 
+        chain = llms.get_llm(model=utils.get_config()["youtube_distributor"]["ego_model"], template=template)
         script_input = yaml.dump([{ "description": s["description"]} for s in utils.get_script()])
 
         response = chain.run(
-            script=script_input
+            script_input
         )
 
         logger.info("Ego response: %s", response)

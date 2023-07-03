@@ -49,25 +49,14 @@ class StoryBoardArtistTool(AICPBaseTool):
     def ego(self):
         """ Run the script through the mind of the storyboard artist
             to generate more descriptive prompts """
-        llm = llms.RevGPTLLM(model=utils.get_config()["storyboard_artist"]["ego_model"])
         template = open("prompts/storyboard_artist.txt").read()
-
-        system_message_prompt = SystemMessagePromptTemplate.from_template(template)
-        human_message_prompt = HumanMessagePromptTemplate.from_template("{script}")
-
-        chat_prompt = ChatPromptTemplate.from_messages([
-                system_message_prompt,
-                human_message_prompt
-            ])
-
+        chain = llms.get_llm(model=utils.get_config()["storyboard_artist"]["ego_model"], template=template)
         # Use only the description lines to save tokens
         script_input = yaml.dump([
                 {"description": s["description"]} \
                    for s in utils.get_script()
             ])
-
-        chain = LLMChain(llm=llm, prompt=chat_prompt)
-        response = chain.run(script=script_input)
+        response = chain.run(script_input)
         print(response)
 
         # Save the updated script

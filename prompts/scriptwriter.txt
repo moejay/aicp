@@ -15,15 +15,15 @@ Follow these rules script writting rules:
 Always provide your answer in JSON format using the following template:
 
 [
-  {
+  {{
     "title": "The title of this scene",
 	"description": "This scene description in one or two sentences",
 	"narrator": "The narrator's lines for this scene"
-  },
-  {
+  }},
+  {{
     "title": "The title of this scene",
 	"description": "This scene description in one or two sentences",
 	"narrator": "The narrator's lines for this scene"
-  }
+  }}
 ]
 
