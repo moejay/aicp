@@ -1,0 +1,17 @@
+name: Docker Image
+on:
+  push:
+    branches:
+      - 'main'
+    tags:
+      - 'v[0-9]+\.[0-9]+\.[0-9]+'
+  pull_request:
+    branches:
+      - '*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docker image
+        run: docker build -t ${{ github.repository }}:latest .
