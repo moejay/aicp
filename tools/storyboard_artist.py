@@ -8,6 +8,7 @@ import yaml
 
 from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline, StableDiffusionImg2ImgPipeline, StableDiffusionUpscalePipeline
 from langchain import LLMChain
+from langchain.chat_models import ChatOpenAI
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
 from langchain.tools import BaseTool
@@ -49,7 +50,7 @@ class StoryBoardArtistTool(AICPBaseTool):
     def ego(self):
         """ Run the script through the mind of the storyboard artist
             to generate more descriptive prompts """
-        llm = llms.RevGPTLLM(model=utils.get_config()["storyboard_artist"]["ego_model"])
+        llm = ChatOpenAI(model="gpt-3.5-turbo-16k", temperature=0.7)
         template = open("prompts/storyboard_artist.txt").read()
 
         system_message_prompt = SystemMessagePromptTemplate.from_template(template)
@@ -60,10 +61,13 @@ class StoryBoardArtistTool(AICPBaseTool):
                 human_message_prompt
             ])
 
+        sentences_durations = json.loads(open(utils.VOICEOVER_SENTENCES_DURATIONS, "r").read().strip())
+
         # Use only the description lines to save tokens
-        script_input = yaml.dump([
-                {"description": s["description"]} \
-                   for s in utils.get_script()
+        script_input = json.dumps([
+            {
+                "sentence": sentence["sentence"],
+                } for sentence in sentences_durations
             ])
 
         chain = LLMChain(llm=llm, prompt=chat_prompt)
@@ -119,7 +123,7 @@ class StoryBoardArtistTool(AICPBaseTool):
         noise_strength = 0.75
         num_inference_steps = 30 
         num_images_per_prompt = 1
-        num_images_per_scene = 10
+        num_images_per_scene = 1
         image_height = 1080
         image_width = 1920
 
@@ -177,7 +181,7 @@ class StoryBoardArtistTool(AICPBaseTool):
         # settings
         guidance_scale = 7.5
         num_inference_steps = 50 
-        num_images_per_prompt = 10
+        num_images_per_prompt = 1
         image_height = 432
         image_width = 768
 

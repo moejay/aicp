@@ -95,6 +95,7 @@ class VoiceOverArtistTool(AICPBaseTool):
         silence = np.zeros(int(0.25 * SAMPLE_RATE))
         pieces = []
         timecodes = [0] # Start at 0
+        sentences_durations = []
 
         # dont recreate voiceover, its expensive
         if os.path.exists(utils.VOICEOVER_WAV_FILE):
@@ -113,7 +114,17 @@ class VoiceOverArtistTool(AICPBaseTool):
                             min_eos_p=0.05
                         )
                     audio_array = semantic_to_waveform(semantic_tokens, history_prompt=SPEAKER)
+                    start_time = sum([len(p)/SAMPLE_RATE for p in pieces])
                     pieces += [audio_array, silence]
+                    end_time = sum([len(p)/SAMPLE_RATE for p in pieces])
+                    sentences_durations.append(
+                            {
+                                "sentence": sentence,
+                                "start_time": start_time,
+                                "end_time": end_time,
+                                "duration": end_time - start_time
+                            }
+                        )
                 timecodes.append(math.ceil(sum([len(p)/SAMPLE_RATE for p in pieces])))
 
             full_audio = np.concatenate(pieces)
@@ -122,6 +133,10 @@ class VoiceOverArtistTool(AICPBaseTool):
 
             with open(utils.VOICEOVER_TIMECODES, "w") as f:
                 f.write("\n".join(map(str, timecodes)))
+
+            with open(utils.VOICEOVER_SENTENCES_DURATIONS, "w") as f:
+                f.write(json.dumps(sentences_durations))
+
 
         # Due to bug in clean_models
         while True:

@@ -24,6 +24,19 @@ from dataclasses import dataclass
 logger = logging.getLogger(__name__)
 
 
+all_tools = [
+    ResearcherTool(),
+    ScriptWriterTool(),
+    #VisualEffectsArtistTool(),
+    VoiceOverArtistTool(),
+    StoryBoardArtistTool(),
+    MusicComposerTool(),
+    SoundEngineerTool(),
+    ProducerTool(),
+    ThumbnailArtistTool(),
+    YoutubeDistributorTool(),
+]
+
 def make_video(prompt, actor, working_dir, step):
     os.makedirs(working_dir, exist_ok=True)
     utils.set_prefix(working_dir)
@@ -33,18 +46,6 @@ def make_video(prompt, actor, working_dir, step):
         prompt=prompt,
         actor=actor)
 
-    all_tools = [
-        ResearcherTool(),
-        ScriptWriterTool(),
-        StoryBoardArtistTool(),
-        #VisualEffectsArtistTool(),
-        VoiceOverArtistTool(),
-        MusicComposerTool(),
-        SoundEngineerTool(),
-        ProducerTool(),
-        ThumbnailArtistTool(),
-        YoutubeDistributorTool(),
-    ] 
     
     # create tools only from step onwards
     tools = []
@@ -72,7 +73,7 @@ with gr.Blocks() as app:
     actor = gr.Dropdown(label="Actor", choices=actors, value=actors[0], interactive=True)
     working_dir = gr.Textbox(label="Working Directory", value="output")
     ## Ask the user which step to start at
-    step = gr.Dropdown(label="Start At", choices=["Researcher", "Script Writer", "Storyboard Artist", "Voiceover Artist", "Music Composer", "Sound Engineer", "Producer", "Thumbnail Artist" , "Youtube Distributor" ])
+    step = gr.Dropdown(label="Start At", choices=[t.name for t in all_tools], value=all_tools[0].name, interactive=True)
 
     output = gr.Video(label="Your Video", format="mp4")
 

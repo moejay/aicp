@@ -18,6 +18,7 @@ THUMBNAILS_PATH = 'thumbnails'
 VOICEOVER_WAV_FILE = 'script.wav'
 FINAL_AUDIO_FILE = 'audio.wav'
 VOICEOVER_TIMECODES = 'voiceover_timecodes.txt'
+VOICEOVER_SENTENCES_DURATIONS = 'voiceover_sentences_durations.json'
 ACTOR_PATH = 'actors'
 TEMP_VIDEO_FILE = 'temp_video.mp4'
 FINAL_VIDEO_FILE = 'video.mp4'
@@ -54,7 +55,8 @@ def set_prefix(prefix):
             FINAL_VIDEO_FILE, \
             MUSIC_PATH, \
             DISTRIBUTION_METADATA_FILE, \
-            THUMBNAILS_PATH
+            THUMBNAILS_PATH, \
+            VOICEOVER_SENTENCES_DURATIONS
 
     PATH_PREFIX = prefix
     RESEARCH = os.path.join(prefix, RESEARCH.split('/')[-1])
@@ -62,6 +64,7 @@ def set_prefix(prefix):
     VOICEOVER_WAV_FILE = os.path.join(prefix, VOICEOVER_WAV_FILE.split('/')[-1] )
     FINAL_AUDIO_FILE = os.path.join(prefix, FINAL_AUDIO_FILE.split('/')[-1])
     VOICEOVER_TIMECODES = os.path.join(prefix, VOICEOVER_TIMECODES.split('/')[-1] )
+    VOICEOVER_SENTENCES_DURATIONS = os.path.join(prefix, VOICEOVER_SENTENCES_DURATIONS.split('/')[-1] )
     FINAL_VIDEO_FILE = os.path.join(prefix, FINAL_VIDEO_FILE.split('/')[-1])
     TEMP_VIDEO_FILE = os.path.join(prefix, TEMP_VIDEO_FILE.split('/')[-1])
     DISTRIBUTION_METADATA_FILE = os.path.join(prefix, DISTRIBUTION_METADATA_FILE.split('/')[-1])

@@ -5,6 +5,7 @@ import glob
 import math
 import os
 import subprocess
+import json
 import wave
 
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
@@ -70,15 +71,11 @@ class ProducerTool(AICPBaseTool):
         else:
             upscaler_path = ""
 
-        for i, scene in enumerate(scenes):
-            scene_images = glob.glob(
-                        os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
-                    )
-            duration_per_image = scene.duration / len(scene_images)
-
-            for img in scene_images:
-                image = os.path.join(upscaler_path, os.path.basename(img))
-                images_dict[image] = duration_per_image
+        # Read VOICEOVER_SENTENCES_DURATIONS and use that to create a dictionary of images and their durations
+        sentences_durations = json.loads(open(utils.VOICEOVER_SENTENCES_DURATIONS).read())
+        for i, sentence in enumerate(sentences_durations):
+            image = os.path.join(upscaler_path, f"scene_{i+1}_1.png")
+            images_dict[image] = sentence['duration']
 
         return images_dict
 
