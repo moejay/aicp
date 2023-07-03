@@ -22,11 +22,7 @@ class ScriptWriterTool(AICPBaseTool):
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
         template = open("prompts/scriptwriter.txt", "r").read()
-        llm = llms.RevGPTLLM(model=utils.get_config()["script_writer"]["model"])
-        system_message_prompt = SystemMessage(content=template)
-        human_message_prompt = HumanMessagePromptTemplate.from_template("{text}")
-        chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
-        chain = LLMChain(llm=llm, prompt=chat_prompt)
+        chain = llms.get_llm(model=utils.get_config()["script_writer"]["model"], template=template)
         research_text = open(utils.RESEARCH, "r").read()
         result = chain.run(research_text)
         with open(utils.SCRIPT, "w") as f:

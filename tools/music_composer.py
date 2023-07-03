@@ -38,20 +38,14 @@ class MusicComposerTool(AICPBaseTool):
             self.scene_prompts = self.ego()
 
     def ego(self):
-        llm = llms.RevGPTLLM(model=utils.get_config()["music_composer"]["ego_model"])
-
         template = open("prompts/music_composer.txt").read()
-        system_message_prompt = SystemMessagePromptTemplate.from_template(template)
-        human_message_prompt = HumanMessagePromptTemplate.from_template("{script}")
+        chain = llms.get_llm(model=utils.get_config()["music_composer"]["ego_model"], template=template)
 
-        chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
-
-        chain = LLMChain(llm=llm, prompt=chat_prompt) 
         script_input = yaml.dump([{ "description": s["description"]} for s in utils.get_script()])
 
         response = chain.run(
-                script=script_input
-            )
+            script_input
+        )
         print(response)
 
         scene_prompts = json.loads(response)

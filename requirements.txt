@@ -16,6 +16,8 @@ pydub
 gradio==3.35.2
 python-on-whales
 revChatGPT==6.7.5
+pylint==2.17.4
+black
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib

@@ -59,22 +59,15 @@ class VoiceOverArtistTool(AICPBaseTool):
 
     def ego(self):
         """ Personalize the dialog according to the selected voice actor """
-        llm = llms.RevGPTLLM(model=utils.get_config()["voiceover_artist"]["ego_model"])
-
         template = open("prompts/voiceover_artist.txt").read()
-        system_message_prompt = SystemMessagePromptTemplate.from_template(template)
-        human_message_prompt = HumanMessagePromptTemplate.from_template("{script}")
-
-        chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
-        chain = LLMChain(llm=llm, prompt=chat_prompt)
-
+        chain = llms.get_llm(model=utils.get_config()["voiceover_artist"]["ego_model"], template=template)
         # Since we only have narrator at this point, no dialogue
         script_input = yaml.dump([{ "narrator": s["narrator"]} for s in utils.get_script()])
 
         response = chain.run(
                 character_bio=self.actor["character_bio"],
-                script=script_input
-            )
+                input=script_input
+        )
         print(response)
 
         # Save the updated script
