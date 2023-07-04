@@ -68,11 +68,19 @@ notebook: docker-compose
 
 video: docker-compose
 	@echo "Starting AI Content Producer..."
-	@venv/bin/python main.py
+	@venv/bin/python main.py $(ARGS)
+
+ui: docker-compose
+	@echo "Starting UI..."
+	@venv/bin/python main.py --ui
 
 dev: docker-compose
 	@echo "Starting development server..."
-	@venv/bin/gradio main.py
+	@venv/bin/gradio main.py --ui
+
+auto: docker-compose
+	@echo "Starting AI Content Producer..."
+	@/bin/bash auto.sh inputs.txt
 
 rsync:
 	@echo "Syncing files to remote server..."
