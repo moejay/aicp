@@ -25,4 +25,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker push
-        run: docker push jwmarshall/${{ github.repository }}:${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+        run: docker push jwmarshall/aicp:${{GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
