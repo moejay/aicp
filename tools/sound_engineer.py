@@ -1,14 +1,9 @@
 import os
-import json
 import subprocess
 
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-from langchain.tools import BaseTool
-from typing import Optional, Type
-from langchain import OpenAI
-from utils.utils import get_scenes, get_script
-from audiocraft.models import MusicGen
-from audiocraft.data.audio import audio_write
+from typing import Optional
+from utils.parsers import get_scenes
 from pydub import AudioSegment
 from utils import utils
 

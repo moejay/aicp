@@ -39,7 +39,7 @@ notebook: docker-compose
 	@echo "Starting Jupyter Notebook..."
 	@venv/bin/python -m jupyter notebook
 
-video: docker-compose 
+video: docker-compose
 	@echo "Starting AI Content Producer..."
 	@venv/bin/python main.py
 

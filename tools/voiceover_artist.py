@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-from langchain.tools import BaseTool
-from typing import Optional, Type
+from typing import Optional
 import os
 import nltk
 import numpy as np
@@ -15,13 +14,10 @@ from bark.generation import (
         )
 from bark.api import semantic_to_waveform
 from bark import SAMPLE_RATE
-from utils import utils, llms
+from utils import utils, llms, parsers
 import math
 import yaml
 import json
-from langchain import LLMChain
-from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
-from dataclasses import dataclass
 from .base import AICPBaseTool
 
 class VoiceOverArtistTool(AICPBaseTool):
@@ -40,8 +36,8 @@ class VoiceOverArtistTool(AICPBaseTool):
 
     def load_actor(self):
         """ Load voice actor specific files and configuration """
-        with open(os.path.join(utils.ACTOR_PATH, f"{self.config.actor}.yaml")) as f:
-            print(f"Loading VO actor: {self.config.actor}")
+        with open(os.path.join(utils.ACTOR_PATH, f"{self.actors[0]}.yaml")) as f:
+            print(f"Loading VO actor: {self.actors[0]}")
             self.actor = yaml.load(f.read(), Loader=yaml.Loader)
 
         self.speaker = self.actor["speaker"]
@@ -59,10 +55,10 @@ class VoiceOverArtistTool(AICPBaseTool):
 
     def ego(self):
         """ Personalize the dialog according to the selected voice actor """
-        template = open("prompts/voiceover_artist.txt").read()
-        chain = llms.get_llm(model=utils.get_config()["voiceover_artist"]["ego_model"], template=template)
+        cast_member = self.director.get_voiceover_artist()
+        chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
         # Since we only have narrator at this point, no dialogue
-        script_input = yaml.dump([{ "narrator": s["narrator"]} for s in utils.get_script()])
+        script_input = yaml.dump([{ "narrator": s["narrator"]} for s in parsers.get_script()])
 
         response = chain.run(
                 character_bio=self.actor["character_bio"],

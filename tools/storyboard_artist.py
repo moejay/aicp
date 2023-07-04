@@ -1,21 +1,16 @@
 #!usr/bin/env python
 
-import glob
 import json
 import os
 import torch
 import yaml
 
-from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline, StableDiffusionImg2ImgPipeline, StableDiffusionUpscalePipeline
-from langchain import LLMChain
+from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline, StableDiffusionImg2ImgPipeline
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
-from langchain.tools import BaseTool
 from PIL import Image
 from python_on_whales import docker
-from typing import Optional, Type
-from utils import llms, utils
-from xformers.ops import MemoryEfficientAttentionFlashAttentionOp
+from typing import Optional
+from utils import llms, utils, parsers
 
 from .base import AICPBaseTool
 
@@ -33,8 +28,9 @@ class StoryBoardArtistTool(AICPBaseTool):
 
     def load_prompts(self):
         # load additive prompts
-        self.positive_prompt = open("prompts/storyboard_artist/positive.txt", "r").read().strip()
-        self.negative_prompt = open("prompts/storyboard_artist/negative.txt", "r").read().strip()
+        cast_member = self.director.get_storyboard_artist()
+        self.positive_prompt = cast_member.positive_prompt
+        self.negative_prompt = cast_member.negative_prompt
     
         # load storyboard artist prompts if they exist or create them 
         prompts_file = os.path.join(utils.PATH_PREFIX, "storyboard_prompts.json")
@@ -49,12 +45,12 @@ class StoryBoardArtistTool(AICPBaseTool):
     def ego(self):
         """ Run the script through the mind of the storyboard artist
             to generate more descriptive prompts """
-        template = open("prompts/storyboard_artist.txt").read()
-        chain = llms.get_llm(model=utils.get_config()["storyboard_artist"]["ego_model"], template=template)
+        cast_member = self.director.get_storyboard_artist()
+        chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
         # Use only the description lines to save tokens
         script_input = yaml.dump([
                 {"description": s["description"]} \
-                   for s in utils.get_script()
+                   for s in parsers.get_script()
             ])
         response = chain.run(script_input)
         print(response)
@@ -91,8 +87,9 @@ class StoryBoardArtistTool(AICPBaseTool):
         # setup stable diffusion pipeline
         os.makedirs(os.path.join(utils.STORYBOARD_PATH, "img2img"), exist_ok=True)
 
+        cast_member = self.director.get_storyboard_artist()
         pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
-                    utils.get_config()["storyboard_artist"]["sd_model"],
+                    cast_member.sd_model,
                     custom_pipeline="lpw_stable_diffusion",
                     torch_dtype=torch.float16,
                 )
@@ -151,8 +148,9 @@ class StoryBoardArtistTool(AICPBaseTool):
 
     def stable_diffusion(self):
         # setup stable diffusion pipeline
+        cast_member = self.director.get_storyboard_artist()
         pipe = StableDiffusionPipeline.from_pretrained(
-                    utils.get_config()["storyboard_artist"]["sd_model"],
+                    cast_member.sd_model,
                     custom_pipeline="lpw_stable_diffusion",
                     torch_dtype=torch.float16,
                 )
