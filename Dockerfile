@@ -9,6 +9,8 @@ wget \
 ffmpeg \
 libsm6 \
 libxext6 \
+rsync \
+vim \
 && rm -rf /var/lib/apt/lists/*
 
 RUN wget -q https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
