@@ -136,23 +136,23 @@ class SoundEngineerTool(AICPBaseTool):
         background_music = AudioSegment.from_file(os.path.join(utils.MUSIC_PATH, "music.wav"))
 
         # Improve audio quality of music
-        background_music += 6
-        samples = np.array(background_music.get_array_of_samples())
-        reduced_noise = nr.reduce_noise(
-                samples,
-                sr=background_music.frame_rate,
-                time_constant_s=2,
-                n_jobs=-1,
-            )
-        background_music = AudioSegment(
-                reduced_noise.tobytes(),
-                frame_rate=background_music.frame_rate,
-                sample_width=background_music.sample_width,
-                channels=background_music.channels
-            )
+        #background_music += 4
+        #samples = np.array(background_music.get_array_of_samples())
+        #reduced_noise = nr.reduce_noise(
+        #        samples,
+        #        sr=background_music.frame_rate,
+        #        time_constant_s=2,
+        #        n_jobs=-1,
+        #    )
+        #background_music = AudioSegment(
+        #        reduced_noise.tobytes(),
+        #        frame_rate=background_music.frame_rate,
+        #        sample_width=background_music.sample_width,
+        #        channels=background_music.channels
+        #    )
 
         # Improve audio quality of voiceover
-        voiceover += 6
+        voiceover += 8
         samples = np.array(voiceover.get_array_of_samples())
         reduced_noise = nr.reduce_noise(
                 samples,
