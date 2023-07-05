@@ -135,24 +135,8 @@ class SoundEngineerTool(AICPBaseTool):
         voiceover = AudioSegment.from_file(utils.VOICEOVER_WAV_FILE)
         background_music = AudioSegment.from_file(os.path.join(utils.MUSIC_PATH, "music.wav"))
 
-        # Improve audio quality of music
-        #background_music += 4
-        #samples = np.array(background_music.get_array_of_samples())
-        #reduced_noise = nr.reduce_noise(
-        #        samples,
-        #        sr=background_music.frame_rate,
-        #        time_constant_s=2,
-        #        n_jobs=-1,
-        #    )
-        #background_music = AudioSegment(
-        #        reduced_noise.tobytes(),
-        #        frame_rate=background_music.frame_rate,
-        #        sample_width=background_music.sample_width,
-        #        channels=background_music.channels
-        #    )
-
         # Improve audio quality of voiceover
-        voiceover += 8
+        voiceover += 9
         samples = np.array(voiceover.get_array_of_samples())
         reduced_noise = nr.reduce_noise(
                 samples,
@@ -170,7 +154,7 @@ class SoundEngineerTool(AICPBaseTool):
         # Lower gain on background music
         average_loudness_voiceover = voiceover.dBFS
         max_loudness_background_music = background_music.max_dBFS
-        desired_loudness_background_music = average_loudness_voiceover - 2
+        desired_loudness_background_music = average_loudness_voiceover - 3
         gain_change = desired_loudness_background_music - max_loudness_background_music
         background_music = background_music.apply_gain(gain_change)
 
