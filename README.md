@@ -81,7 +81,7 @@ This agent will create video clips to be used instead of just image
 
 AICP can now be run in the cloud via Runpod.io
 
-1. Install command line utility: `make install bin/runpodctl`
+1. Install command line utility: `make bin/runpodctl`
 2. Create Runpod.io API key: https://www.runpod.io/console/user/settings
 3. Create `runpodctl` configuration: `./bin/runpodctl config --apiKey=YOUR_API_KEY`
 4. Add Docker Hub login credentials to your RunPod account: https://www.runpod.io/console/user/settings
