@@ -1,1 +1,6 @@
-*
+.env
+.git
+notebooks
+dockerfiles
+output
+venv

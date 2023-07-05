@@ -51,4 +51,4 @@ with gr.Blocks() as app:
     submit = gr.Button(label="Submit")
     submit.click(prep_video_params, inputs=[video_prompt, director, actor, working_dir, step], outputs=output)
 
-app.launch()
+app.launch(server_name="0.0.0.0")
