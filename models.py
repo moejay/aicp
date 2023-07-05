@@ -59,8 +59,8 @@ class YouTubeDistributor(CastMember):
     """An object representing a YouTube distributor."""
 
 @dataclass
-class DirectorOutputConfig:
-    """An object representing the output configuration of a director."""
+class OutputConfig:
+    """An object representing the output configuration."""
     video_width: int
     video_height: int
 
@@ -84,7 +84,11 @@ class Director:
     def to_yaml(self, yaml_file: str):
         """Write the director to a yaml file."""
         with open(yaml_file, 'w') as f:
-            yaml.dump(self, f)
+            yaml.safe_dump(self.as_dict(), f)
+
+    def as_dict(self):
+        """Return the director as a dictionary."""
+        return self.__dict__
 
     def get_researcher(self):
         """Get the researcher."""
