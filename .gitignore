@@ -5,3 +5,4 @@ venv
 .env
 projects/
 notebooks/outputs/
+output

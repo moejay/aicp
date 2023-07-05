@@ -92,9 +92,9 @@ AICP can now be run in the cloud via Runpod.io
 	4. Create the new template ensuring the following settings:
 		1. The container image is the image name of your private image
 		2. You select the appropriate Container Registry Credentials
-		3. Set the container disk to 20GB at least
+		3. Set the container disk to 40GB at least
 		4. Set the volume disk to be much larger, like 100GB
-		5. Set the volume mount path to `/workspace/output`
+		5. Set the volume mount path to `/output`
 		6. Expose 7860 HTTP port
 		7. Expose 22 TCP Port
 		8. Do not add any environment variables to the template, we will override them later anyway

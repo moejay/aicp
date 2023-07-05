@@ -89,9 +89,9 @@ runpod-create:
 		--templateId $(RUNPOD_TEMPLATE) \
 		--ports 7860/http \
 		--ports 22/tcp \
-		--containerDiskSize 20 \
+		--containerDiskSize 40 \
 		--volumeSize 100 \
-		--volumePath /workspace/output \
+		--volumePath /output \
 		--gpuCount 1 \
 		--gpuType 'NVIDIA RTX A4000' \
 		--mem 20 \
