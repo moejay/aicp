@@ -136,12 +136,12 @@ class SoundEngineerTool(AICPBaseTool):
         background_music = AudioSegment.from_file(os.path.join(utils.MUSIC_PATH, "music.wav"))
 
         # Improve audio quality of music
-        background_music += 3
+        background_music += 6
         samples = np.array(background_music.get_array_of_samples())
         reduced_noise = nr.reduce_noise(
                 samples,
                 sr=background_music.frame_rate,
-                time_constant_s=10,
+                time_constant_s=2,
                 n_jobs=-1,
             )
         background_music = AudioSegment(
@@ -150,7 +150,6 @@ class SoundEngineerTool(AICPBaseTool):
                 sample_width=background_music.sample_width,
                 channels=background_music.channels
             )
-        background_music += 3
 
         # Improve audio quality of voiceover
         voiceover += 6
@@ -158,7 +157,7 @@ class SoundEngineerTool(AICPBaseTool):
         reduced_noise = nr.reduce_noise(
                 samples,
                 sr=voiceover.frame_rate,
-                time_constant_s=10,
+                time_constant_s=2,
                 n_jobs=-1,
             )
         voiceover = AudioSegment(
@@ -167,31 +166,18 @@ class SoundEngineerTool(AICPBaseTool):
                 sample_width=voiceover.sample_width,
                 channels=voiceover.channels,
             )
-        voiceover += 6
 
-        #model = pretrained.dns64().cuda()
-        #wav, sr = torchaudio.load(utils.VOICEOVER_WAV_FILE)
-        #wav = convert_audio(wav.cuda(), sr, model.sample_rate, model.chin)
-        #with torch.no_grad():
-        #    denoised = model(wav[None])[0]
-        #improved_vo = AudioSegment(
-        #        denoised.tobytes(),
-        #        frame_rate=voiceover.frame_rate,
-        #        sample_width=voiceover.sample_width,
-        #        channels=voiceover.channels,
-        #    )
-
-        # Mix audio together
+        # Lower gain on background music
         average_loudness_voiceover = voiceover.dBFS
         max_loudness_background_music = background_music.max_dBFS
-        desired_loudness_background_music = average_loudness_voiceover - 3
-
+        desired_loudness_background_music = average_loudness_voiceover - 2
         gain_change = desired_loudness_background_music - max_loudness_background_music
         background_music = background_music.apply_gain(gain_change)
 
+        # Mix audio together
         combined = voiceover.overlay(background_music)
-        combined.fade_in(800)
-        combined.fade_out(800)
+        combined.fade_in(400)
+        combined.fade_out(400)
         combined.export(utils.FINAL_AUDIO_FILE, format="wav")
 
         return "Done generating final audio"
