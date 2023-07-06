@@ -1,6 +1,5 @@
 #!usr/bin/env python
 
-import json
 import os
 import torch
 import yaml
@@ -33,11 +32,11 @@ class StoryBoardArtistTool(AICPBaseTool):
         self.negative_prompt = cast_member.negative_prompt
     
         # load storyboard artist prompts if they exist or create them 
-        prompts_file = os.path.join(utils.PATH_PREFIX, "storyboard_prompts.json")
+        prompts_file = os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml")
         if os.path.exists(prompts_file):
             with open(prompts_file) as prompts:
-                print("Loading existing prompts from: storyboard_prompts.json")
-                self.scene_prompts = json.loads(prompts.read().strip())
+                print("Loading existing prompts from: storyboard_prompts.yaml")
+                self.scene_prompts = yaml.load(prompts.read().strip(), Loader=yaml.Loader)
         else:
             print("Generating text-to-image prompts for storyboard artist...")
             self.scene_prompts = self.ego()
@@ -56,10 +55,10 @@ class StoryBoardArtistTool(AICPBaseTool):
         print(response)
 
         # Save the updated script
-        with open(os.path.join(utils.PATH_PREFIX, "storyboard_prompts.json"), "w") as f:
+        with open(os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml"), "w") as f:
             f.write(response)
 
-        return json.loads(response)
+        return yaml.load(response, Loader=yaml.Loader)
 
     def gfp_upscaler(self):
         """ Upscale images with the GFPGAN ("restore faces") """
@@ -97,8 +96,8 @@ class StoryBoardArtistTool(AICPBaseTool):
 
         pipe.enable_xformers_memory_efficient_attention()
         pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
-#        scheduler.config.algorithm_type = "sde-dpmsolver++"
-#        pipe.scheduler = scheduler
+        #scheduler.config.algorithm_type = "sde-dpmsolver++"
+        #pipe.scheduler = scheduler
 
         # settings
         guidance_scale = 7.5

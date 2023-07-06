@@ -17,7 +17,7 @@ from bark import SAMPLE_RATE
 from utils import utils, llms, parsers
 import math
 import yaml
-import json
+#import json
 from .base import AICPBaseTool
 
 class VoiceOverArtistTool(AICPBaseTool):
@@ -44,14 +44,14 @@ class VoiceOverArtistTool(AICPBaseTool):
 
     def load_prompts(self):
         # load voiceover artist prompts if they exist or create them 
-        prompts_file = os.path.join(utils.PATH_PREFIX, "voiceover_prompts.json")
+        prompts_file = os.path.join(utils.PATH_PREFIX, "voiceover_prompts.yaml")
         if os.path.exists(prompts_file):
             with open(prompts_file) as prompts:
                 print("Loading existing prompt file: voiceover_prompts")
-                self.scene_prompts = json.loads(prompts.read().strip())
+                self.scene_prompts = yaml.load(f.read(), Loader=yaml.Loader)
         else:
             print("Generating new dialog prompts...")
-            self.scene_prompts = json.loads(self.ego())
+            self.scene_prompts = yaml.load(self.ego(), Loader=yaml.Loader)
 
     def ego(self):
         """ Personalize the dialog according to the selected voice actor """
@@ -67,7 +67,7 @@ class VoiceOverArtistTool(AICPBaseTool):
         print(response)
 
         # Save the updated script
-        with open(os.path.join(utils.PATH_PREFIX, "voiceover_prompts.json"), "w") as f:
+        with open(os.path.join(utils.PATH_PREFIX, "voiceover_prompts.yaml"), "w") as f:
             f.write(response)
 
         return response

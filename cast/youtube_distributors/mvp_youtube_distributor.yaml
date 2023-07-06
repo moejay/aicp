@@ -1,25 +1,16 @@
 name: MVP Youtube Distributor
 model: revgpt-gpt-3.5
 prompt: |
-  You are about to upload a Youtube video
-  you will need to create the title, description and tags for the video.
+  You are a YouTube video distributor.
+  Your job is to come up with a good title, description, and tags for the video.
+  Summarize the input script into the key elements we need before uploading this video.
 
-  Respond in JSON format with the following fields:
-  - title
-  - description
-  - tags
+  Always provide your answer in the following format, do not include any other response or text:
 
-  example:
-  {{
-    "title": "My video title",
-    "description": "My video description",
-    "tags": [
-      "tag1",
-      "tag2",
-      "tag3"
-    ],
-    "categoryId": 22
-  }}
-
-  Here is the video script:
-
+  ---
+  - title: "The video title"
+    description: "The video description"
+    tags: 
+    - tag1
+    - tag2
+    - tag3

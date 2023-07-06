@@ -1,4 +1,3 @@
-import json
 import os
 import yaml
 
@@ -23,11 +22,11 @@ class MusicComposerTool(AICPBaseTool):
 
     def load_prompts(self):
         # load voiceover artist prompts if they exist or create them 
-        prompts_file = os.path.join(utils.PATH_PREFIX, "music_prompts.json")
+        prompts_file = os.path.join(utils.PATH_PREFIX, "music_prompts.yaml")
         if os.path.exists(prompts_file):
             with open(prompts_file) as prompts:
-                print("Loading existing music prompts: music_prompts.json")
-                self.scene_prompts = json.loads(prompts.read().strip())
+                print("Loading existing music prompts: music_prompts.yaml")
+                self.scene_prompts = yaml.load(prompts.read().strip(), Loader=yaml.Loader)
         else:
             print("Generating new music prompts...")
             self.scene_prompts = self.ego()
@@ -43,14 +42,14 @@ class MusicComposerTool(AICPBaseTool):
         )
         print(response)
 
-        scene_prompts = json.loads(response)
+        scene_prompts = yaml.load(response, Loader=yaml.Loader)
         scenes = get_scenes()
 
         if len(scene_prompts) < len(scenes):
             return "Please try again, not enough music prompts"
 
         # Save the prompts
-        with open(os.path.join(utils.PATH_PREFIX, "music_prompts.json"), "w") as f:
+        with open(os.path.join(utils.PATH_PREFIX, "music_prompts.yaml"), "w") as f:
             f.write(response)
 
         return scene_prompts

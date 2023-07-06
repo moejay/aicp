@@ -1,15 +1,13 @@
-from typing import Optional
 import os
+import torch
 import yaml
+
+from typing import Optional
 from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-import json
-
+from typing import Optional
 from utils import utils, llms, parsers
 from .base import AICPBaseTool
-
-import torch
-from diffusers import StableDiffusionPipeline
 
 
 class ThumbnailArtistTool(AICPBaseTool):
@@ -31,11 +29,11 @@ class ThumbnailArtistTool(AICPBaseTool):
         self.negative_prompt = cast_member.negative_prompt
     
         # load storyboard artist prompts if they exist or create them 
-        prompts_file = os.path.join(utils.PATH_PREFIX, "thumbnail_prompts.json")
+        prompts_file = os.path.join(utils.PATH_PREFIX, "thumbnail_prompts.yaml")
         if os.path.exists(prompts_file):
             with open(prompts_file) as prompts:
                 print(f"Loading existing prompts from: {prompts_file}")
-                self.scene_prompts = json.loads(prompts.read().strip())
+                self.scene_prompts = yaml.load(prompts.read().strip(), Loader=yaml.Loader)
         else:
             print("Generating text-to-image prompts for thumbnail artist...")
             self.scene_prompts = self.ego()
@@ -55,10 +53,10 @@ class ThumbnailArtistTool(AICPBaseTool):
         print(response)
 
         # Save the updated script
-        with open(os.path.join(utils.PATH_PREFIX, "thumbnail_prompts.json"), "w") as f:
+        with open(os.path.join(utils.PATH_PREFIX, "thumbnail_prompts.yaml"), "w") as f:
             f.write(response)
 
-        return json.loads(response)
+        return yaml.load(response, Loader=yaml.Loader)
     def stable_diffusion(self):
         # setup stable diffusion pipeline
         cast_member = self.director.get_thumbnail_artist()
