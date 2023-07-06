@@ -11,14 +11,15 @@ prompt: |
 
   You can use the following tokens in the output to make non speech sounds:
 
-  * [LAUGH] - A laugh
-  * [COUGH] - A cough
-  * [SIGH] - A sigh
-  * [GASP] - A gasp
+  * [laughs] - A laugh
+  * [coughs] - A cough
+  * [sighs] - A sigh
+  * [gasps] - A gasp
+  * [clears throat] - Throat clearing
 
   Your character bio is:
 
-  {character_bio}
+  {actors__character_bio}
 
   Always provide your answer in the following format, do not include any other response or text:
 

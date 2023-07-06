@@ -1,11 +1,10 @@
 import os
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from typing import Optional
 from dacite import from_dict
 import yaml
 from utils.utils import (
         ACTOR_PATH,
-        DIRECTOR_PATH,
         RESEARCHER_PATH,
         SCRIPT_WRITER_PATH,
         VOICEOVER_ARTIST_PATH,
@@ -136,4 +135,47 @@ class Scene:
     scene_title: str # The title of the scene
     description: str # The description of the scene
     content: str # The content of the scene
+
+@dataclass
+class Program:
+    """A program aka: show"""
+    title: str
+    description: str
+
+    @classmethod
+    def from_yaml(cls, yaml_file: str):
+        """Read the program from a yaml file."""
+        with open(yaml_file, 'r') as f:
+            return from_dict(data_class=Program, data=yaml.load(f, Loader=yaml.FullLoader))
+
+
+
+@dataclass
+class Actor:
+    """An actor object."""
+    name: str
+    speaker: str
+    character_bio: str
+
+    @classmethod
+    def from_yaml(cls, yaml_file: str):
+        """Read the actor from a yaml file."""
+        with open(yaml_file, 'r') as f:
+            return from_dict(data_class=Actor, data=yaml.load(f, Loader=yaml.FullLoader))
+
+    @classmethod
+    def from_name(cls, name: str):
+        """Read the actor from a name."""
+        return from_dict(data_class=Actor, data=yaml.load(open(os.path.join(ACTOR_PATH, f"{name}.yaml")), Loader=yaml.FullLoader))
+
+@dataclass
+class Video:
+    """Class encapsulating a video creation process."""
+    prompt: str
+    output_dir: str
+    program: Program
+    director: Director
+    production_config: ProductionConfig
+    actors: list[Actor]
+
 

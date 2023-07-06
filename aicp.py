@@ -2,7 +2,7 @@ import os
 import logging
 from dotenv import load_dotenv
 from utils import utils
-from models import Director, ProductionConfig
+from models import Video
 
 from tools.music_composer import MusicComposerTool
 from tools.producer import ProducerTool
@@ -17,21 +17,23 @@ from tools.youtube_distributor import YoutubeDistributorTool
 logger = logging.getLogger(__name__)
 
 
-def make_video(prompt: str, director: Director, actors: list[str], config: ProductionConfig, working_dir: str, step: str):
+def make_video(video: Video, step: str):
+    prompt = video.prompt
+    working_dir = video.output_dir
     os.makedirs(working_dir, exist_ok=True)
     utils.set_prefix(working_dir)
     load_dotenv()
 
     all_tools = [
-        ResearcherTool(),
-        ScriptWriterTool(),
-        StoryBoardArtistTool(),
-        VoiceOverArtistTool(),
-        MusicComposerTool(),
-        SoundEngineerTool(),
-        ProducerTool(),
-        ThumbnailArtistTool(),
-        YoutubeDistributorTool(),
+        ResearcherTool(video=video),
+        ScriptWriterTool(video=video),
+        StoryBoardArtistTool(video=video),
+        VoiceOverArtistTool(video=video),
+        MusicComposerTool(video=video),
+        SoundEngineerTool(video=video),
+        ProducerTool(video=video),
+        ThumbnailArtistTool(video=video),
+        YoutubeDistributorTool(video=video),
     ] 
     
     # create tools only from step onwards
@@ -44,7 +46,6 @@ def make_video(prompt: str, director: Director, actors: list[str], config: Produ
 
     logger.info("Starting at tool %s", tools[0].name)
     for t in tools:
-        t.set_config(director=director, actors=actors, config=config)
         t.run(prompt)
     return utils.FINAL_VIDEO_FILE
 

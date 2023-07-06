@@ -15,7 +15,7 @@ class ScriptWriterTool(AICPBaseTool):
 
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
         """Use the tool."""
-        cast_member = self.director.get_script_writer()
+        cast_member = self.video.director.get_script_writer()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
 
         research_text = open(utils.RESEARCH, "r").read()

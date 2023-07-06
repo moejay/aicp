@@ -1,5 +1,5 @@
 from utils import utils
-from models import Director, ProductionConfig 
+from models import Director, ProductionConfig , Program
 import gradio as gr
 import os
 
@@ -11,6 +11,8 @@ actors = [f.split(".")[0] for f in os.listdir(utils.ACTOR_PATH) if f.endswith(".
 directors = [f.split(".")[0] for f in os.listdir(utils.DIRECTOR_PATH) if f.endswith(".yaml")]
 # Same for configs
 production_configs = [f.split(".")[0] for f in os.listdir(utils.PRODUCTION_CONFIG_PATH) if f.endswith(".yaml")]
+# Same for programs
+programs = [f.split(".")[0] for f in os.listdir(utils.PROGRAMS_PATH_PREFIX) if f.endswith(".yaml")]
 
 current_director = Director.from_yaml(os.path.join(utils.DIRECTOR_PATH, f"{directors[0]}.yaml"))
 current_config = ProductionConfig.from_yaml(os.path.join(utils.PRODUCTION_CONFIG_PATH, f"{production_configs[0]}.yaml"))
@@ -38,6 +40,7 @@ def change_artist(artist):
     return change
 
 
+
 def make_ui(prep_video_params):
     with gr.Blocks() as demo:
         with gr.Tab("Make a video"):
@@ -47,6 +50,9 @@ def make_ui(prep_video_params):
             submit = gr.Button(label="Submit")
 
             with gr.Accordion("Configure stuff"):
+                with gr.Tab("Program"):
+                    program = gr.Dropdown(label="Programs", choices=programs, value=programs[0], interactive=True)
+
                 with gr.Tab("Actors"):
                     actor = gr.CheckboxGroup(label="Actors", choices=actors, value=[actors[0]], interactive=True)
                 with gr.Tab("Director"):
@@ -60,7 +66,7 @@ def make_ui(prep_video_params):
             ## Ask the user which step to start at
 
             output = gr.Video(label="Your Video", format="mp4")
-            submit.click(prep_video_params, inputs=[video_prompt, director, actor, production_config, working_dir, step], outputs=output)
+            submit.click(prep_video_params, inputs=[video_prompt, program, director, actor, production_config, working_dir, step], outputs=output)
 
         with gr.Tab("Create a Director"):
             with gr.Tab("Researcher"):

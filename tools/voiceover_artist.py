@@ -29,17 +29,12 @@ class VoiceOverArtistTool(AICPBaseTool):
 
     def initialize_agent(self):
         """ Initialize the agent """
-        super().initialize_agent()
         self.load_actor()
         self.load_prompts()
 
     def load_actor(self):
         """ Load voice actor specific files and configuration """
-        with open(os.path.join(utils.ACTOR_PATH, f"{self.actors[0]}.yaml")) as f:
-            print(f"Loading VO actor: {self.actors[0]}")
-            self.actor = yaml.load(f.read(), Loader=yaml.Loader)
-
-        self.speaker = self.actor["speaker"]
+        self.speaker = self.video.actors[0].speaker
 
     def load_prompts(self):
         # load voiceover artist prompts if they exist or create them 
@@ -54,14 +49,21 @@ class VoiceOverArtistTool(AICPBaseTool):
 
     def ego(self):
         """ Personalize the dialog according to the selected voice actor """
-        cast_member = self.director.get_voiceover_artist()
+        cast_member = self.video.director.get_voiceover_artist()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
-        # Since we only have narrator at this point, no dialogue
-        script_input = yaml.dump([{ "narrator": s["narrator"]} for s in parsers.get_script()])
+        prompt_params = parsers.get_params_from_prompt(cast_member.prompt)
+        prompt_params.append("input")
+        # This is in addition to the input (Human param)
+        # Resolve params from existing config/director/program
+        params = {}
+        for param in prompt_params:
+            params[param] = parsers.resolve_param_from_video(video=self.video, param_name=param)
+        params["input"] = yaml.dump([{ "narrator": s["narrator"]} for s in parsers.get_script()])
 
+        # Since we only have narrator at this point, no dialogue
+        # character_bio=self.actor["character_bio"],
         response = chain.run(
-                character_bio=self.actor["character_bio"],
-                input=script_input
+                **params,
         )
         print(response)
 
