@@ -17,7 +17,6 @@ from bark import SAMPLE_RATE
 from utils import utils, llms, parsers
 import math
 import yaml
-#import json
 from .base import AICPBaseTool
 
 class VoiceOverArtistTool(AICPBaseTool):
@@ -48,7 +47,7 @@ class VoiceOverArtistTool(AICPBaseTool):
         if os.path.exists(prompts_file):
             with open(prompts_file) as prompts:
                 print("Loading existing prompt file: voiceover_prompts")
-                self.scene_prompts = yaml.load(f.read(), Loader=yaml.Loader)
+                self.scene_prompts = yaml.load(prompts.read(), Loader=yaml.Loader)
         else:
             print("Generating new dialog prompts...")
             self.scene_prompts = yaml.load(self.ego(), Loader=yaml.Loader)
