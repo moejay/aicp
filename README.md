@@ -34,7 +34,10 @@ Given some prompt, the AI will end up creating a video "suitable" for YouTube/Ru
 
 Then you can run either
 * `make notebook` will launch jupyter
-* `make video` is to run the whole thing, you will be asked to provide the topic to search
+* `make ui` to run the webui to generate a video
+* `make video` the command line to run a single input, pass as make args (env variables) eg: `ARGS=--prompt "prompt" --actors zane --director mvp_director -- output some/output` 
+* `make auto` will look for `inputs.txt` with `|` separated ( prompt | output_dir | actor ) 
+can be used to run multiple back to back video creations
 
 
 ## Agent description

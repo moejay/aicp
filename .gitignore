@@ -6,3 +6,4 @@ venv
 projects/
 notebooks/outputs/
 output
+inputs.txt

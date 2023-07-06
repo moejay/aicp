@@ -4,4 +4,4 @@
 ChatGPTProxy &
 
 # Start AICP
-cd /workspace && python3 main.py
+cd /workspace && python3 main.py --ui
