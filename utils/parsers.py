@@ -3,6 +3,7 @@ import os
 import contextlib
 import wave
 import json
+import yaml
 
 from models import Scene
 
@@ -18,7 +19,7 @@ def get_voiceover_duration():
 def get_script():
     """Retrieve the script from the script file."""
     with open(utils.SCRIPT, "r") as file:
-        return json.loads(file.read())
+        return yaml.load(file.read(), Loader=yaml.Loader)
 
 def get_scenes():
     """Retrieve the scenes from the script file."""

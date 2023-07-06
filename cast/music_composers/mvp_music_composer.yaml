@@ -9,6 +9,10 @@ prompt: |
 
   * Generate a unique musical description, one for each scene, up to 25 words.
   * Make sure you describe the instruments, tempo, and genre of music in the prompt.
-  * Make sure you return a JSON array of maps (one for each scene) that include the prompt key.
-  * Wrap all string values in double quotes (eg: "This is a string") and escape any inner double quotes.
-  * Remember to make sure your output is fully parseable JSON, it's important.
+
+  Always provide your answer in the following format, do not include any other response or text:
+
+  ---
+  - prompt: "The text-to-music prompt for this scene"
+  - prompt: "The text-to-music prompt for this scene"
+  - prompt: "The text-to-music prompt for this scene"

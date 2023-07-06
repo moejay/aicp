@@ -5,8 +5,8 @@ import os
 
 
 PATH_PREFIX = ''
-RESEARCH = 'research.json'
-SCRIPT = 'script.json'
+RESEARCH = 'research.yaml'
+SCRIPT = 'script.yaml'
 STORYBOARD_PATH = 'storyboard'
 THUMBNAILS_PATH = 'thumbnails'
 VOICEOVER_WAV_FILE = 'script.wav'
@@ -15,7 +15,7 @@ VOICEOVER_TIMECODES = 'voiceover_timecodes.txt'
 TEMP_VIDEO_FILE = 'temp_video.mp4'
 FINAL_VIDEO_FILE = 'video.mp4'
 MUSIC_PATH = 'music'
-DISTRIBUTION_METADATA_FILE = 'distribution_metadata.json'
+DISTRIBUTION_METADATA_FILE = 'distribution_metadata.yaml'
 
 # Those paths are static and not prefixable
 CAST_PATH_PREFIX = os.environ.get("CAST_PATH_PREFIX", "cast")

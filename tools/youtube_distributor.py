@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 
-import json
 import logging
-
 import yaml
-from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 
 from .base import AICPBaseTool
+from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from typing import Optional
 from utils import utils, llms, parsers
 
+
 logger = logging.getLogger(__name__)
+
 
 class YoutubeDistributorTool(AICPBaseTool):
     name = "youtubedistributor"
@@ -26,7 +26,7 @@ class YoutubeDistributorTool(AICPBaseTool):
         )
 
         logger.info("Ego response: %s", response)
-        return json.loads(response)
+        return yaml.load(response, Loader=yaml.Loader)
  
 
 
@@ -35,7 +35,8 @@ class YoutubeDistributorTool(AICPBaseTool):
         ego_response = self.ego()
         print(ego_response)
         with open(utils.DISTRIBUTION_METADATA_FILE, "w") as file:
-            file.write(json.dumps(ego_response))
+            file.write(yaml.dump(ego_response))
+
 #        upload_yt.upload_video(upload_yt.Options(
 #            file=utils.FINAL_VIDEO_FILE,
 #            title=ego_response["title"],

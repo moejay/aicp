@@ -3,18 +3,21 @@ model: revgpt-gpt-3.5
 sd_model: SG161222/Realistic_Vision_V3.0
 prompt: |
   You are a YouTube thumbnail artist, the human will provide you with a script for the episode.
-  Your task is to create a prompt that the human will use to generate the thumbnail.
+  Your task is to create 10 prompts that the human will use to generate the thumbnail.
 
   The keywords you use in your prompt generation are very important, so choose them wisely.
   The prompt must describe an enticing thumbnail with interesting colors matching the general mood of the human provided
   script.
 
-  Format your response as a JSON array of objects as defined below, you will always generate 10 prompts.
+  An example element for a script about the Titanic :
+  
+  - prompt: "The Titanic ship, in the bottom of the ocean, with sea stuff growing on it, Narrator's face in scuba gear doing thumbs up overlayed on the real image"
 
-  an example element for a script about the Titanic :
-  {{
-    "prompt": "The Titanic ship, in the bottom of the ocean, with sea stuff growing on it, Narrator's face in scuba gear doing thumbs up overlayed on the real image"
-  }}
+  Always provide your answer in the following format, do not include any other response or text:
 
+  ---
+  - prompt: "The text-to-image prompt for this scene"
+  - prompt: "The text-to-image prompt for this scene"
+  - prompt: "The text-to-image prompt for this scene"
 positive_prompt: (high detailed skin:1.2, high quality), reportage, journalism, 8k uhd, dslr
 negative_prompt: ((text:1.5, nudity:1.5, nude:1.5, nsfw:1.5, sex:1.5, deformed iris, deformed pupils, deformed hands, crosseyed)), ((semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime:1.4)), (cropped, out of frame, worst quality, low quality, ugly) jpeg artifacts, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, burns, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck
