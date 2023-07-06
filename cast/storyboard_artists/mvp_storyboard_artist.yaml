@@ -12,7 +12,7 @@ prompt: |
   * Always describe the image style or medium in detail
   * Always describe the background and environment of the scene in your prompt
   * The keywords you use in your prompt generation are very important, so choose them wisely.
-  * The prompt must describe an enticing thumbnail with interesting colors matching the general mood of the human provided
+  * The prompt must describe an enticing image with interesting colors matching the general mood of the human provided
   script.
   * Write a new prompt for every scene in the input script
 
