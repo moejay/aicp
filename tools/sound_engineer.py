@@ -2,9 +2,9 @@ import os
 import subprocess
 
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
+from pydub import AudioSegment
 from typing import Optional
 from utils.parsers import get_scenes
-from pydub import AudioSegment
 from utils import utils
 
 from .base import AICPBaseTool
@@ -16,7 +16,7 @@ def pad_audio_with_fade(audio_path, output_path, fade_duration, silence_duration
     audio = audio + AudioSegment.silent(duration=silence_duration)
     audio.export(output_path, format="wav")
 
-def combine_music_with_crossfade(music_paths, output_path, crossfade_duration=3):
+def combine_music_with_crossfade(music_paths, output_path, crossfade_duration=1.5):
     """
     Combine multiple music clips into a single file with crossfade.
 
@@ -130,27 +130,25 @@ class SoundEngineerTool(AICPBaseTool):
 
         voiceover = AudioSegment.from_file(utils.VOICEOVER_WAV_FILE)
         background_music = AudioSegment.from_file(os.path.join(utils.MUSIC_PATH, "music.wav"))
-        
-        # Reduce background music volume to 30% of voiceover's max volume
-        voiceover += 12
 
+        # Boost audio sources slightly
+        background_music += 2
+        voiceover += 2
+
+        # Lower gain on background music
         average_loudness_voiceover = voiceover.dBFS
-
         max_loudness_background_music = background_music.max_dBFS
-        desired_loudness_background_music = average_loudness_voiceover - 3
-
+        desired_loudness_background_music = average_loudness_voiceover - 1.5
         gain_change = desired_loudness_background_music - max_loudness_background_music
         background_music = background_music.apply_gain(gain_change)
 
-
-
+        # Mix audio together
         combined = voiceover.overlay(background_music)
-        combined.fade_in(800)
-        combined.fade_out(800)
+        combined.fade_in(400)
+        combined.fade_out(400)
         combined.export(utils.FINAL_AUDIO_FILE, format="wav")
 
         return "Done generating final audio"
-
 
     def _arun(self, query:str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None) -> str:
         """Use the tool."""

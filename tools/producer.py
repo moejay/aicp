@@ -34,7 +34,10 @@ def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
 
     # Construct the ffmpeg command for video creation
     scale_filter = f"scale=w={resolution[0]}:h={resolution[1]}:force_original_aspect_ratio=1,pad={resolution[0]}:{resolution[1]}:(ow-iw)/2:(oh-ih)/2"
-    ffmpeg_cmd = f"ffmpeg -f concat -i {images_list_file} -vf '{scale_filter}' -r 30 -y '{utils.TEMP_VIDEO_FILE}'"
+    # Audio compressor
+    audio_compressor = '-filter:a "speechnorm=e=6.75:r=0.00001:l=1"'
+
+    ffmpeg_cmd = f"ffmpeg -f concat -i {images_list_file} -vf '{scale_filter}' -r 30 {audio_compressor} -y '{utils.TEMP_VIDEO_FILE}'"
     subprocess.run(ffmpeg_cmd, shell=True)
 
     # Add audio to the video
