@@ -1,9 +1,5 @@
-import noisereduce as nr
-import numpy as np
 import os
 import subprocess
-import torch
-import torchaudio
 
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from pydub import AudioSegment
@@ -137,19 +133,6 @@ class SoundEngineerTool(AICPBaseTool):
 
         # Improve audio quality of voiceover
         voiceover += 9
-        samples = np.array(voiceover.get_array_of_samples())
-        reduced_noise = nr.reduce_noise(
-                samples,
-                sr=voiceover.frame_rate,
-                time_constant_s=2,
-                n_jobs=-1,
-            )
-        voiceover = AudioSegment(
-                reduced_noise.tobytes(),
-                frame_rate=voiceover.frame_rate,
-                sample_width=voiceover.sample_width,
-                channels=voiceover.channels,
-            )
 
         # Lower gain on background music
         average_loudness_voiceover = voiceover.dBFS
