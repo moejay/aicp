@@ -23,7 +23,7 @@ while IFS= read -r line; do
     arg3=$(echo $line | cut -d'|' -f3 | xargs)
 
     # Run the command with the arguments
-    make video ARGS="--prompt \"$arg1\" --director mvp_director --output \"$arg2\" --actors \"$arg3\""
+    make video ARGS="--prompt \"$arg1\" --production-config default_config --director mvp_director --output \"$arg2\" --actors \"$arg3\""
     
 done < "$input_file"
 

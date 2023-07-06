@@ -1,42 +1,44 @@
-import gradio as gr
 import os
 import logging
-from typing import Optional
 
 from utils import utils
 from aicp import make_video
-from models import Director
+from models import Director, ProductionConfig
 from argparse import ArgumentParser
 from ui.ui import make_ui
 
 logger = logging.getLogger(__name__)
 
-def prep_video_params(prompt, director, actors, working_dir, step):
+def prep_video_params(prompt, director, actors, config, working_dir, step):
     """ Prepare the video parameters for the make_video function """
     director = Director.from_yaml(os.path.join(utils.DIRECTOR_PATH, director + ".yaml"))
-    return make_video(prompt, director, actors, working_dir, step)
+    config = ProductionConfig.from_yaml(os.path.join(utils.PRODUCTION_CONFIG_PATH, config + ".yaml"))
+    return make_video(prompt, director, actors, config, working_dir, step)
 
 parser = ArgumentParser()
 parser.add_argument("--ui", action="store_true", help="Launch the UI")
 parser.add_argument("--prompt", help="The prompt to use for the video")
 parser.add_argument("--director", help="The director to use for the video")
+parser.add_argument("--production-config", help="The production config to use for the video")
 parser.add_argument("--actors", nargs="+", help="The actors to use for the video")
 parser.add_argument("--output", help="The output directory to write to")
 
+
+demo = make_ui(prep_video_params)
 
 if __name__ == "__main__":
     args = parser.parse_args()
     if args.ui:
         # Launch the UI
-        app = make_ui(prep_video_params)
-        app.launch(server_name="0.0.0.0")
+        demo.launch(server_name="0.0.0.0")
 
     elif args.prompt and args.director and args.actors:
         # Make the video
         retries = 3
         while retries > 0:
             try:
-                result = prep_video_params(args.prompt, args.director, args.actors, args.output, "Researcher")
+                print(f"Making video with prompt: {args.prompt}, director: {args.director}, actors: {args.actors}, production config: {args.production_config}, output: {args.output}")
+                result = prep_video_params(args.prompt, args.director, args.actors, args.production_config, args.output, "Researcher")
                 print(result)
                 break
             except Exception as e:
