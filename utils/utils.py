@@ -18,15 +18,16 @@ MUSIC_PATH = 'music'
 DISTRIBUTION_METADATA_FILE = 'distribution_metadata.json'
 
 # Those paths are static and not prefixable
-ACTOR_PATH = 'cast/actors'
-DIRECTOR_PATH = 'cast/directors'
-RESEARCHER_PATH = 'cast/researchers'
-SCRIPT_WRITER_PATH = 'cast/script_writers'
-VOICEOVER_ARTIST_PATH = 'cast/voiceover_artists'
-MUSIC_COMPOSER_PATH = 'cast/music_composers'
-STORYBOARD_ARTIST_PATH = 'cast/storyboard_artists'
-THUMBNAIL_ARTIST_PATH = 'cast/thumbnail_artists'
-YOUTUBE_DISTRIBUTOR_PATH = 'cast/youtube_distributors'
+CAST_PATH_PREFIX = os.environ.get("CAST_PATH_PREFIX", "cast")
+ACTOR_PATH = os.path.join(CAST_PATH_PREFIX, 'actors')
+DIRECTOR_PATH = os.path.join(CAST_PATH_PREFIX, 'directors')
+RESEARCHER_PATH = os.path.join(CAST_PATH_PREFIX, 'researchers')
+SCRIPT_WRITER_PATH = os.path.join(CAST_PATH_PREFIX, 'script_writers')
+STORYBOARD_ARTIST_PATH = os.path.join(CAST_PATH_PREFIX, 'storyboard_artists')
+THUMBNAIL_ARTIST_PATH = os.path.join(CAST_PATH_PREFIX, 'thumbnail_artists')
+VOICEOVER_ARTIST_PATH = os.path.join(CAST_PATH_PREFIX, 'voiceover_artists')
+MUSIC_COMPOSER_PATH = os.path.join(CAST_PATH_PREFIX, 'music_composers')
+YOUTUBE_DISTRIBUTOR_PATH = os.path.join(CAST_PATH_PREFIX, 'youtube_distributors')
 
 
 researchers = [f.split(".")[0] for f in os.listdir(RESEARCHER_PATH) if f.endswith(".yaml")]
