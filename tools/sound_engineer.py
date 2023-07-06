@@ -131,13 +131,14 @@ class SoundEngineerTool(AICPBaseTool):
         voiceover = AudioSegment.from_file(utils.VOICEOVER_WAV_FILE)
         background_music = AudioSegment.from_file(os.path.join(utils.MUSIC_PATH, "music.wav"))
 
-        # Improve audio quality of voiceover
-        voiceover += 9
+        # Boost audio sources slightly
+        background_music += 2
+        voiceover += 2
 
         # Lower gain on background music
         average_loudness_voiceover = voiceover.dBFS
         max_loudness_background_music = background_music.max_dBFS
-        desired_loudness_background_music = average_loudness_voiceover - 3
+        desired_loudness_background_music = average_loudness_voiceover - 1.5
         gain_change = desired_loudness_background_music - max_loudness_background_music
         background_music = background_music.apply_gain(gain_change)
 
