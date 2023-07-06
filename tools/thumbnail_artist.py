@@ -78,8 +78,8 @@ class ThumbnailArtistTool(AICPBaseTool):
         guidance_scale = 7.5
         num_inference_steps = 50 
         num_images_per_prompt = 2
-        image_height = 432
-        image_width = 768
+        image_height = self.production_config.sd_base_image_height
+        image_width = self.production_config.sd_base_image_width 
 
         # enumerate scenes and generate image set
         for i, scene in enumerate(self.scene_prompts):

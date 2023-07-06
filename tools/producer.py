@@ -90,7 +90,7 @@ class ProducerTool(AICPBaseTool):
                 utils.FINAL_AUDIO_FILE: 0
         }
 
-        resolution = (1920, 1080)
+        resolution = (self.production_config.video_width, self.production_config.video_height)
         output_file = utils.FINAL_VIDEO_FILE
         create_video_with_audio(images, audio_dict, resolution, output_file)
         return "Done producing video file"

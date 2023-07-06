@@ -28,6 +28,7 @@ THUMBNAIL_ARTIST_PATH = os.path.join(CAST_PATH_PREFIX, 'thumbnail_artists')
 VOICEOVER_ARTIST_PATH = os.path.join(CAST_PATH_PREFIX, 'voiceover_artists')
 MUSIC_COMPOSER_PATH = os.path.join(CAST_PATH_PREFIX, 'music_composers')
 YOUTUBE_DISTRIBUTOR_PATH = os.path.join(CAST_PATH_PREFIX, 'youtube_distributors')
+PRODUCTION_CONFIG_PATH = os.path.join(CAST_PATH_PREFIX, 'production_configs')
 
 
 researchers = [f.split(".")[0] for f in os.listdir(RESEARCHER_PATH) if f.endswith(".yaml")]
@@ -37,6 +38,7 @@ thumbnail_artists = [f.split(".")[0] for f in os.listdir(THUMBNAIL_ARTIST_PATH) 
 voiceover_artists = [f.split(".")[0] for f in os.listdir(VOICEOVER_ARTIST_PATH) if f.endswith(".yaml")]
 music_composers = [f.split(".")[0] for f in os.listdir(MUSIC_COMPOSER_PATH) if f.endswith(".yaml")]
 youtube_distributors = [f.split(".")[0] for f in os.listdir(YOUTUBE_DISTRIBUTOR_PATH) if f.endswith(".yaml")]
+production_configs = [f.split(".")[0] for f in os.listdir(PRODUCTION_CONFIG_PATH) if f.endswith(".yaml")]
 
 
 def set_prefix(prefix):

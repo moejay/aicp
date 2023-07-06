@@ -59,10 +59,18 @@ class YouTubeDistributor(CastMember):
     """An object representing a YouTube distributor."""
 
 @dataclass
-class OutputConfig:
+class ProductionConfig:
     """An object representing the output configuration."""
     video_width: int
     video_height: int
+    sd_base_image_width: int
+    sd_base_image_height: int
+
+    @classmethod
+    def from_yaml(cls, yaml_file: str):
+        """Read the output configuration from a yaml file."""
+        with open(yaml_file, 'r') as f:
+            return from_dict(data_class=ProductionConfig, data=yaml.load(f, Loader=yaml.FullLoader))
 
 @dataclass
 class Director:

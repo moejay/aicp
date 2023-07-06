@@ -106,8 +106,8 @@ class StoryBoardArtistTool(AICPBaseTool):
         num_inference_steps = 30 
         num_images_per_prompt = 1
         num_images_per_scene = 10
-        image_height = 1080
-        image_width = 1920
+        image_height = self.production_config.video_height
+        image_width = self.production_config.video_width 
 
         # enumerate scenes and generate image set
         for i, scene in enumerate(self.scene_prompts):
@@ -165,8 +165,8 @@ class StoryBoardArtistTool(AICPBaseTool):
         guidance_scale = 7.5
         num_inference_steps = 50 
         num_images_per_prompt = 10
-        image_height = 432
-        image_width = 768
+        image_width = self.production_config.sd_base_image_width 
+        image_height = self.production_config.sd_base_image_height
 
         # enumerate scenes and generate image set
         for i, scene in enumerate(self.scene_prompts):
