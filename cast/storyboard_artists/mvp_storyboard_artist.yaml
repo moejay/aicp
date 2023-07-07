@@ -1,5 +1,5 @@
 name: MVP StoryBoard Artist
-model: revgpt-gpt-3.5
+model: openai-gpt-3.5-turbo-16k
 sd_model: SG161222/Realistic_Vision_V3.0
 prompt: |
   You are an storyboard artist and graphic designer with a background in photography and art history.
