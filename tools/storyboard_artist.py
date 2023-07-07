@@ -56,18 +56,39 @@ class StoryBoardArtistTool(AICPBaseTool):
         to generate more descriptive prompts"""
         cast_member = self.video.director.get_storyboard_artist()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
-        # Use only the description lines to save tokens
-        script_input = yaml.dump(
-            [{"description": s["description"]} for s in parsers.get_script()]
-        )
-        response = chain.run(script_input)
-        print(response)
 
-        # Save the updated script
-        with open(os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml"), "w") as f:
-            f.write(response)
+        retries = 3
 
-        return yaml.load(response, Loader=yaml.Loader)
+        while retries > 0:
+            
+            try:
+                # Use only the description lines to save tokens
+                script_input = yaml.dump(
+                    [
+                        {
+                            "scene_title": s.scene_title,
+                            "scene_description": s.description,
+                            "content": s.content,
+                        }
+                        for s in parsers.get_scenes()
+                    ]
+                )
+                response = chain.run(script_input)
+                print(response)
+
+                parsed = yaml.load(response, Loader=yaml.Loader)
+                ## Check if parsed has the same number of scenes as the script
+                if len(parsed) != len(parsers.get_scenes()):
+                    raise Exception("Parsed script has different number of scenes")
+                # Save the updated script
+                with open(os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml"), "w") as f:
+                    f.write(response)
+
+                return parsed
+            except Exception as e:
+                print(e)
+                retries -= 1
+
 
     def gfp_upscaler(self):
         """Upscale images with the GFPGAN ("restore faces")"""
@@ -126,7 +147,7 @@ class StoryBoardArtistTool(AICPBaseTool):
 
         # enumerate scenes and generate image set
         for i, scene in enumerate(self.scene_prompts):
-            prompt = f"{scene['prompt']}, {self.positive_prompt}"
+            prompt = f"{scene['scene'][0]['prompt']}, {self.positive_prompt}"
             print(f"PP={prompt}")
             print(f"NP={self.negative_prompt}")
 
@@ -201,7 +222,7 @@ class StoryBoardArtistTool(AICPBaseTool):
                 print(f"Skipping: scene_{i+1}_{num_images_per_prompt}.png")
                 continue
 
-            prompt = f"{scene['prompt']}, {self.positive_prompt}"
+            prompt = f"{scene['scene'][0]['prompt']}, {self.positive_prompt}"
 
             print(f"PP={prompt}")
             print(f"NP={self.negative_prompt}")
