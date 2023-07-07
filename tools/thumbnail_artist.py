@@ -19,12 +19,11 @@ class ThumbnailArtistTool(AICPBaseTool):
     positive_prompt = ""
     negative_prompt = ""
     def initialize_agent(self):
-        super().initialize_agent()
         self.load_prompts()
 
     def load_prompts(self):
         # load additive prompts
-        cast_member = self.director.get_thumbnail_artist()
+        cast_member = self.video.director.get_thumbnail_artist()
         self.positive_prompt = cast_member.positive_prompt
         self.negative_prompt = cast_member.negative_prompt
     
@@ -41,7 +40,7 @@ class ThumbnailArtistTool(AICPBaseTool):
     def ego(self):
         """ Run the script through the mind of the storyboard artist
             to generate more descriptive prompts """
-        cast_member = self.director.get_thumbnail_artist()
+        cast_member = self.video.director.get_thumbnail_artist()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
         # Use only the description lines to save tokens
         script_input = yaml.dump([
@@ -59,7 +58,7 @@ class ThumbnailArtistTool(AICPBaseTool):
         return yaml.load(response, Loader=yaml.Loader)
     def stable_diffusion(self):
         # setup stable diffusion pipeline
-        cast_member = self.director.get_thumbnail_artist()
+        cast_member = self.video.director.get_thumbnail_artist()
         pipe = StableDiffusionPipeline.from_pretrained(
                     cast_member.sd_model,
                     custom_pipeline="lpw_stable_diffusion",
@@ -76,8 +75,8 @@ class ThumbnailArtistTool(AICPBaseTool):
         guidance_scale = 7.5
         num_inference_steps = 50 
         num_images_per_prompt = 2
-        image_height = self.production_config.sd_base_image_height
-        image_width = self.production_config.sd_base_image_width 
+        image_height = self.video.production_config.sd_base_image_height
+        image_width = self.video.production_config.sd_base_image_width 
 
         # enumerate scenes and generate image set
         for i, scene in enumerate(self.scene_prompts):

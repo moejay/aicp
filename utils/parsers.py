@@ -1,13 +1,15 @@
 import os
+import re
 
 import contextlib
 import wave
-import json
+import logging
 import yaml
 
-from models import Scene
-
+from models import Scene, Video
 from utils import utils
+
+logger = logging.getLogger(__name__)
 def get_voiceover_duration():
     """Get the duration of the voiceover script."""
     with contextlib.closing(wave.open(utils.VOICEOVER_WAV_FILE,'r')) as f:
@@ -51,4 +53,37 @@ def get_scenes():
         scene.start_time = timecodes[i]
 
     return scenes
+
+def get_params_from_prompt(prompt: str) -> list[str]:
+    """Given a text with formattable {} parameters, return them as a list."""
+    # Regex to find anythin within single curly brackets
+    # Do not match {{ }} as they are used for escaping
+    regex = r"(?<!{){(?!{)(.*?)(?<!})}(?!})"
+    matches = re.findall(regex, prompt)
+    return matches
+
+def resolve_param_from_video(video: Video, param_name):
+    """Given a parameter name, return its value from the user.
+        params are defined like such:
+
+        * `program__description`
+        * `actors__character_bio`
+    """
+    # Split the param name by __ 
+    params = param_name.split("__")
+    # Get the first param
+    first_param = params[0]
+    # if the first param is actors, the concatenate the 2nd param for every actor
+    if first_param == "actors":
+        second_param = params[1]
+        actors = video.actors
+        return "\n".join([getattr(actor, second_param, "") for actor in actors])
+    elif first_param == "program":
+        program = video.program
+        second_param = params[1]
+        return getattr(program, second_param, "")
+    else:
+        logger.warning(f"Unknown param: {param_name}")
+        return ""
+
 

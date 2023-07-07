@@ -1,8 +1,5 @@
 # Description: Utility functions for the project.
-
-
 import os
-
 
 PATH_PREFIX = ''
 RESEARCH = 'research.yaml'
@@ -30,6 +27,8 @@ MUSIC_COMPOSER_PATH = os.path.join(CAST_PATH_PREFIX, 'music_composers')
 YOUTUBE_DISTRIBUTOR_PATH = os.path.join(CAST_PATH_PREFIX, 'youtube_distributors')
 PRODUCTION_CONFIG_PATH = os.path.join(CAST_PATH_PREFIX, 'production_configs')
 
+PROGRAMS_PATH_PREFIX = os.environ.get("PROGRAMS_PATH_PREFIX", "programs")
+programs = [f.split(".")[0] for f in os.listdir(PROGRAMS_PATH_PREFIX) if f.endswith(".yaml")]
 
 researchers = [f.split(".")[0] for f in os.listdir(RESEARCHER_PATH) if f.endswith(".yaml")]
 script_writers = [f.split(".")[0] for f in os.listdir(SCRIPT_WRITER_PATH) if f.endswith(".yaml")]
@@ -74,3 +73,4 @@ def set_prefix(prefix):
 
     MUSIC_PATH = os.path.join(prefix, MUSIC_PATH.split('/')[-1])
     os.makedirs(MUSIC_PATH, exist_ok=True)
+

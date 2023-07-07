@@ -17,7 +17,6 @@ class MusicComposerTool(AICPBaseTool):
 
     def initialize_agent(self):
         """ Initialize the agent """
-        super().initialize_agent()
         self.load_prompts()
 
     def load_prompts(self):
@@ -32,7 +31,7 @@ class MusicComposerTool(AICPBaseTool):
             self.scene_prompts = self.ego()
 
     def ego(self):
-        cast_member = self.director.get_music_composer()
+        cast_member = self.video.director.get_music_composer()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
 
         script_input = yaml.dump([{ "description": s["description"]} for s in parsers.get_script()])

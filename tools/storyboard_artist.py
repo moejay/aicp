@@ -27,7 +27,7 @@ class StoryBoardArtistTool(AICPBaseTool):
 
     def load_prompts(self):
         # load additive prompts
-        cast_member = self.director.get_storyboard_artist()
+        cast_member = self.video.director.get_storyboard_artist()
         self.positive_prompt = cast_member.positive_prompt
         self.negative_prompt = cast_member.negative_prompt
     
@@ -44,7 +44,7 @@ class StoryBoardArtistTool(AICPBaseTool):
     def ego(self):
         """ Run the script through the mind of the storyboard artist
             to generate more descriptive prompts """
-        cast_member = self.director.get_storyboard_artist()
+        cast_member = self.video.director.get_storyboard_artist()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
         # Use only the description lines to save tokens
         script_input = yaml.dump([
@@ -86,7 +86,7 @@ class StoryBoardArtistTool(AICPBaseTool):
         # setup stable diffusion pipeline
         os.makedirs(os.path.join(utils.STORYBOARD_PATH, "img2img"), exist_ok=True)
 
-        cast_member = self.director.get_storyboard_artist()
+        cast_member = self.video.director.get_storyboard_artist()
         pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
                     cast_member.sd_model,
                     custom_pipeline="lpw_stable_diffusion",
@@ -104,9 +104,9 @@ class StoryBoardArtistTool(AICPBaseTool):
         noise_strength = 0.75
         num_inference_steps = 30 
         num_images_per_prompt = 1
-        num_images_per_scene = 10
-        image_height = self.production_config.video_height
-        image_width = self.production_config.video_width 
+        num_images_per_scene = self.video.production_config.num_images_per_scene 
+        image_height = self.video.production_config.video_height
+        image_width = self.video.production_config.video_width 
 
         # enumerate scenes and generate image set
         for i, scene in enumerate(self.scene_prompts):
@@ -147,7 +147,7 @@ class StoryBoardArtistTool(AICPBaseTool):
 
     def stable_diffusion(self):
         # setup stable diffusion pipeline
-        cast_member = self.director.get_storyboard_artist()
+        cast_member = self.video.director.get_storyboard_artist()
         pipe = StableDiffusionPipeline.from_pretrained(
                     cast_member.sd_model,
                     custom_pipeline="lpw_stable_diffusion",
@@ -163,9 +163,9 @@ class StoryBoardArtistTool(AICPBaseTool):
         # settings
         guidance_scale = 7.5
         num_inference_steps = 50 
-        num_images_per_prompt = 10
-        image_width = self.production_config.sd_base_image_width 
-        image_height = self.production_config.sd_base_image_height
+        num_images_per_prompt = self.video.production_config.num_images_per_scene
+        image_width = self.video.production_config.sd_base_image_width 
+        image_height = self.video.production_config.sd_base_image_height
 
         # enumerate scenes and generate image set
         for i, scene in enumerate(self.scene_prompts):

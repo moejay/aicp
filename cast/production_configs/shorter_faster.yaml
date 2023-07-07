@@ -1,0 +1,5 @@
+video_width: 768 
+video_height: 432 
+sd_base_image_width: 384 
+sd_base_image_height: 216 
+num_images_per_scene: 2

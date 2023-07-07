@@ -17,7 +17,7 @@ class YoutubeDistributorTool(AICPBaseTool):
     description = "Useful for distributing videos to youtube"
 
     def ego(self):
-        cast_member = self.director.get_youtube_distributor()
+        cast_member = self.video.director.get_youtube_distributor()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
         script_input = yaml.dump([{ "description": s["description"]} for s in parsers.get_script()])
 

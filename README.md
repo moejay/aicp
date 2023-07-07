@@ -35,9 +35,35 @@ Given some prompt, the AI will end up creating a video "suitable" for YouTube/Ru
 Then you can run either
 * `make notebook` will launch jupyter
 * `make ui` to run the webui to generate a video
-* `make video` the command line to run a single input, pass as make args (env variables) eg: `ARGS=--prompt "prompt" --actors zane --director mvp_director --production-config default_config --output some/output` 
+* `make video` the command line to run a single input, pass as make args (env variables) eg: `ARGS=--prompt "prompt" --actors zane --director mvp_director --production-config default_config --program matrix --output some/output` 
 * `make auto` will look for `inputs.txt` with `|` separated ( prompt | output_dir | actor ) 
 can be used to run multiple back to back video creations
+
+## The templates and yamls
+
+* `cast` includes the actors/directors/researchers etc.. also includes the configs
+* `programs` includes the well, programs aka shows
+
+### The production config
+
+The config currently includes the output video dimensions (also img2img dimension),
+as well as the stable diffusion initial dimensions
+
+### The director 
+
+A Director is a collection of researcher, and other artists involved in the production
+Each artist, can have multiple yamls that can be chosen as part of a director
+
+### The actors
+
+specify a list of actors to be part of the show
+currently only shows with one actor are supported
+this is still in heavy development for v0.69
+
+
+### The program aka: show
+
+Has a name and a description, not used anywhere currently
 
 
 ## Agent description
