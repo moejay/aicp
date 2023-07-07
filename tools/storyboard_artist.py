@@ -5,6 +5,7 @@ import torch
 import yaml
 
 from diffusers import (
+    DDIMScheduler,
     DPMSolverMultistepScheduler,
     StableDiffusionPipeline,
     StableDiffusionImg2ImgPipeline,
@@ -109,13 +110,14 @@ class StoryBoardArtistTool(AICPBaseTool):
         pipe = pipe.to("cuda")
 
         pipe.enable_xformers_memory_efficient_attention()
-        pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
+        pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
+        #pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
         # scheduler.config.algorithm_type = "sde-dpmsolver++"
         # pipe.scheduler = scheduler
 
         # settings
         guidance_scale = 7.5
-        noise_strength = 0.75
+        noise_strength = 0.35
         num_inference_steps = 30
         num_images_per_prompt = 1
         num_images_per_scene = self.video.production_config.num_images_per_scene
