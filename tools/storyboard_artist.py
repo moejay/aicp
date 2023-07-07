@@ -3,6 +3,7 @@
 import os
 import torch
 import yaml
+import logging
 
 from diffusers import (
     DDIMScheduler,
@@ -20,6 +21,8 @@ from typing import Optional
 from utils import llms, utils, parsers
 
 from .base import AICPBaseTool
+
+logger = logging.getLogger(__name__)
 
 
 class StoryBoardArtistTool(AICPBaseTool):
@@ -43,12 +46,12 @@ class StoryBoardArtistTool(AICPBaseTool):
         prompts_file = os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml")
         if os.path.exists(prompts_file):
             with open(prompts_file) as prompts:
-                print("Loading existing prompts from: storyboard_prompts.yaml")
+                logger.info("Loading existing prompts from: storyboard_prompts.yaml")
                 self.scene_prompts = yaml.load(
                     prompts.read().strip(), Loader=yaml.Loader
                 )
         else:
-            print("Generating text-to-image prompts for storyboard artist...")
+            logger.info("Generating text-to-image prompts for storyboard artist...")
             self.scene_prompts = self.ego()
 
     def ego(self):
@@ -56,18 +59,43 @@ class StoryBoardArtistTool(AICPBaseTool):
         to generate more descriptive prompts"""
         cast_member = self.video.director.get_storyboard_artist()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
-        # Use only the description lines to save tokens
-        script_input = yaml.dump(
-            [{"description": s["description"]} for s in parsers.get_script()]
-        )
-        response = chain.run(script_input)
-        print(response)
 
-        # Save the updated script
-        with open(os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml"), "w") as f:
-            f.write(response)
+        retries = 3
 
-        return yaml.load(response, Loader=yaml.Loader)
+        while retries > 0:
+            try:
+                # Use only the description lines to save tokens
+                script_input = yaml.dump(
+                    [
+                        {
+                            "scene_title": s.scene_title,
+                            "scene_description": s.description,
+                            "content": s.content,
+                        }
+                        for s in parsers.get_scenes()
+                    ]
+                )
+                response = chain.run(script_input)
+                logger.info(response)
+
+                parsed = yaml.load(response, Loader=yaml.Loader)
+                ## Check if parsed has the same number of scenes as the script
+                if len(parsed) != len(parsers.get_scenes()):
+                    raise Exception("Parsed prompts has different number of scenes")
+                # Save the updated script
+                with open(
+                    os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml"), "w"
+                ) as f:
+                    f.write(response)
+
+                return parsed
+            except Exception as e:
+                logger.warning(e)
+                logger.info(f"Retrying {retries} more times...")
+                retries -= 1
+
+        logger.error("Failed to generate prompts, no more retries left")
+        raise Exception("Failed to generate prompts")
 
     def gfp_upscaler(self):
         """Upscale images with the GFPGAN ("restore faces")"""
@@ -94,7 +122,7 @@ class StoryBoardArtistTool(AICPBaseTool):
             detach=False,
             tty=True,
         )
-        print(out)
+        logger.info(out)
         return True
 
     def img2img_upscaler(self):
@@ -127,8 +155,8 @@ class StoryBoardArtistTool(AICPBaseTool):
         # enumerate scenes and generate image set
         for i, scene in enumerate(self.scene_prompts):
             prompt = f"{scene['prompt']}, {self.positive_prompt}"
-            print(f"PP={prompt}")
-            print(f"NP={self.negative_prompt}")
+            logger.info(f"PP={prompt}")
+            logger.info(f"NP={self.negative_prompt}")
 
             for j in range(0, num_images_per_scene):
                 # dont recreate images, its expensive
@@ -137,7 +165,7 @@ class StoryBoardArtistTool(AICPBaseTool):
                         utils.STORYBOARD_PATH, "img2img", f"scene_{i+1}_{j+1}.png"
                     )
                 ):
-                    print(f"Skipping: img2img/scene_{i+1}_{j+1}.png")
+                    logger.info(f"Skipping: img2img/scene_{i+1}_{j+1}.png")
                     continue
 
                 file = os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_{j+1}.png")
@@ -198,13 +226,13 @@ class StoryBoardArtistTool(AICPBaseTool):
                     utils.STORYBOARD_PATH, f"scene_{i+1}_{num_images_per_prompt}.png"
                 )
             ):
-                print(f"Skipping: scene_{i+1}_{num_images_per_prompt}.png")
+                logger.info(f"Skipping: scene_{i+1}_{num_images_per_prompt}.png")
                 continue
 
             prompt = f"{scene['prompt']}, {self.positive_prompt}"
 
-            print(f"PP={prompt}")
-            print(f"NP={self.negative_prompt}")
+            logger.info(f"PP={prompt}")
+            logger.info(f"NP={self.negative_prompt}")
 
             images = pipe(
                 prompt=prompt,
