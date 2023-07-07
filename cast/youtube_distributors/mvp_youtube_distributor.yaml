@@ -1,5 +1,5 @@
 name: MVP Youtube Distributor
-model: revgpt-gpt-3.5
+model: openai-gpt-3.5-turbo-16k
 prompt: |
   You are a YouTube video distributor.
   Your job is to come up with a good title, description, and tags for the video.
