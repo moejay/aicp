@@ -104,3 +104,13 @@ AICP can now be run in the cloud via Runpod.io
 	5. Copy the template ID into your .env `RUNPOD_TEMPLATE=your-template-id`
 	6. Launch a new pod with `make runpod-create`
 
+
+## Development
+
+(to do- developer guide)
+
+### Code Formatting
+
+This project uses the `black` code formatter. You can check your local environment by running `make check-format` and you can autoformat your code with `make reformat`. See `pyproject.toml` for configuration.
+
+Note: This code format is enforced for pull requests.
