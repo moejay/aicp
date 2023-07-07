@@ -197,36 +197,6 @@ class Director:
                 Loader=yaml.FullLoader,
             ),
         )
-
-
-@dataclass
-class Scene:
-    """A scene object."""
-
-    start_time: Optional[float]  # The scene starting
-    duration: Optional[float]  # The duration of the scene in seconds
-
-    scene_title: str  # The title of the scene
-    description: str  # The description of the scene
-    content: str  # The content of the scene
-
-
-@dataclass
-class Program:
-    """A program aka: show"""
-
-    title: str
-    description: str
-
-    @classmethod
-    def from_yaml(cls, yaml_file: str):
-        """Read the program from a yaml file."""
-        with open(yaml_file, "r") as f:
-            return from_dict(
-                data_class=Program, data=yaml.load(f, Loader=yaml.FullLoader)
-            )
-
-
 @dataclass
 class Actor:
     """An actor object."""
@@ -252,6 +222,46 @@ class Actor:
                 open(os.path.join(ACTOR_PATH, f"{name}.yaml")), Loader=yaml.FullLoader
             ),
         )
+
+@dataclass
+class SceneDialogue:
+    """A scene dialogue object."""
+
+    actor: Actor
+    character_name: str
+    line: str
+
+@dataclass
+class Scene:
+    """A scene object."""
+
+    start_time: Optional[float]  # The scene starting
+    duration: Optional[float]  # The duration of the scene in seconds
+
+    scene_title: str  # The title of the scene
+    description: str  # The description of the scene
+    content: str  # The content of the scene
+
+    dialogue: list[SceneDialogue]  # The dialogue of the scene
+
+
+
+@dataclass
+class Program:
+    """A program aka: show"""
+
+    title: str
+    description: str
+
+    @classmethod
+    def from_yaml(cls, yaml_file: str):
+        """Read the program from a yaml file."""
+        with open(yaml_file, "r") as f:
+            return from_dict(
+                data_class=Program, data=yaml.load(f, Loader=yaml.FullLoader)
+            )
+
+
 
 
 @dataclass
