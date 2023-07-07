@@ -4,7 +4,10 @@ import logging
 import yaml
 
 from .base import AICPBaseTool
-from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
+from langchain.callbacks.manager import (
+    AsyncCallbackManagerForToolRun,
+    CallbackManagerForToolRun,
+)
 from typing import Optional
 from utils import utils, llms, parsers
 
@@ -19,34 +22,36 @@ class YoutubeDistributorTool(AICPBaseTool):
     def ego(self):
         cast_member = self.video.director.get_youtube_distributor()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
-        script_input = yaml.dump([{ "description": s["description"]} for s in parsers.get_script()])
-
-        response = chain.run(
-            script_input
+        script_input = yaml.dump(
+            [{"description": s["description"]} for s in parsers.get_script()]
         )
+
+        response = chain.run(script_input)
 
         logger.info("Ego response: %s", response)
         return yaml.load(response, Loader=yaml.Loader)
- 
 
-
-    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+    def _run(
+        self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
+    ) -> str:
         """Use the tool."""
         ego_response = self.ego()
         print(ego_response)
         with open(utils.DISTRIBUTION_METADATA_FILE, "w") as file:
             file.write(yaml.dump(ego_response))
 
-#        upload_yt.upload_video(upload_yt.Options(
-#            file=utils.FINAL_VIDEO_FILE,
-#            title=ego_response["title"],
-#            description=ego_response["description"],
-#            tags=",".join(ego_response["tags"]),
-#            privacy_status="private"
-#            ))
-#
+        #        upload_yt.upload_video(upload_yt.Options(
+        #            file=utils.FINAL_VIDEO_FILE,
+        #            title=ego_response["title"],
+        #            description=ego_response["description"],
+        #            tags=",".join(ego_response["tags"]),
+        #            privacy_status="private"
+        #            ))
+        #
         return "Done uploading video file to youtube, check your channel"
 
-    def _arun(self, query:str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None) -> str:
+    def _arun(
+        self, query: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
+    ) -> str:
         """Use the tool."""
         raise NotImplementedError("Async not implemented")

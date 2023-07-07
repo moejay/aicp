@@ -10,18 +10,22 @@ from models import Scene, Video
 from utils import utils
 
 logger = logging.getLogger(__name__)
+
+
 def get_voiceover_duration():
     """Get the duration of the voiceover script."""
-    with contextlib.closing(wave.open(utils.VOICEOVER_WAV_FILE,'r')) as f:
+    with contextlib.closing(wave.open(utils.VOICEOVER_WAV_FILE, "r")) as f:
         frames = f.getnframes()
         rate = f.getframerate()
         duration = frames / float(rate)
     return int(duration)
 
+
 def get_script():
     """Retrieve the script from the script file."""
     with open(utils.SCRIPT, "r") as file:
         return yaml.load(file.read(), Loader=yaml.Loader)
+
 
 def get_scenes():
     """Retrieve the scenes from the script file."""
@@ -29,30 +33,33 @@ def get_scenes():
     scenes = []
     for scene in script:
         scenes.append(
-                Scene(
-                        scene_title=scene['title'].strip(),
-                        description=scene['description'].strip(),
-                        content=scene['narrator'].strip(),
-                        start_time=None,
-                        duration=None
-                    )
-                )
+            Scene(
+                scene_title=scene["title"].strip(),
+                description=scene["description"].strip(),
+                content=scene["narrator"].strip(),
+                start_time=None,
+                duration=None,
+            )
+        )
 
     # Check if timecodes are available
     if not os.path.exists(utils.VOICEOVER_TIMECODES):
         return scenes
     timecodes = [
-            float(t) for t in open(utils.VOICEOVER_TIMECODES, "r").readlines() if t.strip() != ""
-            ]
+        float(t)
+        for t in open(utils.VOICEOVER_TIMECODES, "r").readlines()
+        if t.strip() != ""
+    ]
     # Calculate duration of each scene
     for i, scene in enumerate(scenes):
         if i == len(timecodes) - 1:
             scene.duration = get_voiceover_duration() - timecodes[i]
         else:
-            scene.duration = timecodes[i+1] - timecodes[i]
+            scene.duration = timecodes[i + 1] - timecodes[i]
         scene.start_time = timecodes[i]
 
     return scenes
+
 
 def get_params_from_prompt(prompt: str) -> list[str]:
     """Given a text with formattable {} parameters, return them as a list."""
@@ -62,14 +69,15 @@ def get_params_from_prompt(prompt: str) -> list[str]:
     matches = re.findall(regex, prompt)
     return matches
 
+
 def resolve_param_from_video(video: Video, param_name):
     """Given a parameter name, return its value from the user.
-        params are defined like such:
+    params are defined like such:
 
-        * `program__description`
-        * `actors__character_bio`
+    * `program__description`
+    * `actors__character_bio`
     """
-    # Split the param name by __ 
+    # Split the param name by __
     params = param_name.split("__")
     # Get the first param
     first_param = params[0]
@@ -85,5 +93,3 @@ def resolve_param_from_video(video: Video, param_name):
     else:
         logger.warning(f"Unknown param: {param_name}")
         return ""
-
-

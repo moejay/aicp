@@ -18,10 +18,17 @@ from oauth2client.tools import run_flow
 httplib2.RETRIES = 1
 MAX_RETRIES = 10
 
-RETRIABLE_EXCEPTIONS = (httplib2.HttpLib2Error, IOError, http.client.NotConnected,
-                        http.client.IncompleteRead, http.client.ImproperConnectionState,
-                        http.client.CannotSendRequest, http.client.CannotSendHeader,
-                        http.client.ResponseNotReady, http.client.BadStatusLine)
+RETRIABLE_EXCEPTIONS = (
+    httplib2.HttpLib2Error,
+    IOError,
+    http.client.NotConnected,
+    http.client.IncompleteRead,
+    http.client.ImproperConnectionState,
+    http.client.CannotSendRequest,
+    http.client.CannotSendHeader,
+    http.client.ResponseNotReady,
+    http.client.BadStatusLine,
+)
 
 RETRIABLE_STATUS_CODES = [500, 502, 503, 504]
 
@@ -49,9 +56,11 @@ class Options:
 
 
 def get_authenticated_service(options: Options):
-    flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
-                                   scope=YOUTUBE_UPLOAD_SCOPE,
-                                   message=MISSING_CLIENT_SECRETS_MESSAGE)
+    flow = flow_from_clientsecrets(
+        CLIENT_SECRETS_FILE,
+        scope=YOUTUBE_UPLOAD_SCOPE,
+        message=MISSING_CLIENT_SECRETS_MESSAGE,
+    )
 
     storage = Storage(f"{sys.argv[0]}-oauth2.json")
     credentials = storage.get()
@@ -59,8 +68,11 @@ def get_authenticated_service(options: Options):
     if credentials is None or credentials.invalid:
         credentials = run_flow(flow, storage)
 
-    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
-                 http=credentials.authorize(httplib2.Http()))
+    return build(
+        YOUTUBE_API_SERVICE_NAME,
+        YOUTUBE_API_VERSION,
+        http=credentials.authorize(httplib2.Http()),
+    )
 
 
 def initialize_upload(youtube, options):
@@ -71,17 +83,15 @@ def initialize_upload(youtube, options):
             title=options.title,
             description=options.description,
             tags=tags,
-            categoryId=options.category
+            categoryId=options.category,
         ),
-        status=dict(
-            privacyStatus=options.privacy_status
-        )
+        status=dict(privacyStatus=options.privacy_status),
     )
 
     insert_request = youtube.videos().insert(
         part=",".join(body.keys()),
         body=body,
-        media_body=MediaFileUpload(options.file, chunksize=-1, resumable=True)
+        media_body=MediaFileUpload(options.file, chunksize=-1, resumable=True),
     )
 
     return resumable_upload(insert_request)
@@ -96,11 +106,15 @@ def resumable_upload(insert_request):
             logging.info("Uploading file...")
             status, response = insert_request.next_chunk()
             if response is not None:
-                if 'id' in response:
-                    logging.info(f"Video id '{response['id']}' was successfully uploaded.")
+                if "id" in response:
+                    logging.info(
+                        f"Video id '{response['id']}' was successfully uploaded."
+                    )
                     return f"https://www.youtube.com/watch?v={response['id']}"
                 else:
-                    logging.error(f"The upload failed with an unexpected response: {response}")
+                    logging.error(
+                        f"The upload failed with an unexpected response: {response}"
+                    )
                     return None
         except HttpError as e:
             if e.resp.status in RETRIABLE_STATUS_CODES:
@@ -117,7 +131,7 @@ def resumable_upload(insert_request):
                 logging.error("No longer attempting to retry.")
                 return None
 
-            max_sleep = 2 ** retry
+            max_sleep = 2**retry
             sleep_seconds = random.random() * max_sleep
             logging.info(f"Sleeping {sleep_seconds} seconds and then retrying...")
             time.sleep(sleep_seconds)

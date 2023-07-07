@@ -8,8 +8,8 @@ from tools.music_composer import MusicComposerTool
 from tools.producer import ProducerTool
 from tools.researcher import ResearcherTool
 from tools.script_writer import ScriptWriterTool
-from tools.sound_engineer import SoundEngineerTool 
-from tools.storyboard_artist import StoryBoardArtistTool 
+from tools.sound_engineer import SoundEngineerTool
+from tools.storyboard_artist import StoryBoardArtistTool
 from tools.thumbnail_artist import ThumbnailArtistTool
 from tools.voiceover_artist import VoiceOverArtistTool
 from tools.youtube_distributor import YoutubeDistributorTool
@@ -34,8 +34,8 @@ def make_video(video: Video, step: str):
         ProducerTool(video=video),
         ThumbnailArtistTool(video=video),
         YoutubeDistributorTool(video=video),
-    ] 
-    
+    ]
+
     # create tools only from step onwards
     tools = []
     for _, tool in enumerate(all_tools):
@@ -48,5 +48,3 @@ def make_video(video: Video, step: str):
     for t in tools:
         t.run(prompt)
     return utils.FINAL_VIDEO_FILE
-
-
