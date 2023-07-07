@@ -1,5 +1,5 @@
 name: MVP Thumbnail Artist
-model: revgpt-gpt-3.5
+model: openai-gpt-3.5-turbo-16k
 sd_model: SG161222/Realistic_Vision_V3.0
 prompt: |
   You are a YouTube thumbnail artist, the human will provide you with a script for the episode.
