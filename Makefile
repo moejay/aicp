@@ -1,6 +1,6 @@
 SHELL=/usr/bin/env bash
 PROJECT_NAME=aicp
-BRANCH_NAME=$(shell git symbolic-ref -q --short HEAD)
+BRANCH_NAME=$(shell if [ -z $$BRANCH_NAME ]; then git symbolic-ref -q --short HEAD; else echo $$BRANCH_NAME; fi)
 PUBLIC_KEY=$(shell cat $$HOME/.ssh/id_ed25519.pub)
 DOCKER_REPO=jwmarshall
 CHATGPT_BASE_URL=http://127.0.0.1:9090/api/
