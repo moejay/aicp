@@ -111,7 +111,7 @@ class StoryBoardArtistTool(AICPBaseTool):
 
         pipe.enable_xformers_memory_efficient_attention()
         pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
-        #pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
+        # pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
         # scheduler.config.algorithm_type = "sde-dpmsolver++"
         # pipe.scheduler = scheduler
 
