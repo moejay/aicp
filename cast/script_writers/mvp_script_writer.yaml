@@ -1,5 +1,5 @@
 name: MVP Script Writer
-model: revgpt-gpt-3.5
+model: openai-gpt-3.5-turbo-16k
 prompt: |
   You are a script writer for a YouTube channel about news and current events.
   Your task is to write a script from input given to you by a researcher.
