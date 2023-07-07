@@ -3,11 +3,15 @@ import yaml
 
 from audiocraft.models import MusicGen
 from audiocraft.data.audio import audio_write
-from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
+from langchain.callbacks.manager import (
+    AsyncCallbackManagerForToolRun,
+    CallbackManagerForToolRun,
+)
 from typing import Optional
 from utils.parsers import get_scenes
 from utils import utils, llms, parsers
 from .base import AICPBaseTool
+
 
 class MusicComposerTool(AICPBaseTool):
     name = "musiccomposer"
@@ -16,17 +20,19 @@ class MusicComposerTool(AICPBaseTool):
     scene_prompts = []
 
     def initialize_agent(self):
-        """ Initialize the agent """
+        """Initialize the agent"""
         super().initialize_agent()
         self.load_prompts()
 
     def load_prompts(self):
-        # load voiceover artist prompts if they exist or create them 
+        # load voiceover artist prompts if they exist or create them
         prompts_file = os.path.join(utils.PATH_PREFIX, "music_prompts.yaml")
         if os.path.exists(prompts_file):
             with open(prompts_file) as prompts:
                 print("Loading existing music prompts: music_prompts.yaml")
-                self.scene_prompts = yaml.load(prompts.read().strip(), Loader=yaml.Loader)
+                self.scene_prompts = yaml.load(
+                    prompts.read().strip(), Loader=yaml.Loader
+                )
         else:
             print("Generating new music prompts...")
             self.scene_prompts = self.ego()
@@ -35,11 +41,11 @@ class MusicComposerTool(AICPBaseTool):
         cast_member = self.director.get_music_composer()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
 
-        script_input = yaml.dump([{ "description": s["description"]} for s in parsers.get_script()])
-
-        response = chain.run(
-            script_input
+        script_input = yaml.dump(
+            [{"description": s["description"]} for s in parsers.get_script()]
         )
+
+        response = chain.run(script_input)
         print(response)
 
         scene_prompts = yaml.load(response, Loader=yaml.Loader)
@@ -54,7 +60,9 @@ class MusicComposerTool(AICPBaseTool):
 
         return scene_prompts
 
-    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+    def _run(
+        self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
+    ) -> str:
         self.initialize_agent()
 
         model = MusicGen.get_pretrained("medium")
@@ -65,33 +73,32 @@ class MusicComposerTool(AICPBaseTool):
             if os.path.exists(os.path.join(utils.MUSIC_PATH, f"music-{i+1}.wav")):
                 print(f"Skipping: music-{i+1}.wav")
                 continue
- 
+
             print(f"PROMPT: {self.scene_prompts[i]['prompt']}")
 
             model.set_generation_params(
-                        use_sampling=True,
-                        top_k=250,
-                        duration=min(30, scene.duration)
-                    )
+                use_sampling=True, top_k=250, duration=min(30, scene.duration)
+            )
 
             output = model.generate(
-                        descriptions=[self.scene_prompts[i]["prompt"]],
-                        progress=True,
-                    )
+                descriptions=[self.scene_prompts[i]["prompt"]],
+                progress=True,
+            )
 
             filename = os.path.join(utils.MUSIC_PATH, f"music-{i+1}.wav")
             audio_write(
-                        filename,
-                        output[0].to("cpu"), 
-                        model.sample_rate,
-                        strategy="rms",
-                        rms_headroom_db=16,
-                        add_suffix=False
-                    )
+                filename,
+                output[0].to("cpu"),
+                model.sample_rate,
+                strategy="rms",
+                rms_headroom_db=16,
+                add_suffix=False,
+            )
 
         return "Done generating music score"
 
-
-    def _arun(self, query:str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None) -> str:
+    def _arun(
+        self, query: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
+    ) -> str:
         """Use the tool."""
         raise NotImplementedError("Async version of this tool is not implemented")

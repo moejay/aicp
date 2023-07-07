@@ -4,18 +4,24 @@
 
 from typing import Optional
 from dotenv import load_dotenv
+
 load_dotenv()
 
-from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
+from langchain.callbacks.manager import (
+    AsyncCallbackManagerForToolRun,
+    CallbackManagerForToolRun,
+)
 from utils import utils, llms
 from .base import AICPBaseTool
+
 
 class ResearcherTool(AICPBaseTool):
     name = "researcher"
     description = "Useful when you need to research a topic"
 
-
-    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+    def _run(
+        self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
+    ) -> str:
         """Use the tool."""
 
         cast_member = self.director.get_researcher()
@@ -26,8 +32,8 @@ class ResearcherTool(AICPBaseTool):
             f.write(result)
         return f"File written to {utils.RESEARCH}"
 
-
-    async def _arun(self, query:str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None) -> str:
+    async def _arun(
+        self, query: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
+    ) -> str:
         """Use the tool."""
         raise NotImplementedError("Async not implemented")
-

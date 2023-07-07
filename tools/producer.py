@@ -4,9 +4,12 @@ import glob
 import os
 import subprocess
 
-from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
+from langchain.callbacks.manager import (
+    AsyncCallbackManagerForToolRun,
+    CallbackManagerForToolRun,
+)
 from typing import Optional
-from utils import utils, parsers 
+from utils import utils, parsers
 from .base import AICPBaseTool
 
 
@@ -15,19 +18,19 @@ def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
     sorted_images = images_dict.items()
 
     # Create a temporary file with the list of images and durations
-    if os.path.exists(os.path.join(utils.STORYBOARD_PATH, 'restored_imgs')):
+    if os.path.exists(os.path.join(utils.STORYBOARD_PATH, "restored_imgs")):
         # use gfpgan upscaled images if they exist
-        image_set = 'restored_imgs'
-    elif os.path.exists(os.path.join(utils.STORYBOARD_PATH, 'img2img')):
+        image_set = "restored_imgs"
+    elif os.path.exists(os.path.join(utils.STORYBOARD_PATH, "img2img")):
         # use img2img upscaled images if they exist
-        image_set = 'img2img'
+        image_set = "img2img"
     else:
         image_set = ""
 
     print(f"IMAGE_SET={image_set}")
-    images_list_file = os.path.join(utils.STORYBOARD_PATH, 'images_list.txt')
+    images_list_file = os.path.join(utils.STORYBOARD_PATH, "images_list.txt")
 
-    with open(images_list_file, 'w') as f:
+    with open(images_list_file, "w") as f:
         for image_path, duration in sorted_images:
             f.write(f"file '{image_set}/{image_path}'\n")
             f.write(f"duration {duration}\n")
@@ -56,6 +59,7 @@ def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
     ffmpeg_cmd = f"ffmpeg -i {utils.TEMP_VIDEO_FILE} {audio_input_str}-filter_complex '{audio_filter_str}' -map 0:v -map '[a]' -c:v copy -y '{output_file}'"
     subprocess.run(ffmpeg_cmd, shell=True)
 
+
 class ProducerTool(AICPBaseTool):
     name = "producer"
     description = "Useful when you want to finalize the video file"
@@ -63,7 +67,7 @@ class ProducerTool(AICPBaseTool):
     def get_scene_images(self, scenes):
         images_dict = {}
 
-        if os.path.exists(os.path.join(utils.STORYBOARD_PATH, 'restored_imgs')):
+        if os.path.exists(os.path.join(utils.STORYBOARD_PATH, "restored_imgs")):
             # use gfpgan upscaled images if they exist
             upscaler_path = "restored_imgs"
         else:
@@ -71,8 +75,8 @@ class ProducerTool(AICPBaseTool):
 
         for i, scene in enumerate(scenes):
             scene_images = glob.glob(
-                        os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
-                    )
+                os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
+            )
             duration_per_image = scene.duration / len(scene_images)
 
             for img in scene_images:
@@ -81,20 +85,25 @@ class ProducerTool(AICPBaseTool):
 
         return images_dict
 
-    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+    def _run(
+        self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
+    ) -> str:
         """Use the tool."""
         scenes = parsers.get_scenes()
         images = self.get_scene_images(scenes)
 
-        audio_dict = {
-                utils.FINAL_AUDIO_FILE: 0
-        }
+        audio_dict = {utils.FINAL_AUDIO_FILE: 0}
 
-        resolution = (self.production_config.video_width, self.production_config.video_height)
+        resolution = (
+            self.production_config.video_width,
+            self.production_config.video_height,
+        )
         output_file = utils.FINAL_VIDEO_FILE
         create_video_with_audio(images, audio_dict, resolution, output_file)
         return "Done producing video file"
 
-    def _arun(self, query:str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None) -> str:
+    def _arun(
+        self, query: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
+    ) -> str:
         """Use the tool."""
         raise NotImplementedError("Async not implemented")

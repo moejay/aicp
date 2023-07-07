@@ -2,7 +2,12 @@ import os
 import logging
 from langchain import LLMChain
 from langchain.chat_models import ChatOpenAI
-from langchain.prompts.chat import (ChatPromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate, HumanMessagePromptTemplate)
+from langchain.prompts.chat import (
+    ChatPromptTemplate,
+    SystemMessagePromptTemplate,
+    AIMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
 
 from typing import Any, List, Mapping, Optional
 from langchain.callbacks.manager import CallbackManagerForLLMRun
@@ -10,6 +15,7 @@ from langchain.llms.base import LLM
 from revChatGPT.V1 import Chatbot
 
 logger = logging.getLogger(__name__)
+
 
 class RevGPTLLM(LLM):
     model: str
@@ -21,34 +27,35 @@ class RevGPTLLM(LLM):
 
     def _get_chatbot(self) -> Chatbot:
         if self.chatbot is None:
-            self.chatbot = Chatbot(config={
-                "access_token": os.environ["GPT4_TOKEN"],
-                "model": self.model,
-            })
+            self.chatbot = Chatbot(
+                config={
+                    "access_token": os.environ["GPT4_TOKEN"],
+                    "model": self.model,
+                }
+            )
         return self.chatbot
-    
+
     def _ask(self, prompt: str) -> str:
         response = ""
         for data in self._get_chatbot().ask(prompt, auto_continue=True):
-                response = data["message"]
+            response = data["message"]
         return response
 
     def _call(
-            self,
-            prompt: str,
-            stop: Optional[List[str]] = None,
-            run_manager: Optional[CallbackManagerForLLMRun] = None,
-            ) -> str:
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[CallbackManagerForLLMRun] = None,
+    ) -> str:
         if stop is not None:
             raise NotImplementedError("Stop not implemented")
         return self._ask(prompt)
-
 
     @property
     def _identifying_params(self) -> Mapping[str, Any]:
         """Get the identifying params for the LLM."""
         return {
-                "model": self.model,
+            "model": self.model,
         }
 
 
@@ -58,9 +65,9 @@ def get_llm_instance(model, **kwargs):
     The prefix defines what sort of class to use, such as ChatOpenAI or RevGPTLLM etc..
     """
     model_prefix_to_class = {
-            "revgpt": RevGPTLLM,
-            "openai": ChatOpenAI,
-            }
+        "revgpt": RevGPTLLM,
+        "openai": ChatOpenAI,
+    }
 
     model_prefix = model.split("-")[0]
     if model_prefix not in model_prefix_to_class:
@@ -71,15 +78,14 @@ def get_llm_instance(model, **kwargs):
 
     return model_prefix_to_class[model_prefix](model=model_name, **kwargs)
 
+
 def get_llm(model, template, **kwargs):
     system_message_prompt = SystemMessagePromptTemplate.from_template(template)
     human_message_prompt = HumanMessagePromptTemplate.from_template("{input}")
 
-    chat_prompt = ChatPromptTemplate.from_messages([
-        system_message_prompt,
-        human_message_prompt
-    ])
+    chat_prompt = ChatPromptTemplate.from_messages(
+        [system_message_prompt, human_message_prompt]
+    )
 
     chain = LLMChain(llm=get_llm_instance(model, **kwargs), prompt=chat_prompt)
     return chain
-
