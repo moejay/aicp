@@ -63,7 +63,7 @@ class VoiceOverArtistTool(AICPBaseTool):
         # Since we only have narrator at this point, no dialogue
         # character_bio=self.actor["character_bio"],
         response = chain.run(
-                **params,
+           **params,
         )
         print(response)
 

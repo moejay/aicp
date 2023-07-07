@@ -64,6 +64,7 @@ class ProductionConfig:
     video_height: int
     sd_base_image_width: int
     sd_base_image_height: int
+    num_images_per_scene: int
 
     @classmethod
     def from_yaml(cls, yaml_file: str):

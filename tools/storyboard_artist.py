@@ -104,7 +104,7 @@ class StoryBoardArtistTool(AICPBaseTool):
         noise_strength = 0.75
         num_inference_steps = 30 
         num_images_per_prompt = 1
-        num_images_per_scene = 10
+        num_images_per_scene = self.video.production_config.num_images_per_scene 
         image_height = self.video.production_config.video_height
         image_width = self.video.production_config.video_width 
 
@@ -163,7 +163,7 @@ class StoryBoardArtistTool(AICPBaseTool):
         # settings
         guidance_scale = 7.5
         num_inference_steps = 50 
-        num_images_per_prompt = 10
+        num_images_per_prompt = self.video.production_config.num_images_per_scene
         image_width = self.video.production_config.sd_base_image_width 
         image_height = self.video.production_config.sd_base_image_height
 
