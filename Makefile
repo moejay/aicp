@@ -110,3 +110,8 @@ runpod-create:
 		--env OPENAI_API_KEY="$(OPENAI_API_KEY)" \
 		--env GPT4_TOKEN="$(GPT4_TOKEN)"
 
+check-format:
+	@venv/bin/black . --check -v
+
+reformat:
+	@venv/bin/black .
