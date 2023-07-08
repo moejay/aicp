@@ -59,13 +59,7 @@ class VoiceOverArtistTool(AICPBaseTool):
                 video=self.video, param_name=param
             )
 
-        input_lines = []
-        for scene in parsers.get_scenes():
-            for dialogue in scene.dialogue:
-                input_lines.append(
-                    {"actor": dialogue.actor.name, "line": dialogue.line}
-                )
-        params["input"] = yaml.dump(input_lines)
+        params["input"] = yaml.dump(parsers.get_scenes())
 
         retries = 3
         while retries > 0:
@@ -75,6 +69,15 @@ class VoiceOverArtistTool(AICPBaseTool):
                 )
                 print(response)
                 parsed = yaml.load(response, Loader=yaml.Loader)
+                if len(parsed) != len(parsers.get_scenes()):
+                    raise Exception("Number of scenes does not match")
+                # Make sure it's an array of arrays that include actor and line
+                for converted_scene in parsed:
+                    for converted_dialogue in converted_scene:
+                        if "actor" not in converted_dialogue:
+                            raise Exception("Actor not found in converted dialogue")
+                        if "line" not in converted_dialogue:
+                            raise Exception("Line not found in converted dialogue")
 
                 # Save the updated script
                 with open(
@@ -110,21 +113,20 @@ class VoiceOverArtistTool(AICPBaseTool):
         else:
             for scene in self.scene_prompts:
                 print("--- SCENE ---")
-                print(f"{scene['actor']}: {scene['line']}")
-
-                actor = Actor.from_name(scene["actor"])
-                sentences = nltk.sent_tokenize(scene["line"])
-                for sentence in sentences:
-                    semantic_tokens = generate_text_semantic(
-                        sentence,
-                        history_prompt=actor.speaker,
-                        temp=GEN_TEMP,
-                        min_eos_p=0.05,
-                    )
-                    audio_array = semantic_to_waveform(
-                        semantic_tokens, history_prompt=actor.speaker
-                    )
-                    pieces += [audio_array, silence]
+                for item in scene:
+                    actor = Actor.from_name(item["actor"])
+                    sentences = nltk.sent_tokenize(item["line"])
+                    for sentence in sentences:
+                        semantic_tokens = generate_text_semantic(
+                            sentence,
+                            history_prompt=actor.speaker,
+                            temp=GEN_TEMP,
+                            min_eos_p=0.05,
+                        )
+                        audio_array = semantic_to_waveform(
+                            semantic_tokens, history_prompt=actor.speaker
+                        )
+                        pieces += [audio_array, silence]
                 timecodes.append(math.ceil(sum([len(p) / SAMPLE_RATE for p in pieces])))
 
             full_audio = np.concatenate(pieces)

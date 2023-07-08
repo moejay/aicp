@@ -23,11 +23,14 @@ prompt: |
   
   {actors__bio}
 
+  Make sure you return the exact number of scenes as was provided to you.
   Always provide your answer in the following format, do not include any other response or text,
   remember this is YAML where formatting (spacing, quotes, etc..) matters :
 
   ---
-  - line: "The new dialog lines for this scene"
-    actor: "The actor's name"
-  - line: "The new dialog lines for this scene"
-    actor: "The actor's name"
+  - - line: "The new dialog lines for this scene"
+      actor: "The actor's name"
+    - line: "Another line in the same scene"
+      actor: "Another actor's name"
+  - - line: "The new dialog lines for this scene"
+      actor: "The actor's name"
