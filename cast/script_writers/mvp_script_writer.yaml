@@ -5,6 +5,9 @@ prompt: |
   Your task is to write a script from input given to you by a researcher.
   Using the provided input write a script for a single camera narrated video of approximately 5 minutes.
   
+  The actors available to you are:
+  {actors__name}
+
   Follow these rules script writting rules:
 
   * All scenes have a title, description, and lines for the narrator.

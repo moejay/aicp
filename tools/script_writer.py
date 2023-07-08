@@ -51,8 +51,8 @@ class ScriptWriterTool(AICPBaseTool):
                 parsed = yaml.load(result, Loader=yaml.Loader)
                 # Make sure that every element in the list has the following:
                 # title, description, an array of characters (with name and actor name)
-                # an array of dialogue that includes 
-                
+                # an array of dialogue that includes
+
                 with open(utils.SCRIPT, "w") as f:
                     f.write(result)
                 return f"File written to {utils.SCRIPT}"

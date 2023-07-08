@@ -64,13 +64,12 @@ class StoryBoardArtistTool(AICPBaseTool):
 
         while retries > 0:
             try:
-                # Use only the description lines to save tokens
+                # Use only the title and description lines to save tokens
                 script_input = yaml.dump(
                     [
                         {
                             "scene_title": s.scene_title,
                             "scene_description": s.description,
-                            "content": s.content,
                         }
                         for s in parsers.get_scenes()
                     ]

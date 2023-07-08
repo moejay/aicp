@@ -5,6 +5,9 @@ prompt: |
   The show describes it self as:
   {program__description}
 
+  The actors available to you are:
+  {actors__name}
+
   Your task is to write a script based on the input from the human
 
   Using the provided input, write a script.

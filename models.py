@@ -197,6 +197,8 @@ class Director:
                 Loader=yaml.FullLoader,
             ),
         )
+
+
 @dataclass
 class Actor:
     """An actor object."""
@@ -219,9 +221,11 @@ class Actor:
         return from_dict(
             data_class=Actor,
             data=yaml.load(
-                open(os.path.join(ACTOR_PATH, f"{name}.yaml")), Loader=yaml.FullLoader
+                open(os.path.join(ACTOR_PATH, f"{name.strip().lower()}.yaml")),
+                Loader=yaml.FullLoader,
             ),
         )
+
 
 @dataclass
 class SceneDialogue:
@@ -230,6 +234,7 @@ class SceneDialogue:
     actor: Actor
     character_name: str
     line: str
+
 
 @dataclass
 class Scene:
@@ -240,10 +245,9 @@ class Scene:
 
     scene_title: str  # The title of the scene
     description: str  # The description of the scene
-    content: str  # The content of the scene
 
+    characters: dict[str, Actor]  # The characters in the scene
     dialogue: list[SceneDialogue]  # The dialogue of the scene
-
 
 
 @dataclass
@@ -260,8 +264,6 @@ class Program:
             return from_dict(
                 data_class=Program, data=yaml.load(f, Loader=yaml.FullLoader)
             )
-
-
 
 
 @dataclass
