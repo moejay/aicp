@@ -1,4 +1,5 @@
 import os
+import glob
 import subprocess
 
 from langchain.callbacks.manager import (
@@ -145,17 +146,37 @@ class SoundEngineerTool(AICPBaseTool):
         """Use the tool."""
 
         scenes = get_scenes()
-        music_files = []
+
+        # For each scene, calculate the duration of all music-{scene_number}.wav files
+        # and pad the audio with silence if the duration is less than the scene duration
+
+        all_music_files = []
         for i, scene in enumerate(scenes):
-            filename = os.path.join(utils.MUSIC_PATH, f"music-{i+1}.wav")
-            music_files.append(filename)
-            if scene.duration > 30:
+            music_files_for_scene = []
+            glob_result = glob.glob(
+                os.path.join(utils.MUSIC_PATH, f"music-{i+1}-*.wav")
+            )
+            for filename in glob_result:
+                music_files_for_scene.append(filename)
+                all_music_files.append(filename)
+
+            duration_of_music_files = 0
+            for filename in music_files_for_scene:
+                duration_of_music_files += AudioSegment.from_file(
+                    filename
+                ).duration_seconds
+
+            if duration_of_music_files < scene.duration:
+                # Pad the audio with silence
                 pad_audio_with_fade(
-                    filename, filename, 1000, 1000 * (scene.duration - 30)
+                    music_files_for_scene[-1],
+                    music_files_for_scene[-1],
+                    1000,
+                    1000 * (scene.duration - duration_of_music_files),
                 )
 
         combine_music_with_crossfade(
-            music_files, os.path.join(utils.MUSIC_PATH, "music.wav")
+            all_music_files, os.path.join(utils.MUSIC_PATH, "music.wav")
         )
 
         voiceover = AudioSegment.from_file(utils.VOICEOVER_WAV_FILE)
