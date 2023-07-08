@@ -200,6 +200,43 @@ class Director:
 
 
 @dataclass
+class Actor:
+    """An actor object."""
+
+    name: str
+    speaker: str
+    bio: str
+
+    @classmethod
+    def from_yaml(cls, yaml_file: str):
+        """Read the actor from a yaml file."""
+        with open(yaml_file, "r") as f:
+            return from_dict(
+                data_class=Actor, data=yaml.load(f, Loader=yaml.FullLoader)
+            )
+
+    @classmethod
+    def from_name(cls, name: str):
+        """Read the actor from a name."""
+        return from_dict(
+            data_class=Actor,
+            data=yaml.load(
+                open(os.path.join(ACTOR_PATH, f"{name.strip().lower()}.yaml")),
+                Loader=yaml.FullLoader,
+            ),
+        )
+
+
+@dataclass
+class SceneDialogue:
+    """A scene dialogue object."""
+
+    actor: Actor
+    character_name: str
+    line: str
+
+
+@dataclass
 class Scene:
     """A scene object."""
 
@@ -208,7 +245,9 @@ class Scene:
 
     scene_title: str  # The title of the scene
     description: str  # The description of the scene
-    content: str  # The content of the scene
+
+    characters: dict[str, Actor]  # The characters in the scene
+    dialogue: list[SceneDialogue]  # The dialogue of the scene
 
 
 @dataclass
@@ -225,33 +264,6 @@ class Program:
             return from_dict(
                 data_class=Program, data=yaml.load(f, Loader=yaml.FullLoader)
             )
-
-
-@dataclass
-class Actor:
-    """An actor object."""
-
-    name: str
-    speaker: str
-    character_bio: str
-
-    @classmethod
-    def from_yaml(cls, yaml_file: str):
-        """Read the actor from a yaml file."""
-        with open(yaml_file, "r") as f:
-            return from_dict(
-                data_class=Actor, data=yaml.load(f, Loader=yaml.FullLoader)
-            )
-
-    @classmethod
-    def from_name(cls, name: str):
-        """Read the actor from a name."""
-        return from_dict(
-            data_class=Actor,
-            data=yaml.load(
-                open(os.path.join(ACTOR_PATH, f"{name}.yaml")), Loader=yaml.FullLoader
-            ),
-        )
 
 
 @dataclass

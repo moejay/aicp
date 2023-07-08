@@ -6,7 +6,7 @@ import wave
 import logging
 import yaml
 
-from models import Scene, Video
+from models import Scene, SceneDialogue, Video, Actor, Program
 from utils import utils
 
 logger = logging.getLogger(__name__)
@@ -32,13 +32,27 @@ def get_scenes():
     script = get_script()
     scenes = []
     for scene in script:
+        characters_in_script = {}
+        for character in scene["characters"]:
+            characters_in_script[character["name"]] = Actor.from_name(
+                character["actor"].strip().lower()
+            )
+
         scenes.append(
             Scene(
                 scene_title=scene["title"].strip(),
                 description=scene["description"].strip(),
-                content=scene["narrator"].strip(),
                 start_time=None,
                 duration=None,
+                characters=characters_in_script,
+                dialogue=[
+                    SceneDialogue(
+                        actor=characters_in_script[dialogue["character"]],
+                        character_name=dialogue["character"],
+                        line=dialogue["content"],
+                    )
+                    for dialogue in scene["dialogue"]
+                ],
             )
         )
 
@@ -75,7 +89,7 @@ def resolve_param_from_video(video: Video, param_name):
     params are defined like such:
 
     * `program__description`
-    * `actors__character_bio`
+    * `actors__bio`
     """
     # Split the param name by __
     params = param_name.split("__")

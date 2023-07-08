@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import logging
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
@@ -17,6 +17,9 @@ from utils import utils, llms, parsers
 import math
 import yaml
 from .base import AICPBaseTool
+from models import Actor
+
+logger = logging.getLogger(__name__)
 
 
 class VoiceOverArtistTool(AICPBaseTool):
@@ -29,12 +32,7 @@ class VoiceOverArtistTool(AICPBaseTool):
 
     def initialize_agent(self):
         """Initialize the agent"""
-        self.load_actor()
         self.load_prompts()
-
-    def load_actor(self):
-        """Load voice actor specific files and configuration"""
-        self.speaker = self.video.actors[0].speaker
 
     def load_prompts(self):
         # load voiceover artist prompts if they exist or create them
@@ -45,7 +43,7 @@ class VoiceOverArtistTool(AICPBaseTool):
                 self.scene_prompts = yaml.load(prompts.read(), Loader=yaml.Loader)
         else:
             print("Generating new dialog prompts...")
-            self.scene_prompts = yaml.load(self.ego(), Loader=yaml.Loader)
+            self.scene_prompts = self.ego()
 
     def ego(self):
         """Personalize the dialog according to the selected voice actor"""
@@ -60,22 +58,37 @@ class VoiceOverArtistTool(AICPBaseTool):
             params[param] = parsers.resolve_param_from_video(
                 video=self.video, param_name=param
             )
-        params["input"] = yaml.dump(
-            [{"narrator": s["narrator"]} for s in parsers.get_script()]
-        )
 
-        # Since we only have narrator at this point, no dialogue
-        # character_bio=self.actor["character_bio"],
-        response = chain.run(
-            **params,
-        )
-        print(response)
+        input_lines = []
+        for scene in parsers.get_scenes():
+            for dialogue in scene.dialogue:
+                input_lines.append(
+                    {"actor": dialogue.actor.name, "line": dialogue.line}
+                )
+        params["input"] = yaml.dump(input_lines)
 
-        # Save the updated script
-        with open(os.path.join(utils.PATH_PREFIX, "voiceover_prompts.yaml"), "w") as f:
-            f.write(response)
+        retries = 3
+        while retries > 0:
+            try:
+                response = chain.run(
+                    **params,
+                )
+                print(response)
+                parsed = yaml.load(response, Loader=yaml.Loader)
 
-        return response
+                # Save the updated script
+                with open(
+                    os.path.join(utils.PATH_PREFIX, "voiceover_prompts.yaml"), "w"
+                ) as f:
+                    f.write(response)
+
+                return parsed
+            except Exception as e:
+                retries -= 1
+                logger.warning(e)
+
+        logger.error("Failed to generate voiceover prompts, retries exhausted.")
+        raise Exception("Failed to generate voiceover prompts, retries exhausted.")
 
     def _run(
         self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
@@ -87,7 +100,6 @@ class VoiceOverArtistTool(AICPBaseTool):
         # then generate the voiceover
         preload_models()
         GEN_TEMP = 0.7
-        SPEAKER = self.speaker
         silence = np.zeros(int(0.25 * SAMPLE_RATE))
         pieces = []
         timecodes = [0]  # Start at 0
@@ -98,15 +110,19 @@ class VoiceOverArtistTool(AICPBaseTool):
         else:
             for scene in self.scene_prompts:
                 print("--- SCENE ---")
-                print(f"DIALOG: {scene['dialog']}")
+                print(f"{scene['actor']}: {scene['line']}")
 
-                sentences = nltk.sent_tokenize(scene["dialog"])
+                actor = Actor.from_name(scene["actor"])
+                sentences = nltk.sent_tokenize(scene["line"])
                 for sentence in sentences:
                     semantic_tokens = generate_text_semantic(
-                        sentence, history_prompt=SPEAKER, temp=GEN_TEMP, min_eos_p=0.05
+                        sentence,
+                        history_prompt=actor.speaker,
+                        temp=GEN_TEMP,
+                        min_eos_p=0.05,
                     )
                     audio_array = semantic_to_waveform(
-                        semantic_tokens, history_prompt=SPEAKER
+                        semantic_tokens, history_prompt=actor.speaker
                     )
                     pieces += [audio_array, silence]
                 timecodes.append(math.ceil(sum([len(p) / SAMPLE_RATE for p in pieces])))

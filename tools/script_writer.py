@@ -2,6 +2,8 @@
 
 from typing import Optional
 from dotenv import load_dotenv
+import logging
+import yaml
 
 load_dotenv()
 
@@ -12,6 +14,8 @@ from langchain.callbacks.manager import (
 from utils import utils, llms, parsers
 
 from .base import AICPBaseTool
+
+logger = logging.getLogger(__name__)
 
 
 class ScriptWriterTool(AICPBaseTool):
@@ -37,12 +41,28 @@ class ScriptWriterTool(AICPBaseTool):
                 video=self.video, param_name=param
             )
         params["input"] = open(utils.RESEARCH, "r").read()
-        result = chain.run(
-            **params,
-        )
-        with open(utils.SCRIPT, "w") as f:
-            f.write(result)
-        return f"File written to {utils.SCRIPT}"
+
+        retries = 3
+        while retries > 0:
+            try:
+                result = chain.run(
+                    **params,
+                )
+                parsed = yaml.load(result, Loader=yaml.Loader)
+                # Make sure that every element in the list has the following:
+                # title, description, an array of characters (with name and actor name)
+                # an array of dialogue that includes
+
+                with open(utils.SCRIPT, "w") as f:
+                    f.write(result)
+                return f"File written to {utils.SCRIPT}"
+            except Exception as e:
+                retries -= 1
+                logger.warning(f"{e}")
+                logger.warning("Failed to generate script, retrying")
+
+        logger.error("Failed to generate script, retries exhausted")
+        return "Failed to generate script"
 
     def _arun(
         self, query: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
