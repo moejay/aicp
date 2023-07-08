@@ -89,7 +89,7 @@ def resolve_param_from_video(video: Video, param_name):
     params are defined like such:
 
     * `program__description`
-    * `actors__character_bio`
+    * `actors__bio`
     """
     # Split the param name by __
     params = param_name.split("__")

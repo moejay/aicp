@@ -205,7 +205,7 @@ class Actor:
 
     name: str
     speaker: str
-    character_bio: str
+    bio: str
 
     @classmethod
     def from_yaml(cls, yaml_file: str):

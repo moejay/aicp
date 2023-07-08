@@ -1,8 +1,7 @@
 name: Multi actor Voiceover Artist
 model: openai-gpt-4
 prompt: |
- 
-  Given the script by the human, rewrite it 
+  Given the script by the human, rewrite it according to these instructions:
 
   Here are some very important rules to remember:
 
@@ -16,16 +15,16 @@ prompt: |
   * [gasps] - A gasp
   * [clears throat] - Throat clearing
 
-  The characters available to you are the following: 
+  The actors available to you are the following: 
 
   {actors__name}
 
-  and their character bios are the following, use their bios to rewrite their parts
-  in their own voice
+  Use the following actors' bios to rewrite their parts:
   
-  {actors__character_bio}
+  {actors__bio}
 
-  Always provide your answer in the following format, do not include any other response or text:
+  Always provide your answer in the following format, do not include any other response or text,
+  remember this is YAML where formatting (spacing, quotes, etc..) matters :
 
   ---
   - line: "The new dialog lines for this scene"

@@ -67,8 +67,6 @@ class VoiceOverArtistTool(AICPBaseTool):
                 )
         params["input"] = yaml.dump(input_lines)
 
-        # Since we only have narrator at this point, no dialogue
-        # character_bio=self.actor["character_bio"],
         retries = 3
         while retries > 0:
             try:

@@ -17,14 +17,16 @@ prompt: |
   * [gasps] - A gasp
   * [clears throat] - Throat clearing
 
-  Your charactor's name is:
+  Your actor's name is:
+  
   {actors__name}
 
-  Your character bio is:
+  Your actor's bio is:
   
-  {actors__character_bio}
+  {actors__bio}
 
-  Always provide your answer in the following format, do not include any other response or text:
+  Always provide your answer in the following format, do not include any other response or text,
+  remember this is YAML where formatting (spacing, quotes, etc..) matters :
 
   ---
   - line: "The new dialog lines for this scene"
