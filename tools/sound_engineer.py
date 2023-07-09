@@ -10,6 +10,8 @@ from pydub import AudioSegment
 from typing import Optional
 from utils.parsers import get_scenes
 from utils import utils
+from df import enhance, init_df
+from df.io import load_audio, save_audio
 
 from .base import AICPBaseTool
 
@@ -179,14 +181,19 @@ class SoundEngineerTool(AICPBaseTool):
             all_music_files, os.path.join(utils.MUSIC_PATH, "music.wav")
         )
 
+        model, df_state, _ = init_df()
+        audio, _ = load_audio(utils.VOICEOVER_WAV_FILE, sr=df_state.sr())
+        enhanced_audio = enhance(model, df_state, audio)
+        save_audio(utils.VOICEOVER_WAV_FILE, enhanced_audio, df_state.sr())
         voiceover = AudioSegment.from_file(utils.VOICEOVER_WAV_FILE)
+
         background_music = AudioSegment.from_file(
             os.path.join(utils.MUSIC_PATH, "music.wav")
         )
 
         # Boost audio sources slightly
         background_music += 2
-        voiceover += 2
+        voiceover += 5
 
         # Lower gain on background music
         average_loudness_voiceover = voiceover.dBFS
