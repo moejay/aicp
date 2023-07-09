@@ -1,5 +1,7 @@
 import os
+import math
 import yaml
+import logging
 
 from audiocraft.models import MusicGen
 from audiocraft.data.audio import audio_write
@@ -11,6 +13,8 @@ from typing import Optional
 from utils.parsers import get_scenes
 from utils import utils, llms, parsers
 from .base import AICPBaseTool
+
+logger = logging.getLogger(__name__)
 
 
 class MusicComposerTool(AICPBaseTool):
@@ -39,25 +43,42 @@ class MusicComposerTool(AICPBaseTool):
     def ego(self):
         cast_member = self.video.director.get_music_composer()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
-
+        prompt_params = parsers.get_params_from_prompt(cast_member.prompt)
+        # This is in addition to the input (Human param)
+        # Resolve params from existing config/director/program
+        params = {}
+        for param in prompt_params:
+            params[param] = parsers.resolve_param_from_video(
+                video=self.video, param_name=param
+            )
         script_input = yaml.dump(
             [{"description": s["description"]} for s in parsers.get_script()]
         )
+        params["input"] = yaml.dump(script_input)
 
-        response = chain.run(script_input)
-        print(response)
+        retries = 3
+        while retries > 0:
+            try:
+                response = chain.run(
+                    **params,
+                )
+                print(response)
+                parsed = yaml.load(response, Loader=yaml.Loader)
+                if len(parsed) != len(parsers.get_scenes()):
+                    raise Exception("Number of scenes does not match")
+                # Save the updated script
+                with open(
+                    os.path.join(utils.PATH_PREFIX, "music_prompts.yaml"), "w"
+                ) as f:
+                    f.write(response)
 
-        scene_prompts = yaml.load(response, Loader=yaml.Loader)
-        scenes = get_scenes()
+                return parsed
+            except Exception as e:
+                retries -= 1
+                logger.warning(e)
 
-        if len(scene_prompts) < len(scenes):
-            return "Please try again, not enough music prompts"
-
-        # Save the prompts
-        with open(os.path.join(utils.PATH_PREFIX, "music_prompts.yaml"), "w") as f:
-            f.write(response)
-
-        return scene_prompts
+        logger.error("Failed to generate music prompts, retries exhausted")
+        raise Exception("Failed to generate music prompts, retries exhausted")
 
     def _run(
         self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
@@ -75,24 +96,36 @@ class MusicComposerTool(AICPBaseTool):
 
             print(f"PROMPT: {self.scene_prompts[i]['prompt']}")
 
-            model.set_generation_params(
-                use_sampling=True, top_k=250, duration=min(30, scene.duration)
-            )
+            # Generate music in 30 second chunks for each scene, but no chunks shorter than 8 seconds
+            last_chunk_duration = scene.duration % 30
+            num_chunks = math.ceil(scene.duration / 30)
+            if last_chunk_duration < 8:
+                num_chunks -= 1
+            # Make sure there is at least one chunk
+            num_chunks = max(1, num_chunks)
 
-            output = model.generate(
-                descriptions=[self.scene_prompts[i]["prompt"]],
-                progress=True,
-            )
+            for j in range(num_chunks):
+                chunk_duration = 30
+                if j == num_chunks - 1:
+                    chunk_duration = last_chunk_duration
+                model.set_generation_params(
+                    use_sampling=True, top_k=250, duration=chunk_duration
+                )
 
-            filename = os.path.join(utils.MUSIC_PATH, f"music-{i+1}.wav")
-            audio_write(
-                filename,
-                output[0].to("cpu"),
-                model.sample_rate,
-                strategy="rms",
-                rms_headroom_db=16,
-                add_suffix=False,
-            )
+                output = model.generate(
+                    descriptions=[self.scene_prompts[i]["prompt"]],
+                    progress=True,
+                )
+
+                filename = os.path.join(utils.MUSIC_PATH, f"music-{i+1}-{j+1}.wav")
+                audio_write(
+                    filename,
+                    output[0].to("cpu"),
+                    model.sample_rate,
+                    strategy="rms",
+                    rms_headroom_db=16,
+                    add_suffix=False,
+                )
 
         return "Done generating music score"
 
