@@ -90,8 +90,8 @@ class MusicComposerTool(AICPBaseTool):
 
         for i, scene in enumerate(scenes):
             # dont recreate music, its expensive
-            if os.path.exists(os.path.join(utils.MUSIC_PATH, f"music-{i+1}.wav")):
-                print(f"Skipping: music-{i+1}.wav")
+            if os.path.exists(os.path.join(utils.MUSIC_PATH, f"music-{i+1}-1.wav")):
+                print(f"Skipping: music for scene {i+1}... already exists")
                 continue
 
             print(f"PROMPT: {self.scene_prompts[i]['prompt']}")
