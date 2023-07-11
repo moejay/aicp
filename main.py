@@ -11,7 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 def prep_video_params(
-    prompt, program: str, director: str, actors: str, config: str, working_dir, step
+    prompt,
+    program: str,
+    director: str,
+    actors: str,
+    config: str,
+    working_dir,
+    step: str,
+    single_step: bool,
 ):
     """Prepare the video parameters for the make_video function"""
     video = Video(
@@ -28,7 +35,7 @@ def prep_video_params(
         ),
         output_dir=working_dir,
     )
-    return make_video(video, step)
+    return make_video(video, step, single_step)
 
 
 parser = ArgumentParser()
@@ -41,6 +48,8 @@ parser.add_argument(
 parser.add_argument("--actors", nargs="+", help="The actors to use for the video")
 parser.add_argument("--program", help="The program aka show to use for the video")
 parser.add_argument("--output", help="The output directory to write to")
+parser.add_argument("--step", help="The step to start at")
+parser.add_argument("--single-step", action="store_true", help="Run a single step")
 
 
 demo = make_ui(prep_video_params)
@@ -73,7 +82,8 @@ if __name__ == "__main__":
                     args.actors,
                     args.production_config,
                     args.output,
-                    "Researcher",
+                    args.step,
+                    args.single_step,
                 )
                 print(result)
                 break
