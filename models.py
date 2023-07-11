@@ -256,6 +256,7 @@ class Program:
 
     title: str
     description: str
+    rules: str
 
     @classmethod
     def from_yaml(cls, yaml_file: str):
