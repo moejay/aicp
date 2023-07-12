@@ -98,6 +98,7 @@ def make_ui(prep_video_params):
                 ],
                 value="Researcher",
             )
+            single_step = gr.Checkbox(label="Single Step", value=False)
             submit = gr.Button(label="Submit")
 
             with gr.Accordion("Configure stuff"):
@@ -145,9 +146,7 @@ def make_ui(prep_video_params):
                         inputs=production_config,
                         outputs=production_config_contents,
                     )
-            ## Ask the user which step to start at
-
-            output = gr.Video(label="Your Video", format="mp4")
+            output = gr.Textbox(label="Output", value="")
             submit.click(
                 prep_video_params,
                 inputs=[
@@ -158,6 +157,7 @@ def make_ui(prep_video_params):
                     production_config,
                     working_dir,
                     step,
+                    single_step,
                 ],
                 outputs=output,
             )

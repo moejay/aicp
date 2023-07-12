@@ -17,7 +17,7 @@ from tools.youtube_distributor import YoutubeDistributorTool
 logger = logging.getLogger(__name__)
 
 
-def make_video(video: Video, step: str):
+def make_video(video: Video, step: str, single_step: bool = False):
     prompt = video.prompt
     working_dir = video.output_dir
     os.makedirs(working_dir, exist_ok=True)
@@ -47,4 +47,7 @@ def make_video(video: Video, step: str):
     logger.info("Starting at tool %s", tools[0].name)
     for t in tools:
         t.run(prompt)
-    return utils.FINAL_VIDEO_FILE
+        if single_step:
+            logger.info("Single step mode, stopping after %s", t.name)
+            return "Single step mode, stopped at %s" % t.name
+    return "Done all steps"
