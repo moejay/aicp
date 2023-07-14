@@ -7,3 +7,4 @@ projects/
 notebooks/outputs/
 output
 inputs.txt
+tmp/

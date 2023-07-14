@@ -1,6 +1,7 @@
 # Description: Utility functions for the project.
 import os
 
+# Those are the creation paths (files that get created during a run)
 PATH_PREFIX = ""
 RESEARCH = "research.yaml"
 SCRIPT = "script.yaml"
@@ -14,9 +15,10 @@ FINAL_VIDEO_FILE = "video.mp4"
 MUSIC_PATH = "music"
 DISTRIBUTION_METADATA_FILE = "distribution_metadata.yaml"
 
-# Those paths are static and not prefixable
+# Those are production paths (files that are used to start a run)
 CAST_PATH_PREFIX = os.environ.get("CAST_PATH_PREFIX", "cast")
 ACTOR_PATH = os.path.join(CAST_PATH_PREFIX, "actors")
+SPEAKER_PATH = "speakers"
 DIRECTOR_PATH = os.path.join(CAST_PATH_PREFIX, "directors")
 RESEARCHER_PATH = os.path.join(CAST_PATH_PREFIX, "researchers")
 SCRIPT_WRITER_PATH = os.path.join(CAST_PATH_PREFIX, "script_writers")
