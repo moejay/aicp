@@ -8,3 +8,4 @@ notebooks/outputs/
 output
 inputs.txt
 tmp/
+bin/runpodctl
