@@ -40,7 +40,7 @@ def create_video_with_audio(images_dict, audio_dict, resolution, output_file):
     # Audio compressor
     audio_compressor = '-filter:a "speechnorm=e=6.75:r=0.00001:l=1"'
     # codec
-    codec = '-c:v libx264 -preset ultrafast' 
+    codec = "-c:v libx264 -preset ultrafast"
 
     ffmpeg_cmd = f"ffmpeg -f concat -i {images_list_file} -vf '{scale_filter}' -r 30 {audio_compressor} {codec} -y '{utils.TEMP_VIDEO_FILE}'"
     subprocess.run(ffmpeg_cmd, shell=True)
