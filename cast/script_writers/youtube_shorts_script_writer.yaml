@@ -36,6 +36,3 @@ prompt: |
     dialogue:
       - character: narrator
         content: "lines for narrator"
-
-  Here is the research:
-  {input}
