@@ -99,15 +99,23 @@ class MusicComposerTool(AICPBaseTool):
             # Generate music in 30 second chunks for each scene, but no chunks shorter than 8 seconds
             last_chunk_duration = scene.duration % 30
             num_chunks = math.ceil(scene.duration / 30)
-            if last_chunk_duration < 8:
-                num_chunks -= 1
+
+            if last_chunk_duration == 0:
+                last_chunk_duration = 30
+
             # Make sure there is at least one chunk
             num_chunks = max(1, num_chunks)
 
+            print(f"Generating {num_chunks} chunks for scene {i+1}...")
             for j in range(num_chunks):
                 chunk_duration = 30
                 if j == num_chunks - 1:
                     chunk_duration = last_chunk_duration
+                if chunk_duration == 0:
+                    continue
+
+                print(f"Generating chunk {j+1} of {num_chunks}...: Duration: {chunk_duration}")
+
                 model.set_generation_params(
                     use_sampling=True, top_k=250, duration=chunk_duration
                 )
