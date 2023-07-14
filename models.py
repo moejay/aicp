@@ -205,6 +205,8 @@ class Actor:
 
     name: str
     speaker: str
+    speaker_text_temp: float
+    speaker_wave_temp: float
     bio: str
 
     @classmethod

@@ -10,8 +10,8 @@ import nltk
 import numpy as np
 from scipy.io import wavfile
 
-from bark.generation import generate_text_semantic, preload_models, clean_models
-from bark.api import semantic_to_waveform
+from bark.generation import preload_models, clean_models
+from bark.api import generate_audio
 from bark import SAMPLE_RATE
 from utils import utils, llms, parsers
 import math
@@ -102,7 +102,6 @@ class VoiceOverArtistTool(AICPBaseTool):
 
         # then generate the voiceover
         preload_models()
-        GEN_TEMP = 0.7
         silence = np.zeros(int(0.25 * SAMPLE_RATE))
         pieces = []
         timecodes = [0]  # Start at 0
@@ -117,14 +116,11 @@ class VoiceOverArtistTool(AICPBaseTool):
                     actor = Actor.from_name(item["actor"])
                     sentences = nltk.sent_tokenize(item["line"])
                     for sentence in sentences:
-                        semantic_tokens = generate_text_semantic(
+                        audio_array = generate_audio(
                             sentence,
+                            text_temp=actor.speaker_text_temp,
+                            waveform_temp=actor.speaker_wave_temp,
                             history_prompt=actor.speaker,
-                            temp=GEN_TEMP,
-                            min_eos_p=0.05,
-                        )
-                        audio_array = semantic_to_waveform(
-                            semantic_tokens, history_prompt=actor.speaker
                         )
                         pieces += [audio_array, silence]
                 timecodes.append(math.ceil(sum([len(p) / SAMPLE_RATE for p in pieces])))
