@@ -114,7 +114,9 @@ class MusicComposerTool(AICPBaseTool):
                 if chunk_duration == 0:
                     continue
 
-                print(f"Generating chunk {j+1} of {num_chunks}...: Duration: {chunk_duration}")
+                print(
+                    f"Generating chunk {j+1} of {num_chunks}...: Duration: {chunk_duration}"
+                )
 
                 model.set_generation_params(
                     use_sampling=True, top_k=250, duration=chunk_duration

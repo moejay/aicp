@@ -138,22 +138,22 @@ def step_2_generate_voice_variations(sentence, voice, text_temp, waveform_temp):
     return gr.Dropdown.update(choices=variations)
 
 
-def step_3_generate_test_from_voice_variation(sentence, voice_variation):
+def step_3_generate_test_from_voice_variation(sentence, voice, voice_variation):
     """Generate a test from the voice variation"""
     output_file = f"vo-variation-test.wav"
     # extract text_temp and waveform_temp from the filename
     text_temp, waveform_temp = voice_variation.replace(".wav", "").split("-")[-2:]
     text_temp = float(text_temp)
     waveform_temp = float(waveform_temp)
-    voice, _ = generate_audio_from_sentence(
+    new_audio, _ = generate_audio_from_sentence(
         sentence,
-        speaker=voice_variation.replace(".wav", ".npz"),
+        speaker=voice.replace(".wav", ".npz"),
         output_file=output_file,
         output_full=False,
         text_temp=text_temp,
         waveform_temp=waveform_temp,
     )
-    return voice
+    return new_audio
 
 
 def step_4_save_actor(
@@ -301,7 +301,7 @@ def actor_creator_ui():
             )
             generate_test_from_variation_btn.click(
                 fn=step_3_generate_test_from_voice_variation,
-                inputs=[test_sentence, list_of_voice_variations],
+                inputs=[test_sentence, list_of_voices, list_of_voice_variations],
                 outputs=voice_variation,
             )
 
