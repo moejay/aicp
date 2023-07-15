@@ -88,17 +88,19 @@ def step_2_generate_voice_variations(sentence, voice, text_temp, waveform_temp):
     """Generate variations of the voice"""
     variations = []
 
+    num_to_generate = 3
+    start_gen = 0.02
     # Generate 10 variations on text_temp where the median is text_temp and the range is 0.1 on either side
     # Keeping waveform_temp constant
-    for i in range(10):
-        new_text_temp = text_temp - 0.1 + (i * 0.02)
+    for i in range(num_to_generate):
+        new_text_temp = text_temp - start_gen + (i * 0.02)
         new_waveform_temp = waveform_temp
         output_file = voice.replace(".wav", f"-{new_text_temp}-{new_waveform_temp}.wav")
         new_file, _ = generate_audio_from_sentence(
             sentence,
             speaker=voice.replace(".wav", ".npz"),
             output_file=output_file,
-            output_full=True,
+            output_full=False,
             text_temp=new_text_temp,
             waveform_temp=new_waveform_temp,
         )
@@ -106,30 +108,30 @@ def step_2_generate_voice_variations(sentence, voice, text_temp, waveform_temp):
 
     # Generate 10 variations on waveform_temp where the median is waveform_temp and the range is 0.1 on either side
     # Keeping text_temp constant
-    for i in range(10):
-        new_waveform_temp = waveform_temp - 0.1 + (i * 0.02)
+    for i in range(num_to_generate):
+        new_waveform_temp = waveform_temp - start_gen + (i * 0.02)
         new_text_temp = text_temp
         output_file = voice.replace(".wav", f"-{new_text_temp}-{new_waveform_temp}.wav")
         new_file, _ = generate_audio_from_sentence(
             sentence,
             speaker=voice.replace(".wav", ".npz"),
             output_file=output_file,
-            output_full=True,
+            output_full=False,
             text_temp=new_text_temp,
             waveform_temp=new_waveform_temp,
         )
         variations.append(new_file)
 
     # Generate 10 variations on both text_temp and waveform_temp where the median is text_temp and waveform_temp and the range is 0.1 on either side
-    for i in range(10):
-        new_waveform_temp = waveform_temp - 0.1 + (i * 0.02)
-        new_text_temp = text_temp - 0.1 + (i * 0.02)
+    for i in range(num_to_generate):
+        new_waveform_temp = waveform_temp - start_gen + (i * 0.02)
+        new_text_temp = text_temp - start_gen + (i * 0.02)
         output_file = voice.replace(".wav", f"-{new_text_temp}-{new_waveform_temp}.wav")
         new_file, _ = generate_audio_from_sentence(
             sentence,
             speaker=voice.replace(".wav", ".npz"),
             output_file=output_file,
-            output_full=True,
+            output_full=False,
             text_temp=new_text_temp,
             waveform_temp=new_waveform_temp,
         )
@@ -161,6 +163,7 @@ def step_4_save_actor(
     actor_bio,
     actor_physical_description,
     actor_catch_phrase,
+    voice,
     voice_variation,
 ):
     """Save the actor as yaml, and save the voice variation as npz"""
@@ -312,6 +315,7 @@ def actor_creator_ui():
                     actor_bio,
                     actor_physical_description,
                     initial_sentence,
+                    list_of_voices,
                     list_of_voice_variations,
                 ],
                 outputs=[save_actor_btn],

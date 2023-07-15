@@ -12,7 +12,7 @@ prompt: |
   Your task is use the provided research to write a fast and engaging script for this show with only two scenes.
 
   Follow these rules script writting rules:
-  * Dont bother with any introductions get right into the topic.
+  * Talk only about the topic provided by the human
   * All scenes have a title, description, and lines for the narrator.
   * Scene descriptions should be brief and focused on major details such as people and places. Refrain from scenes of text.
   * Remember this is a short 60 second video. Keep the dialogue tight and cover only the most interesting parts.
