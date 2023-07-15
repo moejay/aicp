@@ -66,7 +66,7 @@ def get_scenes():
     ]
     # Calculate duration of each scene
     for i, scene in enumerate(scenes):
-        if i == len(timecodes) - 1:
+        if i == len(scenes) - 1:
             scene.duration = get_voiceover_duration() - timecodes[i]
         else:
             scene.duration = timecodes[i + 1] - timecodes[i]

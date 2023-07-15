@@ -119,7 +119,7 @@ class VoiceOverArtistTool(AICPBaseTool):
                         audio_array = generate_audio(
                             sentence,
                             text_temp=actor.speaker_text_temp,
-                            waveform_temp=actor.speaker_wave_temp,
+                            waveform_temp=actor.speaker_waveform_temp,
                             history_prompt=actor.speaker,
                         )
                         pieces += [audio_array, silence]
