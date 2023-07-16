@@ -127,7 +127,9 @@ class VoiceOverArtistTool(AICPBaseTool):
                             history_prompt=actor.speaker,
                         )
                         if actor.speaker_enhance:
-                            audio_array = enhance(model, df_state, torch.tensor([audio_array]))
+                            audio_array = enhance(
+                                model, df_state, torch.tensor([audio_array])
+                            )
                         pieces += [audio_array, silence]
                 timecodes.append(math.ceil(sum([len(p) / SAMPLE_RATE for p in pieces])))
 

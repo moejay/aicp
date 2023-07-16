@@ -211,7 +211,6 @@ class Actor:
     speaker_waveform_temp: float = 0.7
     speaker_enhance: bool = False
 
-
     @classmethod
     def from_yaml(cls, yaml_file: str):
         """Read the actor from a yaml file."""
