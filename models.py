@@ -204,10 +204,13 @@ class Actor:
     """An actor object."""
 
     name: str
-    speaker: str
-    speaker_text_temp: float
-    speaker_waveform_temp: float
     bio: str
+    physical_description: str
+    speaker: str
+    speaker_text_temp: float = 0.7
+    speaker_waveform_temp: float = 0.7
+    speaker_enhance: bool = False
+
 
     @classmethod
     def from_yaml(cls, yaml_file: str):

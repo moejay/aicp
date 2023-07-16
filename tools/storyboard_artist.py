@@ -59,22 +59,34 @@ class StoryBoardArtistTool(AICPBaseTool):
         to generate more descriptive prompts"""
         cast_member = self.video.director.get_storyboard_artist()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
+        prompt_params = parsers.get_params_from_prompt(cast_member.prompt)
+        # This is in addition to the input (Human param)
+        # Resolve params from existing config/director/program
+        params = {}
+        for param in prompt_params:
+            params[param] = parsers.resolve_param_from_video(
+                video=self.video, param_name=param
+            )
+
+        script_input = yaml.dump(
+            [
+                {
+                    "scene_title": s.scene_title,
+                    "scene_description": s.description,
+                }
+                for s in parsers.get_scenes()
+            ]
+        )
+        params["input"] = script_input
 
         retries = 3
 
         while retries > 0:
             try:
                 # Use only the title and description lines to save tokens
-                script_input = yaml.dump(
-                    [
-                        {
-                            "scene_title": s.scene_title,
-                            "scene_description": s.description,
-                        }
-                        for s in parsers.get_scenes()
-                    ]
+                response = chain.run(
+                    **params,
                 )
-                response = chain.run(script_input)
                 logger.info(response)
 
                 parsed = yaml.load(response, Loader=yaml.Loader)

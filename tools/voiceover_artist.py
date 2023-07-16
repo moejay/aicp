@@ -8,6 +8,8 @@ from typing import Optional
 import os
 import nltk
 import numpy as np
+from df import enhance, init_df
+import torch
 from scipy.io import wavfile
 
 from bark.generation import preload_models, clean_models
@@ -110,6 +112,8 @@ class VoiceOverArtistTool(AICPBaseTool):
         if os.path.exists(utils.VOICEOVER_WAV_FILE):
             print("Skipping VO generation...")
         else:
+            model, df_state, _ = init_df()
+
             for scene in self.scene_prompts:
                 print("--- SCENE ---")
                 for item in scene:
@@ -122,6 +126,8 @@ class VoiceOverArtistTool(AICPBaseTool):
                             waveform_temp=actor.speaker_waveform_temp,
                             history_prompt=actor.speaker,
                         )
+                        if actor.speaker_enhance:
+                            audio_array = enhance(model, df_state, torch.tensor([audio_array]))
                         pieces += [audio_array, silence]
                 timecodes.append(math.ceil(sum([len(p) / SAMPLE_RATE for p in pieces])))
 
