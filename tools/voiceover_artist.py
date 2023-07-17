@@ -6,6 +6,7 @@ from langchain.callbacks.manager import (
 )
 from typing import Optional
 import os
+import librosa
 import nltk
 import numpy as np
 from df import enhance, init_df
@@ -13,9 +14,7 @@ import torch
 from scipy.io import wavfile
 
 from bark.generation import preload_models, clean_models
-from bark.api import generate_audio
-from bark import SAMPLE_RATE
-from utils import utils, llms, parsers
+from utils import utils, llms, parsers, voice_gen
 import math
 import yaml
 from .base import AICPBaseTool
@@ -95,6 +94,16 @@ class VoiceOverArtistTool(AICPBaseTool):
         logger.error("Failed to generate voiceover prompts, retries exhausted.")
         raise Exception("Failed to generate voiceover prompts, retries exhausted.")
 
+    def concatenate_and_remove(self, arr, target):
+        i = 1  # start from second element
+        while i < len(arr):
+            if arr[i] == target:
+                arr[i - 1] += target  # concatenate target to the previous string
+                arr.pop(i)  # remove the target
+            else:
+                i += 1  # move to the next element
+        return arr
+
     def _run(
         self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
     ) -> str:
@@ -104,7 +113,7 @@ class VoiceOverArtistTool(AICPBaseTool):
 
         # then generate the voiceover
         preload_models()
-        silence = np.zeros(int(0.25 * SAMPLE_RATE))
+        silence = np.zeros(int(0.25 * voice_gen.NEW_SAMPLE_RATE))
         pieces = []
         timecodes = [0]  # Start at 0
 
@@ -114,28 +123,67 @@ class VoiceOverArtistTool(AICPBaseTool):
         else:
             model, df_state, _ = init_df()
 
-            for scene in self.scene_prompts:
-                print("--- SCENE ---")
-                for item in scene:
+            for scene_index, scene in enumerate(self.scene_prompts):
+                print(f"--- SCENE: {scene_index + 1}/{len(self.scene_prompts)} ---")
+                for line_index, item in enumerate(scene):
                     actor = Actor.from_name(item["actor"])
                     sentences = nltk.sent_tokenize(item["line"])
-                    for sentence in sentences:
-                        audio_array = generate_audio(
+
+                    # It's way more likely to get a good laugh if it's in the sentence
+                    # We get a lot more "just noise" if it is a separate token
+                    non_word_tokens = [
+                        "[laughs]",
+                        "[sighs]",
+                        "[clears throat]",
+                        "[gasps]",
+                        "[coughs]",
+                    ]
+                    for token in non_word_tokens:
+                        sentences = self.concatenate_and_remove(sentences, token)
+
+                    for sentence_index, sentence in enumerate(sentences):
+                        print(f"{actor.name}: {sentence}")
+                        sentence_wav_file = os.path.join(
+                            utils.VOICEOVER_PATH,
+                            f"scene_{scene_index}_line_{line_index}_{sentence_index}.wav",
+                        )
+                        if os.path.exists(sentence_wav_file):
+                            print("Skipping line...")
+                            # Load wav file as a piece
+                            audio_array, _ = librosa.load(
+                                sentence_wav_file, sr=voice_gen.NEW_SAMPLE_RATE
+                            )
+                            pieces += [audio_array, silence]
+                            continue
+
+                        audio_array = voice_gen.generate_speech_as_takes(
                             sentence,
+                            history_prompt=actor.speaker,
                             text_temp=actor.speaker_text_temp,
                             waveform_temp=actor.speaker_waveform_temp,
-                            history_prompt=actor.speaker,
+                            max_takes=40,
+                            save_all_takes=True,
+                            output_dir=utils.VOICEOVER_PATH,
+                            output_file_prefix=f"scene_{scene_index}_line_{line_index}_{sentence_index}-take",
                         )
                         if actor.speaker_enhance:
                             audio_array = enhance(
                                 model, df_state, torch.tensor([audio_array])
                             )
                         pieces += [audio_array, silence]
-                timecodes.append(math.ceil(sum([len(p) / SAMPLE_RATE for p in pieces])))
+                        voice_gen.save_audio_signal_wav(
+                            audio_array, voice_gen.NEW_SAMPLE_RATE, sentence_wav_file
+                        )
+
+                timecodes.append(
+                    math.ceil(sum([len(p) / voice_gen.NEW_SAMPLE_RATE for p in pieces]))
+                )
 
             full_audio = np.concatenate(pieces)
             int_audio_arr = (full_audio * np.iinfo(np.int16).max).astype(np.int16)
-            wavfile.write(utils.VOICEOVER_WAV_FILE, SAMPLE_RATE, int_audio_arr)
+            wavfile.write(
+                utils.VOICEOVER_WAV_FILE, voice_gen.NEW_SAMPLE_RATE, int_audio_arr
+            )
 
             with open(utils.VOICEOVER_TIMECODES, "w") as f:
                 f.write("\n".join(map(str, timecodes)))
@@ -147,6 +195,7 @@ class VoiceOverArtistTool(AICPBaseTool):
                 break
             except:
                 pass
+        torch.cuda.empty_cache()
 
         return "Done generating voiceover audio"
 

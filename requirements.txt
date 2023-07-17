@@ -25,3 +25,5 @@ google-auth-oauthlib==1.0.0
 httplib2==0.22.0
 oauth2client==4.1.3
 deepfilternet==0.5.3
+sentence-transformers==2.2.2
+vocos==0.0.3

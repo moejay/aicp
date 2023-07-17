@@ -6,6 +6,7 @@ PATH_PREFIX = ""
 RESEARCH = "research.yaml"
 SCRIPT = "script.yaml"
 STORYBOARD_PATH = "storyboard"
+VOICEOVER_PATH = "voiceover"
 THUMBNAILS_PATH = "thumbnails"
 VOICEOVER_WAV_FILE = "script.wav"
 FINAL_AUDIO_FILE = "audio.wav"
@@ -62,7 +63,7 @@ production_configs = [
 
 def set_prefix(prefix):
     """Set the prefix of the project."""
-    global PATH_PREFIX, RESEARCH, SCRIPT, STORYBOARD_PATH, VOICEOVER_WAV_FILE, FINAL_AUDIO_FILE, VOICEOVER_TIMECODES, TEMP_VIDEO_FILE, FINAL_VIDEO_FILE, MUSIC_PATH, DISTRIBUTION_METADATA_FILE, THUMBNAILS_PATH
+    global PATH_PREFIX, RESEARCH, SCRIPT, STORYBOARD_PATH, VOICEOVER_PATH, VOICEOVER_WAV_FILE, FINAL_AUDIO_FILE, VOICEOVER_TIMECODES, TEMP_VIDEO_FILE, FINAL_VIDEO_FILE, MUSIC_PATH, DISTRIBUTION_METADATA_FILE, THUMBNAILS_PATH
 
     PATH_PREFIX = prefix
     RESEARCH = os.path.join(prefix, RESEARCH.split("/")[-1])
@@ -78,6 +79,9 @@ def set_prefix(prefix):
 
     STORYBOARD_PATH = os.path.join(prefix, STORYBOARD_PATH.split("/")[-1])
     os.makedirs(STORYBOARD_PATH, exist_ok=True)
+
+    VOICEOVER_PATH = os.path.join(prefix, VOICEOVER_PATH.split("/")[-1])
+    os.makedirs(VOICEOVER_PATH, exist_ok=True)
 
     THUMBNAILS_PATH = os.path.join(prefix, THUMBNAILS_PATH.split("/")[-1])
     os.makedirs(THUMBNAILS_PATH, exist_ok=True)
