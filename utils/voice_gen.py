@@ -9,8 +9,13 @@ import numpy as np
 import torch
 import torchaudio
 from vocos import Vocos
+import whisper
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 
 NEW_SAMPLE_RATE = 44100
+
+WHISPER_MODEL = None
 
 
 def generate_audio_from_sentence(
@@ -69,6 +74,26 @@ def compute_snr(audio_signal):
     return snr
 
 
+def compute_similarity(str1, str2):
+    # Load BERT model
+    model = SentenceTransformer("bert-base-nli-mean-tokens")
+
+    # Compute embeddings
+    embeddings = model.encode([str1, str2])
+
+    # Compute cosine similarity
+    cosine_sim = cosine_similarity([embeddings[0]], [embeddings[1]])[0][0]
+
+    return cosine_sim * 100
+
+
+def get_whisper_model():
+    global WHISPER_MODEL
+    if WHISPER_MODEL is None:
+        WHISPER_MODEL = whisper.load_model("base.en")
+    return WHISPER_MODEL
+
+
 def generate_speech(sentence, history_prompt, text_temp, waveform_temp):
     print(f"Generating sentence: {sentence}")
 
@@ -88,19 +113,22 @@ def generate_speech(sentence, history_prompt, text_temp, waveform_temp):
     audio_tokens_torch = torch.from_numpy(audio_tokens).to(device)
     features = vocos.codes_to_features(audio_tokens_torch)
     vocos_output = vocos.decode(features, bandwidth_id=torch.tensor([2], device=device))
-    audio = (
-        torchaudio.functional.resample(
-            vocos_output, orig_freq=SAMPLE_RATE, new_freq=NEW_SAMPLE_RATE
-        )
-        .cpu()
-        .numpy()[0]
+    audio_resampled = torchaudio.functional.resample(
+        vocos_output, orig_freq=SAMPLE_RATE, new_freq=NEW_SAMPLE_RATE
     )
-
+    whisper_resampled = torchaudio.functional.resample(
+        audio_resampled, orig_freq=NEW_SAMPLE_RATE, new_freq=16000
+    )
+    transcribed_text = get_whisper_model().transcribe(whisper_resampled[0])["text"]
+    text_similarity = compute_similarity(sentence, transcribed_text)
+    audio = audio_resampled.cpu().numpy()[0]
     snr = compute_snr(audio)
     duration = len(audio) / NEW_SAMPLE_RATE
 
     results = {
         "sentence": sentence,
+        "transcribed_text": transcribed_text,
+        "text_similarity": text_similarity,
         "duration": duration,
         "text_temp": text_temp,
         "waveform_temp": waveform_temp,
@@ -110,9 +138,11 @@ def generate_speech(sentence, history_prompt, text_temp, waveform_temp):
     print(
         f"""
     snr: {snr} 
+    transcribed_text: {transcribed_text}
+    text_similarity: {text_similarity}
     duration: {duration}"""
     )
-    if (snr < 20 or snr > 28) or duration > 9:
+    if (snr < 20 or snr > 28) or duration > 9 or text_similarity < 90:
         # Audio is noisy and or not clear
         print("We think it's bad")
         return audio, True, results
