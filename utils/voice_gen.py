@@ -18,6 +18,60 @@ NEW_SAMPLE_RATE = 44100
 WHISPER_MODEL = None
 
 
+def generate_ass(transcription_data):
+    """
+    Generate a ASS file content based on the transcription data.
+
+    Parameters:
+    transcription_data (dict): Transcription data including word-level timestamps.
+
+    Returns:
+    str: Content of the ASS file.
+    """
+    # ASS file header
+    ass_content = """[Script Info]
+ScriptType: v4.00+
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,DejaVu Sans,26,&H00FFFFFF,&H0000FFFF,&H00000000,&H80000000,1,1,0,0,100,100,0,0,1,2,2,2,10,10,10,0
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+    for i, segment in enumerate(transcription_data["segments"], start=1):
+        for word in segment["words"]:
+            # Convert start and end times to HH:MM:SS.mm format
+            start_time = format_time(word["start"])
+            end_time = format_time(word["end"])
+            # Add this subtitle to the ASS content
+            ass_content += (
+                f"Dialogue: 0,{start_time},{end_time},Default,,0,0,0,,{word['word']}\n"
+            )
+    return ass_content
+
+
+def format_time(seconds):
+    """
+    Convert a time in seconds to ASS time format.
+
+    Parameters:
+    seconds (float): Time in seconds.
+
+    Returns:
+    str: Time in ASS format (H:MM:SS.mm).
+    """
+    hours, remainder = divmod(seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    # Convert to milliseconds and round to 2 decimal places
+    milliseconds = round((seconds % 1) * 100)
+    # Remove the decimal part from seconds
+    seconds = int(seconds)
+    # Return in ASS format
+    return f"{int(hours)}:{int(minutes):02}:{seconds:02}.{milliseconds:02}"
+
+
 def generate_audio_from_sentence(
     sentence, speaker, output_file, output_full, text_temp=0.6, waveform_temp=0.6
 ):

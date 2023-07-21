@@ -261,6 +261,7 @@ class Program:
     title: str
     description: str
     rules: str
+    enable_subtitles: bool = False
 
     @classmethod
     def from_yaml(cls, yaml_file: str):

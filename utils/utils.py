@@ -11,6 +11,7 @@ THUMBNAILS_PATH = "thumbnails"
 VOICEOVER_WAV_FILE = "script.wav"
 FINAL_AUDIO_FILE = "audio.wav"
 VOICEOVER_TIMECODES = "voiceover_timecodes.txt"
+VOICEOVER_SUBTITLES = "voiceover.ass"
 TEMP_VIDEO_FILE = "temp_video.mp4"
 FINAL_VIDEO_FILE = "video.mp4"
 MUSIC_PATH = "music"
@@ -63,7 +64,7 @@ production_configs = [
 
 def set_prefix(prefix):
     """Set the prefix of the project."""
-    global PATH_PREFIX, RESEARCH, SCRIPT, STORYBOARD_PATH, VOICEOVER_PATH, VOICEOVER_WAV_FILE, FINAL_AUDIO_FILE, VOICEOVER_TIMECODES, TEMP_VIDEO_FILE, FINAL_VIDEO_FILE, MUSIC_PATH, DISTRIBUTION_METADATA_FILE, THUMBNAILS_PATH
+    global PATH_PREFIX, RESEARCH, SCRIPT, STORYBOARD_PATH, VOICEOVER_PATH, VOICEOVER_WAV_FILE, FINAL_AUDIO_FILE, VOICEOVER_TIMECODES, VOICEOVER_SUBTITLES, TEMP_VIDEO_FILE, FINAL_VIDEO_FILE, MUSIC_PATH, DISTRIBUTION_METADATA_FILE, THUMBNAILS_PATH
 
     PATH_PREFIX = prefix
     RESEARCH = os.path.join(prefix, RESEARCH.split("/")[-1])
@@ -71,6 +72,7 @@ def set_prefix(prefix):
     VOICEOVER_WAV_FILE = os.path.join(prefix, VOICEOVER_WAV_FILE.split("/")[-1])
     FINAL_AUDIO_FILE = os.path.join(prefix, FINAL_AUDIO_FILE.split("/")[-1])
     VOICEOVER_TIMECODES = os.path.join(prefix, VOICEOVER_TIMECODES.split("/")[-1])
+    VOICEOVER_SUBTITLES = os.path.join(prefix, VOICEOVER_SUBTITLES.split("/")[-1])
     FINAL_VIDEO_FILE = os.path.join(prefix, FINAL_VIDEO_FILE.split("/")[-1])
     TEMP_VIDEO_FILE = os.path.join(prefix, TEMP_VIDEO_FILE.split("/")[-1])
     DISTRIBUTION_METADATA_FILE = os.path.join(
