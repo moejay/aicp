@@ -3,6 +3,7 @@ import logging
 from dotenv import load_dotenv
 from utils import utils
 from models import Video
+import torch
 
 from tools.music_composer import MusicComposerTool
 from tools.producer import ProducerTool
@@ -47,6 +48,7 @@ def make_video(video: Video, step: str, single_step: bool = False):
     logger.info("Starting at tool %s", tools[0].name)
     for t in tools:
         t.run(prompt)
+        torch.cuda.empty_cache()
         if single_step:
             logger.info("Single step mode, stopping after %s", t.name)
             return "Single step mode, stopped at %s" % t.name
