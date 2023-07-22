@@ -77,6 +77,8 @@ class ProductionConfig:
     sd_base_image_height: int
     num_images_per_scene: int
 
+    enable_subtitles: bool = False
+
     @classmethod
     def from_yaml(cls, yaml_file: str):
         """Read the output configuration from a yaml file."""
@@ -261,7 +263,7 @@ class Program:
     title: str
     description: str
     rules: str
-    enable_subtitles: bool = False
+    prompt_help_text: str
 
     @classmethod
     def from_yaml(cls, yaml_file: str):

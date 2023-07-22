@@ -1,5 +1,5 @@
 from utils import utils
-from models import Director, ProductionConfig
+from models import Director, ProductionConfig, Program
 from ui.actor_creator import actor_creator_ui
 from ui.director_creator import director_creator_ui
 import gradio as gr
@@ -45,6 +45,12 @@ def change_config(config):
     return "\n".join([f"{k}: {v}" for k, v in c.__dict__.items()])
 
 
+def change_program(config):
+    """Change the current config"""
+    c = Program.from_yaml(os.path.join(utils.PROGRAMS_PATH_PREFIX, f"{config}.yaml"))
+    return "\n".join([f"{k}: {v}" for k, v in c.__dict__.items()])
+
+
 def make_ui(prep_video_params):
     with gr.Blocks() as demo:
         with gr.Tab("Make a video"):
@@ -75,6 +81,15 @@ def make_ui(prep_video_params):
                         choices=programs,
                         value=programs[0],
                         interactive=True,
+                    )
+                    program_contents = gr.Textbox(
+                        label="Program Contents",
+                        value=change_program(programs[0]),
+                    )
+                    program.change(
+                        fn=change_program,
+                        inputs=program,
+                        outputs=program_contents,
                     )
 
                 with gr.Tab("Actors"):

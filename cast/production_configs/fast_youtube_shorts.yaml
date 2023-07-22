@@ -3,3 +3,4 @@ video_height: 768
 sd_base_image_width: 216
 sd_base_image_height: 384
 num_images_per_scene: 8
+enable_subtitles: True
