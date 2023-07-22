@@ -49,8 +49,6 @@ docker-kbe:
 	@echo "Building KBE container, this will take a while..."
 	@docker build -t ken-burns-effect -f dockerfiles/ken-burns-effect.Dockerfile dockerfiles
 
-docker-build: 
-
 docker-image:
 	@docker build --network=host -t $(PROJECT_NAME):$(BRANCH_NAME) .
 
@@ -109,6 +107,9 @@ runpod-create:
 		--env CHATGPT_BASE_URL="$(CHATGPT_BASE_URL)" \
 		--env OPENAI_API_KEY="$(OPENAI_API_KEY)" \
 		--env GPT4_TOKEN="$(GPT4_TOKEN)"
+
+runpod-rsync:
+	@rsync -avz -e "ssh -p $(RUNPOD_PORT)" --progress root@$(RUNPOD_HOST):/output/* output/
 
 check-format:
 	@venv/bin/black . --check -v
