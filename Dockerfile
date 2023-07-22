@@ -10,6 +10,8 @@ libsm6 \
 libxext6 \
 rsync \
 vim \
+&& sudo apt-get autoremove -y \
+&& sudo apt-get clean \
 && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace
