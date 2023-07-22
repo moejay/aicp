@@ -1,6 +1,10 @@
 .env
 .git
+.github
+__pycache__
+bin
 notebooks
 dockerfiles
 output
 venv
+tmp
