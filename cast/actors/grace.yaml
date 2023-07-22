@@ -3,10 +3,9 @@ bio: Grace is a versatile and charismatic actor known for her ability to bring d
   presence, Grace effortlessly commands the stage and screen. Her genuine personality
   shines through in all her performances, making her a beloved presence in the entertainment
   industry.
-catch_phrase: '[Female;British] There''s no role too challenging for me, darling!'
+catch_phrase: Never too old to steal the scene, love.
 name: Grace
-physical_description: Female, fair skin, brunette hair, slim body type, often seen
-  in stylish and elegant attire.
+physical_description: Female, recognizable by her radiant red hair, emerald eyes, and her trademark star-patterned scarf, showcases her diverse acting abilities, infusing every performance with authenticity and depth.
 speaker: speakers/Grace.npz
 speaker_text_temp: 0.75
 speaker_waveform_temp: 0.75
