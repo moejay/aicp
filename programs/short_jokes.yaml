@@ -11,4 +11,4 @@ rules: |
   * End each person's line with the keyword [laughs]
   * Never explain the joke
   * The jokes should be as explicit as possible, the audience are adults.
-prompt_help_text: Write a couple of quick back-and-forth jokes between hosts on a given subject
+prompt_placeholder_text: Write a couple of quick back-and-forth jokes between hosts on a given subject
