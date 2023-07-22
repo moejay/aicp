@@ -13,7 +13,7 @@ nltk==3.8.1
 xformers==0.0.20
 audiocraft==0.0.1
 pydub==0.25.1
-gradio==3.35.2
+gradio==3.38.0
 python-on-whales==0.62.0
 revChatGPT==6.7.5
 pylint==2.17.4

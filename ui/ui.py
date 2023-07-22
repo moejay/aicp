@@ -1,5 +1,5 @@
 from utils import utils
-from models import Director, ProductionConfig
+from models import Director, ProductionConfig, Program
 from ui.actor_creator import actor_creator_ui
 from ui.director_creator import director_creator_ui
 import gradio as gr
@@ -37,18 +37,31 @@ def change_director(director):
     return "\n".join([f"{k}: {v}" for k, v in d.as_dict().items()])
 
 
-def change_config(config):
-    """Change the current config"""
+def change_production(production):
+    """Change the current production"""
     c = ProductionConfig.from_yaml(
-        os.path.join(utils.PRODUCTION_CONFIG_PATH, f"{config}.yaml")
+        os.path.join(utils.PRODUCTION_CONFIG_PATH, f"{production}.yaml")
     )
     return "\n".join([f"{k}: {v}" for k, v in c.__dict__.items()])
 
 
+def change_program(program):
+    """Change the current program"""
+    p = Program.from_yaml(os.path.join(utils.PROGRAMS_PATH_PREFIX, f"{program}.yaml"))
+    return "\n".join([f"{k}: {v}" for k, v in p.__dict__.items()])
+
+
+def change_prompt_info_text(program):
+    """Change the current prompt info text"""
+    p = Program.from_yaml(os.path.join(utils.PROGRAMS_PATH_PREFIX, f"{program}.yaml"))
+    return gr.update(info=p.prompt_placeholder_text)
+
+
 def make_ui(prep_video_params):
+    """Prepare UI blocks"""
     with gr.Blocks() as demo:
         with gr.Tab("Make a video"):
-            video_prompt = gr.Textbox(lines=1, label="Video Prompt", value="Your Mom")
+            video_prompt = gr.Textbox(lines=1, label="Video Prompt")
             working_dir = gr.Textbox(label="Working Directory", value="output")
             step = gr.Dropdown(
                 label="Start At",
@@ -76,7 +89,20 @@ def make_ui(prep_video_params):
                         value=programs[0],
                         interactive=True,
                     )
-
+                    program_contents = gr.Textbox(
+                        label="Program Contents",
+                        value=change_program(programs[0]),
+                    )
+                    program.change(
+                        fn=change_program,
+                        inputs=program,
+                        outputs=program_contents,
+                    )
+                    program.change(
+                        fn=change_prompt_info_text,
+                        inputs=program,
+                        outputs=video_prompt,
+                    )
                 with gr.Tab("Actors"):
                     actor = gr.CheckboxGroup(
                         label="Actors",
@@ -106,10 +132,10 @@ def make_ui(prep_video_params):
                     )
                     production_config_contents = gr.Textbox(
                         label="Production Config Contents",
-                        value=change_config(production_configs[0]),
+                        value=change_production(production_configs[0]),
                     )
                     production_config.change(
-                        fn=change_config,
+                        fn=change_production,
                         inputs=production_config,
                         outputs=production_config_contents,
                     )

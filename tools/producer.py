@@ -63,7 +63,7 @@ class ProducerTool(AICPBaseTool):
         return images_dict
 
     def _add_subtitles(self):
-        if not self.video.program.enable_subtitles:
+        if not self.video.production_config.enable_subtitles:
             return
         if not os.path.exists(utils.VOICEOVER_SUBTITLES):
             return
