@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# run proxy in background
-ChatGPTProxy &
+# Bootstrap some dependancies/models
+python3 -c "import nltk;nltk.download('punkt')"
 
 # Start AICP
 ln -s /output /workspace/output
