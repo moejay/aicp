@@ -44,16 +44,15 @@ def change_production(production):
     )
     return "\n".join([f"{k}: {v}" for k, v in c.__dict__.items()])
 
-
 def change_program(program):
     """Change the current program"""
     p = Program.from_yaml(os.path.join(utils.PROGRAMS_PATH_PREFIX, f"{program}.yaml"))
     return "\n".join([f"{k}: {v}" for k, v in p.__dict__.items()])
 
-def change_program_placeholder_text(program):
-    """ Change the current prompt"""
+def change_prompt_info_text(program):
+    """ Change the current prompt info text"""
     p = Program.from_yaml(os.path.join(utils.PROGRAMS_PATH_PREFIX, f"{program}.yaml"))
-    return gr.update(placeholder=p.prompt_placeholder_text)
+    return gr.update(info=p.prompt_placeholder_text)
 
 def make_ui(prep_video_params):
     """ Prepare UI blocks """
@@ -97,7 +96,7 @@ def make_ui(prep_video_params):
                         outputs=program_contents,
                     )
                     program.change(
-                        fn=change_program_placeholder_text,
+                        fn=change_prompt_info_text,
                         inputs=program,
                         outputs=video_prompt,
                     )

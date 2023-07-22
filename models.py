@@ -263,7 +263,7 @@ class Program:
     title: str
     description: str
     rules: str
-    prompt_help_text: str
+    prompt_placeholder_text: str
 
     @classmethod
     def from_yaml(cls, yaml_file: str):
