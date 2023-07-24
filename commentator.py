@@ -49,14 +49,21 @@ def main():
             """
             human_confirmed = "n"
             potential_comment_response = ""
-            print(f"Comment:\n {comment_text}")
-            while human_confirmed != "y":
+            while human_confirmed not in ["y", "s"]:
+                print("---------------------------")
+                print(f"Comment:\n {comment_text}")
+                print("---------------------------")
                 potential_comment_response = llm.run(prompt).strip()
+                print("---------------------------")
                 print(f"Potential comment response:\n {potential_comment_response}")
-                human_confirmed = input("Is this response good? (y/n/q): ")
+                print("---------------------------")
+                human_confirmed = input("Is this response good? (y/n/s/q): ")
                 if human_confirmed == "q":
                     print("Quitting...")
                     return
+            if human_confirmed == "s":
+                print("Skipping...")
+                continue
             print(f"Replying to comment with response:\n {potential_comment_response}")
             youtube.reply_to_comment(comment["id"], potential_comment_response)
 
