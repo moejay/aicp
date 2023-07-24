@@ -130,6 +130,28 @@ AICP can now be run in the cloud via Runpod.io
 	5. Copy the template ID into your .env `RUNPOD_TEMPLATE=your-template-id`
 	6. Launch a new pod with `make runpod-create`
 
+## Setup Commentator
+
+Commentator will go through comments that have not been replied to by us, and generates a reply
+if confirmed by the human, the Commentator will post the reply.
+
+### Google APIs
+
+* Create a google cloud project
+* Enable the Youtube Data V3 APIs
+* Create oauth credentials, download and save as `client_secrets.json`
+
+### Download the llama model
+
+* Download the [llama 7b chat uncensored model](https://huggingface.co/TheBloke/llama2_7b_chat_uncensored-GGML/resolve/main/llama2_7b_chat_uncensored.ggmlv3.q8_0.bin)
+* Save it in `models/` directory with the name `llama2_7b_chat_uncensored.bin` 
+
+### Running the commentator
+
+* `make commentator`
+* The first time you run it, it will ask for permissions, choose the Youtube Channel account
+
+
 ## Development
 
 (to do- developer guide)

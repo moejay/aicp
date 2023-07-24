@@ -5,10 +5,9 @@ from langchain.chat_models import ChatOpenAI
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
-    AIMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
-
+from langchain.llms import LlamaCpp
 from typing import Any, List, Mapping, Optional
 from langchain.callbacks.manager import CallbackManagerForLLMRun
 from langchain.llms.base import LLM
@@ -67,6 +66,7 @@ def get_llm_instance(model, **kwargs):
     model_prefix_to_class = {
         "revgpt": RevGPTLLM,
         "openai": ChatOpenAI,
+        "llama": LlamaCpp,
     }
 
     model_prefix = model.split("-")[0]
@@ -75,8 +75,20 @@ def get_llm_instance(model, **kwargs):
     model_name = "-".join(model.split("-")[1:])
 
     logger.info(f"Using model {model_name} with prefix {model_prefix}")
+    model_args = {}
+    if model_prefix == "revgpt":
+        model_args["model"] = model_name
+    elif model_prefix == "openai":
+        model_args["model"] = model_name
+    elif model_prefix == "llama":
+        model_args["model_path"] = os.path.join("models", f"{model_name}.bin")
+        model_args["n_ctx"] = 4096
+        model_args["n_gpu_layers"] = 20
+        model_args["n_batch"] = 512
 
-    return model_prefix_to_class[model_prefix](model=model_name, **kwargs)
+    model_args.update(kwargs)
+
+    return model_prefix_to_class[model_prefix](**model_args)
 
 
 def get_llm(model, template, **kwargs):
