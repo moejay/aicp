@@ -1,8 +1,7 @@
 import http.client
 import httplib2
-import os
+from typing import Optional
 import random
-import sys
 import time
 import logging
 from dataclasses import dataclass, field
@@ -34,7 +33,7 @@ RETRIABLE_STATUS_CODES = [500, 502, 503, 504]
 
 CLIENT_SECRETS_FILE = "client_secrets.json"
 
-YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube.upload"
+YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube.force-ssl"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
@@ -55,14 +54,14 @@ class Options:
     privacy_status: str = VALID_PRIVACY_STATUSES[0]
 
 
-def get_authenticated_service(options: Options):
+def get_authenticated_service():
     flow = flow_from_clientsecrets(
         CLIENT_SECRETS_FILE,
         scope=YOUTUBE_UPLOAD_SCOPE,
         message=MISSING_CLIENT_SECRETS_MESSAGE,
     )
 
-    storage = Storage(f"{sys.argv[0]}-oauth2.json")
+    storage = Storage("oauth2.json")
     credentials = storage.get()
 
     if credentials is None or credentials.invalid:
@@ -138,5 +137,86 @@ def resumable_upload(insert_request):
 
 
 def upload_video(options: Options):
-    youtube = get_authenticated_service(options)
+    youtube = get_authenticated_service()
     return initialize_upload(youtube, options)
+
+
+def get_all_videos_for_channel(channel_id: str):
+    """Retrieve videos for a specific channel id"""
+    youtube = get_authenticated_service()
+    last_page_token = None
+    all_videos = []
+    while True:
+        response = (
+            youtube.search()
+            .list(
+                part="snippet",
+                channelId=channel_id,
+                maxResults=50,
+                pageToken=last_page_token,
+                type="video",
+            )
+            .execute()
+        )
+
+        all_videos.extend(response["items"])
+        if "nextPageToken" not in response:
+            break
+        last_page_token = response["nextPageToken"]
+
+    return all_videos
+
+
+def get_all_comments_for_video(video_id: str):
+    """Retrieve comments for a specific video id"""
+    youtube = get_authenticated_service()
+    last_page_token = None
+    all_comments = []
+    while True:
+        response = (
+            youtube.commentThreads()
+            .list(
+                part="snippet,replies",
+                videoId=video_id,
+                maxResults=100,
+                pageToken=last_page_token,
+            )
+            .execute()
+        )
+
+        all_comments.extend(response["items"])
+        if "nextPageToken" not in response:
+            break
+        last_page_token = response["nextPageToken"]
+    return all_comments
+
+
+def filter_comments_with_no_reply_from_user(comments: list[dict], userDisplayName: str):
+    """Filter comments with no reply from user"""
+    comments_with_no_reply_from_user = []
+    for comment in comments:
+        replies = comment["replies"]["comments"] if "replies" in comment else []
+        my_replies = [
+            reply
+            for reply in replies
+            if reply["snippet"]["authorDisplayName"] == userDisplayName
+        ]
+
+        if not my_replies:
+            comments_with_no_reply_from_user.append(comment)
+    return comments_with_no_reply_from_user
+
+
+def reply_to_comment(comment_id, text):
+    """Reply to a comment"""
+    youtube = get_authenticated_service()
+    youtube.comments().insert(
+        part="snippet",
+        body=dict(
+            snippet=dict(
+                parentId=comment_id,
+                textOriginal=text,
+            )
+        ),
+    ).execute()
+    print("Replied to comment successfully")

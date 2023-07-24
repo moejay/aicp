@@ -13,6 +13,8 @@ endif
 
 export CHATGPT_BASE_URL
 
+export CMAKE_ARGS="-DLLAMA_CUBLAS=on"
+export FORCE_CMAKE=1
 
 setup: bin/runpodctl python-deps docker-deps
 
@@ -75,6 +77,10 @@ ui: docker-compose
 dev: docker-compose
 	@echo "Starting development server..."
 	@venv/bin/gradio main.py --ui
+
+commentator:
+	@echo "Starting Commentator..."
+	@venv/bin/python commentator.py
 
 auto: docker-compose
 	@echo "Starting AI Content Producer..."
