@@ -129,10 +129,10 @@ class ThumbnailArtistTool(AICPBaseTool):
     ) -> str:
         """Use the tool."""
 
-        # Come up with an enticing text for the thumbnail
-        # Come up with an enticing image for the thumbnail
-        self.initialize_agent()
+        if self.video.director.get_thumbnail_artist() == None:
+            return "Skipping thumbnail artist"
 
+        self.initialize_agent()
         self.stable_diffusion()
 
         # TODO Generate the text

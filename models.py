@@ -154,6 +154,9 @@ class Director:
 
     def get_thumbnail_artist(self):
         """Get the thumbnail artist."""
+        if self.thumbnail_artist == "None":
+            return None
+
         return from_dict(
             data_class=ThumbnailArtist,
             data=yaml.load(
