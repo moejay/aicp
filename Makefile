@@ -16,7 +16,7 @@ export CHATGPT_BASE_URL
 export CMAKE_ARGS="-DLLAMA_CUBLAS=on"
 export FORCE_CMAKE=1
 
-setup: bin/runpodctl python-deps docker-deps
+setup: bin/runpodctl python-deps docker-deps models/llama2_7b_chat_uncensored.bin
 
 venv:
 	@echo "Setting up Python virtual environment..."
@@ -24,6 +24,13 @@ venv:
 		echo "Creating virtual environment..."; \
 		python3 -m virtualenv venv; \
 	fi
+
+models:
+	@mkdir -p models
+
+models/llama2_7b_chat_uncensored.bin: models
+	@wget -q https://huggingface.co/TheBloke/llama2_7b_chat_uncensored-GGML/resolve/main/llama2_7b_chat_uncensored.ggmlv3.q8_0.bin \
+		-O models/llama2_7b_chat_uncensored.bin
 
 bin/runpodctl:
 	@echo "Installing runpodctl..."
