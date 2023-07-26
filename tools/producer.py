@@ -158,13 +158,20 @@ def generate_ffmpeg_commands(input_file, subtitle_file, output_file, settings):
         end_time = settings[i + 1][0] if i + 1 < len(settings) else None
         # Generate the FFmpeg command for this part
         command = generate_ffmpeg_command(
-            input_file, subtitle_file, start_time, end_time, os.path.join(utils.PATH_PREFIX, f"part{i}.mp4")
+            input_file,
+            subtitle_file,
+            start_time,
+            end_time,
+            os.path.join(utils.PATH_PREFIX, f"part{i}.mp4"),
         )
         commands.append(command)
     # Concatenate the parts back together
     concat_command = (
         f"ffmpeg -y -i 'concat:"
-        + "|".join(os.path.join(utils.PATH_PREFIX, f"part{i}.mp4") for i in range(len(settings)))
+        + "|".join(
+            os.path.join(utils.PATH_PREFIX, f"part{i}.mp4")
+            for i in range(len(settings))
+        )
         + f"' -c copy {output_file}"
     )
     commands.append(concat_command)
