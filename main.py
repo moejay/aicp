@@ -48,7 +48,7 @@ parser.add_argument(
 parser.add_argument("--actors", nargs="+", help="The actors to use for the video")
 parser.add_argument("--program", help="The program aka show to use for the video")
 parser.add_argument("--output", help="The output directory to write to")
-parser.add_argument("--step", help="The step to start at")
+parser.add_argument("--step", help="The step to start at", default="Researcher")
 parser.add_argument("--single-step", action="store_true", help="Run a single step")
 
 

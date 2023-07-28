@@ -18,12 +18,20 @@ fi
 # Read file line by line
 while IFS= read -r line; do
     # Parse the arguments
-    arg1=$(echo $line | cut -d'|' -f1 | xargs) # xargs trims leading/trailing spaces
-    arg2=$(echo $line | cut -d'|' -f2 | xargs)
-    arg3=$(echo $line | cut -d'|' -f3 | xargs)
+    prompt=$(echo $line | cut -d'|' -f1 | xargs) # xargs trims leading/trailing spaces
+    program=$(echo $line | cut -d'|' -f2 | xargs)
+    director=$(echo $line | cut -d'|' -f3 | xargs)
+    production=$(echo $line | cut -d'|' -f4 | xargs)
+    output=$(echo $line | cut -d'|' -f5 | xargs)
+    actors=$(echo $line | cut -d'|' -f6 | xargs)
+	# actors are comma separated, let's convert them to "--actors actor1 --actors actor2 ..."
+	actors=$(echo $actors | sed 's/,/ --actors /g')
 
     # Run the command with the arguments
-    make video ARGS="--prompt \"$arg1\" --production-config default_config --director mvp_director --output \"$arg2\" --actors \"$arg3\""
+    ARGS="--prompt \"$prompt\" --program \"$program\" --production-config $production --director $director --output \"$output\" --actors \"$actors\""
+    
+	echo "Running: with: $ARGS"
+	make video ARGS="$ARGS"
     
 done < "$input_file"
 
