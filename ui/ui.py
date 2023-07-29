@@ -68,8 +68,8 @@ def make_ui(prep_video_params):
                 choices=[
                     "Researcher",
                     "Script Writer",
-                    "Storyboard Artist",
                     "Voiceover Artist",
+                    "Storyboard Artist",
                     "Music Composer",
                     "Sound Engineer",
                     "Producer",
