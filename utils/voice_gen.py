@@ -40,7 +40,11 @@ Style: Default,{},{},&H00FFFFFF,&H0000FFFF,&H00000000,&H80000000,1,1,0,0,100,100
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-""".format(production_config.subtitles_fontname, production_config.subtitles_fontsize, production_config.subtitles_alignment)
+""".format(
+        production_config.subtitles_fontname,
+        production_config.subtitles_fontsize,
+        production_config.subtitles_alignment,
+    )
 
     for i, segment in enumerate(transcription_data["segments"], start=1):
         for word in segment["words"]:

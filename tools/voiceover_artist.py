@@ -193,7 +193,9 @@ class VoiceOverArtistTool(AICPBaseTool):
             )
 
             with open(utils.VOICEOVER_SUBTITLES, "w") as f:
-                srt_data = voice_gen.generate_ass(full_transcription, self.video.production_config)
+                srt_data = voice_gen.generate_ass(
+                    full_transcription, self.video.production_config
+                )
                 f.write(srt_data)
 
             with open(utils.VOICEOVER_TIMECODES, "w") as f:
