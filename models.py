@@ -78,6 +78,9 @@ class ProductionConfig:
     num_images_per_scene: int
 
     enable_subtitles: bool = False
+    subtitles_alignment: int = 2
+    subtitles_fontname: str = "DejaVu Sans"
+    subtitles_fontsize: int = 26
 
     @classmethod
     def from_yaml(cls, yaml_file: str):

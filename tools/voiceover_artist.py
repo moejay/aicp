@@ -184,12 +184,16 @@ class VoiceOverArtistTool(AICPBaseTool):
             wavfile.write(
                 utils.VOICEOVER_WAV_FILE, voice_gen.NEW_SAMPLE_RATE, int_audio_arr
             )
+
+        if os.path.exists(utils.VOICEOVER_SUBTITLES):
+            print("Skipping subtitles generation...")
+        else:
             full_transcription = voice_gen.get_whisper_model().transcribe(
                 utils.VOICEOVER_WAV_FILE, word_timestamps=True
             )
 
             with open(utils.VOICEOVER_SUBTITLES, "w") as f:
-                srt_data = voice_gen.generate_ass(full_transcription)
+                srt_data = voice_gen.generate_ass(full_transcription, self.video.production_config)
                 f.write(srt_data)
 
             with open(utils.VOICEOVER_TIMECODES, "w") as f:

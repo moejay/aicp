@@ -18,7 +18,8 @@ NEW_SAMPLE_RATE = 44100
 WHISPER_MODEL = None
 
 
-def generate_ass(transcription_data):
+def generate_ass(transcription_data, production_config):
+    print(production_config)
     """
     Generate a ASS file content based on the transcription data.
 
@@ -35,11 +36,12 @@ WrapStyle: 0
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,DejaVu Sans,26,&H00FFFFFF,&H0000FFFF,&H00000000,&H80000000,1,1,0,0,100,100,0,0,1,2,2,2,10,10,10,0
+Style: Default,{},{},&H00FFFFFF,&H0000FFFF,&H00000000,&H80000000,1,1,0,0,100,100,0,0,1,2,10,{},10,10,10,0
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-"""
+""".format(production_config.subtitles_fontname, production_config.subtitles_fontsize, production_config.subtitles_alignment)
+
     for i, segment in enumerate(transcription_data["segments"], start=1):
         for word in segment["words"]:
             # Convert start and end times to HH:MM:SS.mm format
@@ -191,7 +193,7 @@ def generate_speech(sentence, history_prompt, text_temp, waveform_temp):
     }
     print(
         f"""
-    snr: {snr} 
+    snr: {snr}
     transcribed_text: {transcribed_text}
     text_similarity: {text_similarity}
     duration: {duration}"""
