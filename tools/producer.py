@@ -83,16 +83,7 @@ class ProducerTool(AICPBaseTool):
             [
                 (
                     None,
-                    {
-                        "Alignment": 8,
-                        "MarginV": 260,
-                        "PrimaryColour": f"&H00{text_color.lstrip('#')}",
-                        "OutlineColour": f"&H00{outline_color.lstrip('#')}",
-                        "BackColour": f"&H00{back_color.lstrip('#')}",
-                        "Outline": 3,
-                        "BorderStyle": 1,
-                        "Shadow": 0,
-                    },
+                    None,
                 ),
             ],
         )
