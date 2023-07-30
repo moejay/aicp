@@ -18,7 +18,7 @@ NEW_SAMPLE_RATE = 44100
 WHISPER_MODEL = None
 
 
-def generate_ass(transcription_data, production_config):
+def generate_ass(transcription_data, fontname, fontsize, alignment):
     print(production_config)
     """
     Generate a ASS file content based on the transcription data.
@@ -41,9 +41,9 @@ Style: Default,{},{},&H00FFFFFF,&H0000FFFF,&H00000000,&H80000000,1,1,0,0,100,100
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """.format(
-        production_config.subtitles_fontname,
-        production_config.subtitles_fontsize,
-        production_config.subtitles_alignment,
+        fontname,
+        fontsize,
+        alignment,
     )
 
     for i, segment in enumerate(transcription_data["segments"], start=1):

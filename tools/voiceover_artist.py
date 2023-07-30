@@ -194,7 +194,10 @@ class VoiceOverArtistTool(AICPBaseTool):
 
             with open(utils.VOICEOVER_SUBTITLES, "w") as f:
                 srt_data = voice_gen.generate_ass(
-                    full_transcription, self.video.production_config
+                    full_transcription,
+                    self.video.production_config.subtitles_fontname,
+                    self.video.production_config.subtitles_fontsize,
+                    self.video.production_config.subtitles_alignment,
                 )
                 f.write(srt_data)
 

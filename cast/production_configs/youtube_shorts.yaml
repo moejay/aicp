@@ -4,3 +4,4 @@ sd_base_image_width: 432
 sd_base_image_height:  768
 num_images_per_scene: 8
 enable_subtitles: True
+subtitles_alignment: 5
