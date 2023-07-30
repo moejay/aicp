@@ -19,7 +19,6 @@ WHISPER_MODEL = None
 
 
 def generate_ass(transcription_data, fontname, fontsize, alignment):
-    print(production_config)
     """
     Generate a ASS file content based on the transcription data.
 
