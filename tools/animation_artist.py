@@ -51,7 +51,7 @@ class AnimationArtistTool(AICPBaseTool):
         for img in images.keys():
             print(f"Animating storyboard image: {img}")
             duration = images[img]
-            video_file = img.replace('png', 'mp4')
+            video_file = img.replace("png", "mp4")
 
             # Skip if video file already exists
             if os.path.exists(video_file):
@@ -62,14 +62,15 @@ class AnimationArtistTool(AICPBaseTool):
             print(f"ZOOM FACTOR: {zoom_factor}")
 
             box1, box2 = self.find_regions_of_interest(img, roi_box1, roi_box2)
-            cmd = self.generate_animation_ffmpeg_command(img, video_file, box1, box2, zoom_factor, duration)
+            cmd = self.generate_animation_ffmpeg_command(
+                img, video_file, box1, box2, zoom_factor, duration
+            )
             os.system(cmd)
 
         # concat animations
         cmd = self.generate_concat_ffmpeg_command(
-                os.path.dirname(list(images.keys())[0]),
-                utils.ANIMATION_VIDEO_FILE
-            )
+            os.path.dirname(list(images.keys())[0]), utils.ANIMATION_VIDEO_FILE
+        )
         os.system(cmd)
 
         return "Done generating animation"
@@ -126,16 +127,26 @@ class AnimationArtistTool(AICPBaseTool):
 
         # Count keypoints in each window
         for y, x in keypoints:
-            for i in range(max(0, int(y) - box1 + 1), min(int(y) + 1, img_height - box1 + 1)):
-                for j in range(max(0, int(x) - box1 + 1), min(int(x) + 1, img_width - box1 + 1)):
+            for i in range(
+                max(0, int(y) - box1 + 1), min(int(y) + 1, img_height - box1 + 1)
+            ):
+                for j in range(
+                    max(0, int(x) - box1 + 1), min(int(x) + 1, img_width - box1 + 1)
+                ):
                     keypoint_counts_box1[i, j] += 1
 
-            for i in range(max(0, int(y) - box2 + 1), min(int(y) + 1, img_height - box2 + 1)):
-                for j in range(max(0, int(x) - box2 + 1), min(int(x) + 1, img_width - box2 + 1)):
+            for i in range(
+                max(0, int(y) - box2 + 1), min(int(y) + 1, img_height - box2 + 1)
+            ):
+                for j in range(
+                    max(0, int(x) - box2 + 1), min(int(x) + 1, img_width - box2 + 1)
+                ):
                     keypoint_counts_box2[i, j] += 1
 
         # Find the window with the highest concentration of keypoints
-        max_keypoints_y_box1, max_keypoints_x_box1 = np.unravel_index(keypoint_counts_box1.argmax(), keypoint_counts_box1.shape)
+        max_keypoints_y_box1, max_keypoints_x_box1 = np.unravel_index(
+            keypoint_counts_box1.argmax(), keypoint_counts_box1.shape
+        )
 
         # Calculate the window's pixel coordinates
         window_top_box1 = max_keypoints_y_box1
@@ -144,11 +155,19 @@ class AnimationArtistTool(AICPBaseTool):
         window_right_box1 = max_keypoints_x_box1 + box1
 
         # Remove the overlapping region in the keypoint_counts_box2
-        keypoint_counts_box2[max(0, window_top_box1 - box2):min(img_height - box2 + 1, window_bottom_box1),
-                             max(0, window_left_box1 - box2):min(img_width - box2 + 1, window_right_box1)] = 0
+        keypoint_counts_box2[
+            max(0, window_top_box1 - box2) : min(
+                img_height - box2 + 1, window_bottom_box1
+            ),
+            max(0, window_left_box1 - box2) : min(
+                img_width - box2 + 1, window_right_box1
+            ),
+        ] = 0
 
         # Find the window with the highest concentration of keypoints in the updated keypoint_counts_box2
-        max_keypoints_y_box2, max_keypoints_x_box2 = np.unravel_index(keypoint_counts_box2.argmax(), keypoint_counts_box2.shape)
+        max_keypoints_y_box2, max_keypoints_x_box2 = np.unravel_index(
+            keypoint_counts_box2.argmax(), keypoint_counts_box2.shape
+        )
 
         # Calculate the window's pixel coordinates
         window_top_box2 = max_keypoints_y_box2
@@ -157,12 +176,27 @@ class AnimationArtistTool(AICPBaseTool):
         window_right_box2 = max_keypoints_x_box2 + box2
 
         # Calculate the center points of the regions
-        center_box1 = ((window_left_box1 + window_right_box1) // 2, (window_top_box1 + window_bottom_box1) // 2)
-        center_box2 = ((window_left_box2 + window_right_box2) // 2, (window_top_box2 + window_bottom_box2) // 2)
+        center_box1 = (
+            (window_left_box1 + window_right_box1) // 2,
+            (window_top_box1 + window_bottom_box1) // 2,
+        )
+        center_box2 = (
+            (window_left_box2 + window_right_box2) // 2,
+            (window_top_box2 + window_bottom_box2) // 2,
+        )
 
         return center_box1, center_box2
 
-    def generate_animation_ffmpeg_command(self, input_image_path, output_video_path, start_coordinates, end_coordinates, zoom_factor=0.0030, duration=3, fps=60):
+    def generate_animation_ffmpeg_command(
+        self,
+        input_image_path,
+        output_video_path,
+        start_coordinates,
+        end_coordinates,
+        zoom_factor=0.0030,
+        duration=3,
+        fps=60,
+    ):
         """
         This function generates an ffmpeg command to create a video with camera movement from point A to point B.
         Parameters:
@@ -191,18 +225,20 @@ class AnimationArtistTool(AICPBaseTool):
 
         # get the aspect ratio of the image
         if width > height:
-            aspect_ratio = (width/height)
+            aspect_ratio = width / height
         else:
-            aspect_ratio = (height/width)
+            aspect_ratio = height / width
 
         # zoom out
         if zoom_factor < 0:
             # try to understand how much movement is to happen for this clip
-            movement_factor = sqrt((end_x - start_x)**2 + (end_y - start_y)**2) / (fps * duration)
+            movement_factor = sqrt((end_x - start_x) ** 2 + (end_y - start_y) ** 2) / (
+                fps * duration
+            )
 
             # reduce factor for long movements
             if movement_factor > 1.0:
-                movement_factor = (movement_factor / aspect_ratio)
+                movement_factor = movement_factor / aspect_ratio
 
             # initial zoom padding when zooming out
             zoom_padding = (abs(zoom_factor) * movement_factor) * (fps * duration)
@@ -240,10 +276,10 @@ class AnimationArtistTool(AICPBaseTool):
         video_files = glob.glob(f"{video_dir}/*.mp4")
         video_files = sorted(video_files)
 
-        video_list = os.path.join(utils.PATH_PREFIX, 'concat.txt')
-        with open(video_list, 'w') as f:
+        video_list = os.path.join(utils.PATH_PREFIX, "concat.txt")
+        with open(video_list, "w") as f:
             for video_file in video_files:
-                file = video_file.replace(f"{utils.PATH_PREFIX}/", '')
+                file = video_file.replace(f"{utils.PATH_PREFIX}/", "")
                 f.write(f"file '{file}'\n")
 
         command = f"ffmpeg -f concat -safe 0 -i {video_list} -c copy {output_file}"

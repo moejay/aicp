@@ -26,7 +26,9 @@ class ProducerTool(AICPBaseTool):
 
         # Create video from animated images
         if os.path.exists(utils.ANIMATION_VIDEO_FILE):
-            self.combine_audio_with_video(audio_dict, utils.ANIMATION_VIDEO_FILE, utils.FINAL_VIDEO_FILE)
+            self.combine_audio_with_video(
+                audio_dict, utils.ANIMATION_VIDEO_FILE, utils.FINAL_VIDEO_FILE
+            )
         # Create video from still images
         else:
             images = self.get_scene_images(scenes)
@@ -36,7 +38,9 @@ class ProducerTool(AICPBaseTool):
                 self.video.production_config.video_height,
             )
             output_file = utils.FINAL_VIDEO_FILE
-            self.create_from_images_video_with_audio(images, audio_dict, resolution, output_file)
+            self.create_from_images_video_with_audio(
+                images, audio_dict, resolution, output_file
+            )
 
         # Add subtitles
         self._add_subtitles()
@@ -117,8 +121,9 @@ class ProducerTool(AICPBaseTool):
         ffmpeg_cmd = f"ffmpeg -y -i {input_file} {audio_input_str}-filter_complex '{audio_filter_str}' -map 0:v -map '[a]' -c:v copy '{output_file}'"
         subprocess.run(ffmpeg_cmd, shell=True)
 
-
-    def create_video_from_images_with_audio(self, images_dict, audio_dict, resolution, output_file):
+    def create_video_from_images_with_audio(
+        self, images_dict, audio_dict, resolution, output_file
+    ):
         # Create video from images
         sorted_images = images_dict.items()
 

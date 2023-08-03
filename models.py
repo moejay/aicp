@@ -52,6 +52,7 @@ class ThumbnailArtist(CastMember):
     negative_prompt: str
     sd_model: str
 
+
 @dataclass
 class AnimationArtist(CastMember):
     """An object representing an animation artist."""
