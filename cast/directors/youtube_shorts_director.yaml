@@ -1,6 +1,7 @@
 researcher: youtube_shorts_researcher
 script_writer: youtube_shorts_script_writer
 storyboard_artist: mvp_storyboard_artist
+animation_artist: mvp_animation_artist
 voiceover_artist: youtube_shorts_voiceover_artist
 music_composer: mvp_music_composer
 thumbnail_artist: None

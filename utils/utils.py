@@ -12,6 +12,7 @@ VOICEOVER_WAV_FILE = "script.wav"
 FINAL_AUDIO_FILE = "audio.wav"
 VOICEOVER_TIMECODES = "voiceover_timecodes.txt"
 VOICEOVER_SUBTITLES = "voiceover.ass"
+ANIMATION_VIDEO_FILE = "animation.mp4"
 TEMP_VIDEO_FILE = "temp_video.mp4"
 FINAL_VIDEO_FILE = "video.mp4"
 MUSIC_PATH = "music"
@@ -26,6 +27,7 @@ RESEARCHER_PATH = os.path.join(CAST_PATH_PREFIX, "researchers")
 SCRIPT_WRITER_PATH = os.path.join(CAST_PATH_PREFIX, "script_writers")
 STORYBOARD_ARTIST_PATH = os.path.join(CAST_PATH_PREFIX, "storyboard_artists")
 THUMBNAIL_ARTIST_PATH = os.path.join(CAST_PATH_PREFIX, "thumbnail_artists")
+ANIMATION_ARTIST_PATH = os.path.join(CAST_PATH_PREFIX, "animation_artists")
 VOICEOVER_ARTIST_PATH = os.path.join(CAST_PATH_PREFIX, "voiceover_artists")
 MUSIC_COMPOSER_PATH = os.path.join(CAST_PATH_PREFIX, "music_composers")
 YOUTUBE_DISTRIBUTOR_PATH = os.path.join(CAST_PATH_PREFIX, "youtube_distributors")
@@ -48,6 +50,9 @@ storyboard_artists = [
 thumbnail_artists = [
     f.split(".")[0] for f in os.listdir(THUMBNAIL_ARTIST_PATH) if f.endswith(".yaml")
 ]
+animation_artists = [
+    f.split(".")[0] for f in os.listdir(ANIMATION_ARTIST_PATH) if f.endswith(".yaml")
+]
 voiceover_artists = [
     f.split(".")[0] for f in os.listdir(VOICEOVER_ARTIST_PATH) if f.endswith(".yaml")
 ]
@@ -64,7 +69,7 @@ production_configs = [
 
 def set_prefix(prefix):
     """Set the prefix of the project."""
-    global PATH_PREFIX, RESEARCH, SCRIPT, STORYBOARD_PATH, VOICEOVER_PATH, VOICEOVER_WAV_FILE, FINAL_AUDIO_FILE, VOICEOVER_TIMECODES, VOICEOVER_SUBTITLES, TEMP_VIDEO_FILE, FINAL_VIDEO_FILE, MUSIC_PATH, DISTRIBUTION_METADATA_FILE, THUMBNAILS_PATH
+    global PATH_PREFIX, RESEARCH, SCRIPT, STORYBOARD_PATH, VOICEOVER_PATH, VOICEOVER_WAV_FILE, FINAL_AUDIO_FILE, VOICEOVER_TIMECODES, VOICEOVER_SUBTITLES, ANIMATION_VIDEO_FILE, TEMP_VIDEO_FILE, FINAL_VIDEO_FILE, MUSIC_PATH, DISTRIBUTION_METADATA_FILE, THUMBNAILS_PATH
 
     PATH_PREFIX = prefix
     RESEARCH = os.path.join(prefix, RESEARCH.split("/")[-1])
@@ -73,6 +78,7 @@ def set_prefix(prefix):
     FINAL_AUDIO_FILE = os.path.join(prefix, FINAL_AUDIO_FILE.split("/")[-1])
     VOICEOVER_TIMECODES = os.path.join(prefix, VOICEOVER_TIMECODES.split("/")[-1])
     VOICEOVER_SUBTITLES = os.path.join(prefix, VOICEOVER_SUBTITLES.split("/")[-1])
+    ANIMATION_VIDEO_FILE = os.path.join(prefix, ANIMATION_VIDEO_FILE.split("/")[-1])
     FINAL_VIDEO_FILE = os.path.join(prefix, FINAL_VIDEO_FILE.split("/")[-1])
     TEMP_VIDEO_FILE = os.path.join(prefix, TEMP_VIDEO_FILE.split("/")[-1])
     DISTRIBUTION_METADATA_FILE = os.path.join(

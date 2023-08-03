@@ -30,3 +30,4 @@ vocos==0.0.3
 openai-whisper==20230314
 llama-cpp-python==0.1.74
 scikit-image==0.21.0
+matploglib==3.7.1

@@ -5,6 +5,7 @@ from utils import utils
 from models import Video
 import torch
 
+from tools.animation_artist import AnimationArtistTool
 from tools.music_composer import MusicComposerTool
 from tools.producer import ProducerTool
 from tools.researcher import ResearcherTool
@@ -30,6 +31,7 @@ def make_video(video: Video, step: str, single_step: bool = False):
         ScriptWriterTool(video=video),
         VoiceOverArtistTool(video=video),
         StoryBoardArtistTool(video=video),
+        AnimationArtistTool(video=video),
         MusicComposerTool(video=video),
         SoundEngineerTool(video=video),
         ProducerTool(video=video),

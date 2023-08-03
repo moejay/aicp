@@ -1,8 +1,8 @@
-music_composer: mvp_music_composer
-researcher: comedy_researcher
-script_writer: comedy_script_writer
+researcher: mvp_researcher
+script_writer: basic_narrated_show
 storyboard_artist: mvp_storyboard_artist
 animation_artist: None
+voiceover_artist: mvp_voiceover_artist
+music_composer: mvp_music_composer
 thumbnail_artist: mvp_thumbnail_artist
-voiceover_artist: multi_character_voiceover
 youtube_distributor: mvp_youtube_distributor

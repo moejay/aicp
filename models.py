@@ -11,6 +11,7 @@ from utils.utils import (
     MUSIC_COMPOSER_PATH,
     STORYBOARD_ARTIST_PATH,
     THUMBNAIL_ARTIST_PATH,
+    ANIMATION_ARTIST_PATH,
     YOUTUBE_DISTRIBUTOR_PATH,
 )
 
@@ -50,6 +51,18 @@ class ThumbnailArtist(CastMember):
     positive_prompt: str
     negative_prompt: str
     sd_model: str
+
+@dataclass
+class AnimationArtist(CastMember):
+    """An object representing an animation artist."""
+
+    # Region-of-interest detection square (one side, in pixels)
+    roi_box1: int = 300
+    roi_box2: int = 300
+    # Speed of zoom animation
+    zoom_factor: float = 0.0030
+    # Frames per second of animation videos (more helps smooth out motion)
+    fps: int = 60
 
 
 @dataclass
@@ -98,6 +111,7 @@ class Director:
     researcher: str
     script_writer: str
     storyboard_artist: str
+    animation_artist: str
     thumbnail_artist: str
     voiceover_artist: str
     music_composer: str
@@ -165,6 +179,21 @@ class Director:
             data=yaml.load(
                 open(
                     os.path.join(THUMBNAIL_ARTIST_PATH, f"{self.thumbnail_artist}.yaml")
+                ),
+                Loader=yaml.FullLoader,
+            ),
+        )
+
+    def get_animation_artist(self):
+        """Get the animation artist."""
+        if self.animation_artist == "None":
+            return None
+
+        return from_dict(
+            data_class=AnimationArtist,
+            data=yaml.load(
+                open(
+                    os.path.join(ANIMATION_ARTIST_PATH, f"{self.animation_artist}.yaml")
                 ),
                 Loader=yaml.FullLoader,
             ),

@@ -1,6 +1,7 @@
 researcher: short_comedy_researcher
 script_writer: comedy_script_writer
 storyboard_artist: handdrawn_caricature_storyboard_artist
+animation_artist: None
 voiceover_artist: multi_character_voiceover_artist 
 music_composer: mvp_music_composer
 thumbnail_artist: mvp_thumbnail_artist
