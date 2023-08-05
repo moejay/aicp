@@ -38,7 +38,7 @@ class ProducerTool(AICPBaseTool):
                 self.video.production_config.video_height,
             )
             output_file = utils.FINAL_VIDEO_FILE
-            self.create_from_images_video_with_audio(
+            self.create_video_from_images_with_audio(
                 images, audio_dict, resolution, output_file
             )
 
