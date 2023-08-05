@@ -5,6 +5,7 @@ venv
 .env
 projects/
 notebooks/outputs/
+notebooks/temp/
 output
 inputs.txt
 tmp/
@@ -12,3 +13,4 @@ bin/runpodctl
 models/
 client_secrets.json
 oauth2.json
+

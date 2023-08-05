@@ -2,6 +2,7 @@ researcher: mvp_researcher
 script_writer: mvp_script_writer
 storyboard_artist: mvp_storyboard_artist
 voiceover_artist: mvp_voiceover_artist
+animation_artist: None
 music_composer: mvp_music_composer
 thumbnail_artist: mvp_thumbnail_artist
 youtube_distributor: mvp_youtube_distributor

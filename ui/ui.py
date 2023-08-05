@@ -70,6 +70,7 @@ def make_ui(prep_video_params):
                     "Script Writer",
                     "Voiceover Artist",
                     "Storyboard Artist",
+                    "AnimationArtist",
                     "Music Composer",
                     "Sound Engineer",
                     "Producer",
