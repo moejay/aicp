@@ -99,7 +99,12 @@ def resolve_param_from_video(video: Video, param_name):
     if first_param == "actors":
         second_param = params[1]
         actors = video.actors
-        return "\n".join([getattr(actor, second_param, "") for actor in actors])
+        return "\n".join(
+            [
+                ":".join([getattr(actor, "name"), getattr(actor, second_param, "")])
+                for actor in actors
+            ]
+        )
     elif first_param == "program":
         program = video.program
         second_param = params[1]

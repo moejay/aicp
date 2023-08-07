@@ -248,6 +248,7 @@ class Actor:
     speaker_text_temp: float = 0.7
     speaker_waveform_temp: float = 0.7
     speaker_enhance: bool = False
+    lora_keyword: Optional[str] = None
 
     @classmethod
     def from_yaml(cls, yaml_file: str):

@@ -3,7 +3,7 @@ langchain==0.0.201
 faiss-gpu==1.7.2
 openai==0.27.7
 python-dotenv==1.0.0
-diffusers==0.17.1
+diffusers==0.19.3
 transformers==4.30.2
 scipy==1.11.1
 ftfy==6.1.1
@@ -30,4 +30,4 @@ vocos==0.0.3
 openai-whisper==20230314
 llama-cpp-python==0.1.74
 scikit-image==0.21.0
-matploglib==3.7.1
+matplotlib==3.7.1
