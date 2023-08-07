@@ -7,8 +7,6 @@ import logging
 
 from diffusers import (
     DDIMScheduler,
-    DPMSolverMultistepScheduler,
-    StableDiffusionPipeline,
     StableDiffusionImg2ImgPipeline,
 )
 from langchain.callbacks.manager import (
@@ -16,10 +14,8 @@ from langchain.callbacks.manager import (
     CallbackManagerForToolRun,
 )
 from PIL import Image
-from python_on_whales import docker
 from typing import Optional
-from utils import llms, utils, parsers
-
+from utils import llms, utils, parsers, image_gen
 from .base import AICPBaseTool
 
 logger = logging.getLogger(__name__)
@@ -108,34 +104,6 @@ class StoryBoardArtistTool(AICPBaseTool):
         logger.error("Failed to generate prompts, no more retries left")
         raise Exception("Failed to generate prompts")
 
-    def gfp_upscaler(self):
-        """Upscale images with the GFPGAN ("restore faces")"""
-        out = docker.run(
-            "gfpgan:latest",
-            [
-                "python3",
-                "/app/GFPGAN/inference_gfpgan.py",
-                "-i",
-                f"/mnt/{utils.PATH_PREFIX}/storyboard",
-                "-o",
-                f"/mnt/{utils.PATH_PREFIX}/storyboard",
-                "-v",
-                "1.3",
-                "-s",
-                "2",
-                "--ext",
-                "png",
-            ],
-            user=os.getuid(),
-            volumes=[(os.getcwd(), "/mnt")],
-            gpus=1,
-            remove=True,
-            detach=False,
-            tty=True,
-        )
-        logger.info(out)
-        return True
-
     def img2img_upscaler(self):
         # setup stable diffusion pipeline
         os.makedirs(os.path.join(utils.STORYBOARD_PATH, "img2img"), exist_ok=True)
@@ -146,13 +114,11 @@ class StoryBoardArtistTool(AICPBaseTool):
             custom_pipeline="lpw_stable_diffusion",
             torch_dtype=torch.float16,
         )
+
         pipe = pipe.to("cuda")
 
         pipe.enable_xformers_memory_efficient_attention()
         pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
-        # pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
-        # scheduler.config.algorithm_type = "sde-dpmsolver++"
-        # pipe.scheduler = scheduler
 
         # settings
         guidance_scale = 7.5
@@ -211,17 +177,15 @@ class StoryBoardArtistTool(AICPBaseTool):
     def stable_diffusion(self):
         # setup stable diffusion pipeline
         cast_member = self.video.director.get_storyboard_artist()
-        pipe = StableDiffusionPipeline.from_pretrained(
-            cast_member.sd_model,
-            custom_pipeline="lpw_stable_diffusion",
-            torch_dtype=torch.float16,
-        )
-        pipe = pipe.to("cuda")
-        pipe.enable_xformers_memory_efficient_attention()
-        pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
-        #        scheduler.config.algorithm_type = "sde-dpmsolver++"
-        #        pipe.scheduler = scheduler
+        lora_paths = []
+        for actor in self.video.actors:
+            if not actor.lora_keyword:
+                continue
+            lora_paths.append(
+                os.path.join("loras", f"{actor.lora_keyword}.safetensors")
+            )
 
+        pipe = image_gen.get_pipeline_with_loras(cast_member.sd_model, lora_paths)
         # settings
         guidance_scale = 7.5
         num_inference_steps = 50
@@ -280,9 +244,6 @@ class StoryBoardArtistTool(AICPBaseTool):
 
         # upscale images with img2img
         self.img2img_upscaler()
-
-        # upscale with restore faces
-        # self.gfp_upscaler()
 
         return "Done generating storyboard"
 

@@ -1,1 +1,2 @@
 loras/AICPHeater.safetensors filter=lfs diff=lfs merge=lfs -text
+loras/KristannaTX.safetensors filter=lfs diff=lfs merge=lfs -text
