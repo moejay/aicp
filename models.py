@@ -89,12 +89,13 @@ class ProductionConfig:
     video_height: int
     sd_base_image_width: int
     sd_base_image_height: int
-    num_images_per_scene: int
+    num_images_per_scene: int = 10
 
     enable_subtitles: bool = False
     subtitles_alignment: int = 2
     subtitles_fontname: str = "DejaVu Sans"
     subtitles_fontsize: int = 26
+    voiceline_synced_storyboard: bool = False
 
     @classmethod
     def from_yaml(cls, yaml_file: str):
