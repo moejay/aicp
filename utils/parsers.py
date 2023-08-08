@@ -1,4 +1,5 @@
 import os
+import json
 import re
 
 import contextlib
@@ -6,7 +7,7 @@ import wave
 import logging
 import yaml
 
-from models import Scene, SceneDialogue, Video, Actor, Program
+from models import Scene, SceneDialogue, Video, Actor, VOLine
 from utils import utils
 
 logger = logging.getLogger(__name__)
@@ -19,6 +20,42 @@ def get_voiceover_duration():
         rate = f.getframerate()
         duration = frames / float(rate)
     return int(duration)
+
+
+def get_voiceover_lines():
+    """Get the successful takes of the recorded VO lines."""
+    # List all the files in the voiceover directory
+    files = os.listdir(utils.VOICEOVER_PATH)
+    # Filter only the files that end with .json and don't have the word "take" in them
+    files = [
+        file
+        for file in files
+        if file.endswith(".json") and "take" not in file  # Change to json later
+    ]
+    vo_lines = []
+    # The file name is of the pattern `scene_{scene_index}_line_{line_index}_{sentence_index}.txt`
+    # Extract that info and read the file to get the duration and the text
+    # in order to create VOLine objects
+    for file in files:
+        scene_index, line_index, sentence_index = [
+            int(i) for i in re.findall(r"\d+", file)
+        ]
+        with open(os.path.join(utils.VOICEOVER_PATH, file), "r") as f:
+            text = f.read()
+        vo_file_json = json.loads(text)
+        vo_lines.append(
+            VOLine(
+                actor=None,
+                line=vo_file_json["sentence"],
+                duration=vo_file_json["duration"],
+                scene_index=scene_index,
+                line_index=line_index,
+                sentence_index=sentence_index,
+            )
+        )
+    # Sort the lines by scene index, line index and sentence index
+    vo_lines.sort(key=lambda x: (x.scene_index, x.line_index, x.sentence_index))
+    return vo_lines
 
 
 def get_script():

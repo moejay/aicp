@@ -1,0 +1,8 @@
+video_width: 1080
+video_height: 1920
+sd_base_image_width: 432
+sd_base_image_height:  768
+num_images_per_scene: 1
+enable_subtitles: True
+subtitles_alignment: 5
+voiceline_synced_storyboard: True

@@ -3,10 +3,7 @@
 import glob
 import os
 import random
-import yaml
 import logging
-import matplotlib.image as mpimg
-import matplotlib.patches as patches
 import numpy as np
 
 from langchain.callbacks.manager import (
@@ -19,7 +16,7 @@ from math import sqrt
 from skimage.color import rgb2gray
 from skimage.feature import ORB
 from typing import Optional
-from utils import llms, utils, parsers
+from utils import utils, parsers
 
 from .base import AICPBaseTool
 
@@ -90,15 +87,23 @@ class AnimationArtistTool(AICPBaseTool):
             # use img2img upscaled images if they exist
             image_path = os.path.join(utils.STORYBOARD_PATH, "img2img")
 
-        for i, scene in enumerate(scenes):
-            scene_images = glob.glob(
-                os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
-            )
-            duration_per_image = scene.duration / len(scene_images)
+        if self.video.production_config.voiceline_synced_storyboard:
+            # Use voiceline synced storyboard images
+            vo_lines = parsers.get_voiceover_lines()
+            for i, vo_line in enumerate(vo_lines, start=1):
+                image = os.path.join(image_path, f"scene_{i}_1.png")
+                images_dict[image] = vo_line.duration
+        else:
+            # use default storyboard images
+            for i, scene in enumerate(scenes):
+                scene_images = glob.glob(
+                    os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
+                )
+                duration_per_image = scene.duration / len(scene_images)
 
-            for img in scene_images:
-                image = os.path.join(image_path, os.path.basename(img))
-                images_dict[image] = duration_per_image
+                for img in scene_images:
+                    image = os.path.join(image_path, os.path.basename(img))
+                    images_dict[image] = duration_per_image
 
         return images_dict
 
@@ -274,7 +279,10 @@ class AnimationArtistTool(AICPBaseTool):
 
         # get list of all video filenames in the directory
         video_files = glob.glob(f"{video_dir}/*.mp4")
-        video_files = sorted(video_files)
+        # Sort them by scene and then line, the files are in the format scene_{scene_index}_{line_index}.mp4
+        # Where scene_index, and line_index are 1,2,3 ....11,12 etc..
+        video_files.sort(key=lambda x: int(x.split("_")[1]))
+        video_files.sort(key=lambda x: int(x.split("_")[2].split(".")[0]))
 
         video_list = os.path.join(utils.PATH_PREFIX, "concat.txt")
         with open(video_list, "w") as f:

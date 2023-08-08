@@ -347,7 +347,9 @@ def generate_speech_as_takes(
         # If we get here, find the best take and use that
         # Sorted by desc text_similarity, snr, then ascending duration
         sorted_takes = sorted(
-            takes, key=lambda x: (x[2]["text_similarity"], x[2]["snr"], -x[2]["duration"]), reverse=True
+            takes,
+            key=lambda x: (x[2]["text_similarity"], x[2]["snr"], -x[2]["duration"]),
+            reverse=True,
         )
         take_to_save = sorted_takes[0]
         print(f"Best take: {take_to_save[2]}")

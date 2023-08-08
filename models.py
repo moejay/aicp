@@ -273,6 +273,18 @@ class Actor:
 
 
 @dataclass
+class VOLine:
+    """A voiceover line object."""
+
+    actor: Optional[Actor]
+    line: str
+    duration: float
+    scene_index: int
+    line_index: int
+    sentence_index: int
+
+
+@dataclass
 class SceneDialogue:
     """A scene dialogue object."""
 
