@@ -3,6 +3,6 @@ title: One Minute Facts
 description: |
   A show that is 1 minute long that brilliantly goes through some facts about a given topic
   delivered in quick single summarized sentence each.
-rules: |
+script_rules: |
   * TODO: Add rules
 prompt_placeholder_text: A short but exciting series of facts on a subject
