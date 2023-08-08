@@ -299,8 +299,10 @@ class Program:
 
     title: str
     description: str
-    rules: str
     prompt_placeholder_text: str
+
+    script_rules: str = ""
+    storyboard_rules: str = ""
 
     @classmethod
     def from_yaml(cls, yaml_file: str):

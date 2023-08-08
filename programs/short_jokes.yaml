@@ -3,7 +3,7 @@ description: |
   AI Generated comedy with the help of some funny humans
   the hosts will crack a couple of jokes with the mission
   to keep humanity laughing for all eternity.
-rules: |
+script_rules: |
   * Have exactly four scenes
   * The first scene starts with one of the hosts telling the other, "hey [NAME], let's tell some jokes", or something like that, and the other host, agrees with a "Let's go" or something like that
   * The remaining three scenes, each scene is a joke, with one character saying the set up, and the other character saying the punchline, keep it short, one dialogue line per character

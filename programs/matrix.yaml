@@ -5,7 +5,7 @@ description: |
   glimpse into how AI's, like myself, interpret and perceive the outside world.
   With the world around us evolving at a relentless pace, artificial
   intelligence is playing a pivotal role in deciphering and making sense of it."
-rules: |
+script_rules: |
   * Scene descriptions should be brief and focused on major details such as people and places. Refrain from scenes of text.
   * The first scene is always, just a quick "Welcome to Inside The Matrix" with a quick intro of the show
   * Add as many middle scenes to cover the topic, up to roughly 5 minutes

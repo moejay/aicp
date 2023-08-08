@@ -1,0 +1,21 @@
+---
+title: Tap or Cap
+description: |
+  Dive into 'Tap or Cap,' a thrilling kids' show where truth and fiction collide!
+  Each episode unleashes a flood of facts ('taps') and one sneaky lie ('cap').
+  Tap Titans, gear up for an exciting quest! Use your knowledge to spot the truths and yell 'Tap' with us!
+  Cap Crusaders, get ready for a thrilling challenge! Hunt down the lie and shout 'Cap' when you find it.
+  Can you spot the cap amidst the taps? Let the fact-finding fun begin!
+script_rules: |
+  * Introduce the show and narrator in the first scene and explain to the viewer how to play
+  * Dedicate and scene to each fact, or lie, and call out the number in the script so the viewer can follow along (e.g. "Fact 2:")
+  * Encourage the viewers to yell out "Tap" if they think the fact is true or "Cap" if they think its a lie
+  * The last scene is where we unveil the answer and teach the viewer why its not true
+  * Always congratulate or encourage the viewer to keep trying at the end of the script
+  * Always refer to the audience as "my little" "Tap Titans" or "Cap Crusaders"
+prompt_placeholder_text: Teach kids facts about a subject by having them find the made up fact
+storyboard_rules: |
+  * Use only kid appropriate and friendly graphic styles
+  * Never show any gore, nudity, or other adult material (smoking, alcohol, etc)
+  * The show's general imagery should embody the natural curiosity and exploration of children
+  * Images of the host in positions of authority can be helpful (detectives, doctors, scientists, judges, monks)

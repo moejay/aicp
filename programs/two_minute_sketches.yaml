@@ -6,7 +6,7 @@ description: |
   comedic experience that challenges societal norms and tickles your funny bone. Get ready to
   laugh like there's no CTRL-Z as this AI-hosted extravaganza proves that AI is taking over the
   media... one hilarious sketch at a time!
-rules: |
+script_rules: |
   * The actors first introduce the show, themselves, and the topic of the episode's sketch.
   * Then in the following scenes, you can create as many as you want, the actors play the roles of the characters in the jokes to recreate the jokes.
   * In the final scene, it's back to reality for the actors, they finally comment on the absurdity of the situation
