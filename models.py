@@ -248,6 +248,7 @@ class Actor:
     speaker_text_temp: float = 0.7
     speaker_waveform_temp: float = 0.7
     speaker_enhance: bool = False
+    speaker_wpm: int = 120
     lora_keyword: Optional[str] = None
 
     @classmethod
