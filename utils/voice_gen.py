@@ -153,7 +153,64 @@ def get_whisper_model():
     return WHISPER_MODEL
 
 
-def generate_speech(sentence, history_prompt, text_temp, waveform_temp):
+def non_silence_in_last_duration_audio(y, sr, duration_ms=250, silence_ratio=0.01):
+    """
+    Detect if there's any non-silence in the last specified duration of an audio array.
+
+    Parameters:
+    - y (numpy array): Audio time series.
+    - sr (int): Sampling rate of the audio time series.
+    - duration_ms (int): Duration in milliseconds to consider from the end of the audio. Default is 250ms.
+    - silence_ratio (float): Ratio to define silence threshold based on max energy. Default is 0.01 (1% of max energy).
+
+    Returns:
+    - bool: True if there's non-silence in the specified duration, False otherwise.
+    """
+
+    # Compute short-time energy
+    hop_length = 512
+    frame_length = 2048
+    energy = np.array(
+        [sum(abs(y[i : i + frame_length] ** 2)) for i in range(0, len(y), hop_length)]
+    )
+
+    # Define a threshold for silence
+    silence_threshold = silence_ratio * max(energy)
+
+    # Consider the last specified duration of the audio
+    num_frames_duration = int((duration_ms / 1000) * sr / hop_length)
+    last_duration_start = max(0, len(energy) - num_frames_duration)
+
+    # Check if there's any non-silence in the last duration
+    return any(e > silence_threshold for e in energy[last_duration_start:])
+
+
+def estimate_speech_duration_with_pauses(sentence, speaking_rate=150, comma_pause=0.5):
+    """
+    Estimate the duration to speak a given sentence, accounting for pauses introduced by commas.
+
+    Parameters:
+    - sentence (str): The sentence to be spoken.
+    - speaking_rate (int): Average speaking rate in words per minute. Default is 150 wpm.
+    - comma_pause (float): Duration in seconds to pause for each comma. Default is 0.5 seconds.
+
+    Returns:
+    - float: Estimated duration in seconds to speak the sentence.
+    """
+
+    # Count the number of words in the sentence
+    num_words = len(sentence.split())
+
+    # Count the number of commas in the sentence
+    num_commas = sentence.count(",")
+
+    # Compute the estimated duration considering the speaking rate and pauses for commas
+    estimated_duration = (num_words / speaking_rate * 60) + (num_commas * comma_pause)
+
+    return estimated_duration
+
+
+def generate_speech(sentence, history_prompt, text_temp, waveform_temp, speech_wpm):
     print(f"Generating sentence: {sentence}")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -182,13 +239,19 @@ def generate_speech(sentence, history_prompt, text_temp, waveform_temp):
     text_similarity = compute_similarity(sentence, transcribed_text)
     audio = audio_resampled.cpu().numpy()[0]
     snr = compute_snr(audio)
+    has_non_silence = non_silence_in_last_duration_audio(audio, NEW_SAMPLE_RATE)
     duration = len(audio) / NEW_SAMPLE_RATE
+    max_duration = estimate_speech_duration_with_pauses(
+        sentence, speaking_rate=speech_wpm
+    )
 
     results = {
         "sentence": sentence,
         "transcribed_text": transcribed_text,
+        "has_non_silence": has_non_silence,
         "text_similarity": text_similarity,
         "duration": duration,
+        "max_duration": max_duration,
         "text_temp": text_temp,
         "waveform_temp": waveform_temp,
         "history_prompt": history_prompt,
@@ -198,10 +261,18 @@ def generate_speech(sentence, history_prompt, text_temp, waveform_temp):
         f"""
     snr: {snr}
     transcribed_text: {transcribed_text}
+    has_non_silence: {has_non_silence}
     text_similarity: {text_similarity}
-    duration: {duration}"""
+    duration: {duration}
+    max_duration: {max_duration}
+    """
     )
-    if (snr < 20 or snr > 28) or duration > 9 or text_similarity < 90:
+    if (
+        (snr < 20 or snr > 28)
+        or duration > max_duration
+        or text_similarity < 95
+        or has_non_silence
+    ):
         # Audio is noisy and or not clear
         print("We think it's bad")
         return audio, True, results
@@ -242,6 +313,7 @@ def generate_speech_as_takes(
     text_temp,
     waveform_temp,
     max_takes=100,
+    speech_wpm=150,
     save_all_takes=False,
     output_dir=None,
     output_file_prefix=None,
@@ -251,7 +323,7 @@ def generate_speech_as_takes(
 
     while max_takes > 0:
         audio, is_bad, results = generate_speech(
-            sentence, history_prompt, text_temp, waveform_temp
+            sentence, history_prompt, text_temp, waveform_temp, speech_wpm
         )
         if save_all_takes:
             take_path = os.path.join(

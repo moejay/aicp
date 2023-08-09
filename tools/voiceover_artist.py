@@ -161,8 +161,9 @@ class VoiceOverArtistTool(AICPBaseTool):
                             history_prompt=actor.speaker,
                             text_temp=actor.speaker_text_temp,
                             waveform_temp=actor.speaker_waveform_temp,
-                            max_takes=40,
+                            max_takes=10,
                             save_all_takes=True,
+                            speech_wpm=actor.speaker_wpm,
                             output_dir=utils.VOICEOVER_PATH,
                             output_file_prefix=f"scene_{scene_index}_line_{line_index}_{sentence_index}-take",
                         )
