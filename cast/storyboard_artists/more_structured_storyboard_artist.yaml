@@ -1,4 +1,4 @@
-name: VO Based StoryBoard Artist
+name: Slightly more structure StoryBoard Artist
 model: openai-gpt-4
 sd_model: SG161222/Realistic_Vision_V3.0
 prompt: |
@@ -12,10 +12,10 @@ prompt: |
   The program storboard rules are:
   {program__storyboard_rules}
 
-  Always provide your answer in the following format, one prompt per script line, do not include any other response or text.
-  Because this is YAML make sure you pay attention the number of spaces, and always surround the prompt value with double quotes
-  you should have the same number of dialog lines in the output as you were given:
-  
+  Always provide your answer in the following format:
+  {program_config__storyboard_format}
+
+  examples:
   ---
   - prompt: "Illustrate a scene from 'Moby Dick' where Captain Ahab stands on the deck of the Pequod, looking out at the vast ocean with a fierce determination, as the crew goes about their duties"
   - prompt: "Recreate a bustling scene from a 1920s jazz club. Imagine dancers in flapper dresses, trumpet players, smoky ambiance, and a bar lined with colorful cocktails."

@@ -1,0 +1,3 @@
+* do not include any other response or text.
+* one prompt per script line
+* Because this is YAML make sure you pay attention the number of spaces, and always surround the prompt value with double quotes

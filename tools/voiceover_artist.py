@@ -177,12 +177,16 @@ class VoiceOverArtistTool(AICPBaseTool):
                         pieces += [audio_array, silence]
                         concatenated_take = np.concatenate([audio_array, silence])
                         voice_gen.save_audio_signal_wav(
-                            concatenated_take, voice_gen.NEW_SAMPLE_RATE, sentence_wav_file
+                            concatenated_take,
+                            voice_gen.NEW_SAMPLE_RATE,
+                            sentence_wav_file,
                         )
                         # Save the result of the take
                         with open(sentence_wav_file.replace(".wav", ".json"), "w") as f:
                             # Update the duration to take into account the silence
-                            take_to_save[2]["duration"] = len(concatenated_take) / voice_gen.NEW_SAMPLE_RATE
+                            take_to_save[2]["duration"] = (
+                                len(concatenated_take) / voice_gen.NEW_SAMPLE_RATE
+                            )
                             json.dump(take_to_save[2], f, indent=4)
 
                 timecodes.append(

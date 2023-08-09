@@ -15,13 +15,13 @@ prompt: |
   * The prompt must describe an enticing image with interesting colors matching the general mood of the human provided
   script.
 
-  Always provide your answer in the following format, one prompt per scene, do not include any other response or text.
-  Because this is YAML make sure you pay attention the number of spaces, and always surround the prompt value with double quotes
-  you should have the same number of scenes in the output as you were given :
+  Always provide your answer in the following format:
+  {production_config__storyboard_format}
 
+  examples:
   ---
   - prompt: "Subject looking right, sitting on park bench, black and white ..."
   - prompt: "Subject on boardwalk with coat, raining ..."
-
+  
 positive_prompt: (high detailed skin:1.2, high quality), reportage, journalism, 8k uhd, dslr
 negative_prompt: ((text:1.5, nudity:1.5, nude:1.5, nsfw:1.5, sex:1.5, deformed iris, deformed pupils, deformed hands, crosseyed)), ((semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime:1.4)), (cropped, out of frame, worst quality, low quality, ugly) jpeg artifacts, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, burns, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, extra lips, extra nose, extra eyes
