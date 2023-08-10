@@ -4,5 +4,5 @@ storyboard_artist: handdrawn_caricature_storyboard_artist
 animation_artist: None
 voiceover_artist: multi_character_voiceover_artist 
 music_composer: mvp_music_composer
-thumbnail_artist: mvp_thumbnail_artist
+thumbnail_artist: None 
 youtube_distributor: mvp_youtube_distributor

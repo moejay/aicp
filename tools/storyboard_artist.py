@@ -66,16 +66,6 @@ class StoryBoardArtistTool(AICPBaseTool):
 
         prompts = []
         if self.video.production_config.voiceline_synced_storyboard:
-            # Summarize the script in a few sentences
-
-            if not os.path.exists(utils.SCRIPT_SUMMARY):
-                with open(utils.SCRIPT_SUMMARY, "w") as f:
-                    f.write(
-                        llms.get_llm(
-                            model=cast_member.model,
-                            template="Summarize the following script in 4 sentences",
-                        ).run(parsers.get_script())
-                    )
             with open(utils.SCRIPT_SUMMARY, "r") as f:
                 script_summary = f.read()
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 from typing import Optional
 from dotenv import load_dotenv
 import logging
@@ -55,6 +56,16 @@ class ScriptWriterTool(AICPBaseTool):
 
                 with open(utils.SCRIPT, "w") as f:
                     f.write(result)
+                # Summarize the script in a few sentences
+                if not os.path.exists(utils.SCRIPT_SUMMARY):
+                    with open(utils.SCRIPT_SUMMARY, "w") as f:
+                        f.write(
+                            llms.get_llm(
+                                model=cast_member.model,
+                                template="Summarize the following script in 4 sentences",
+                            ).run(result)
+                        )
+
                 return f"File written to {utils.SCRIPT}"
             except Exception as e:
                 retries -= 1
@@ -62,6 +73,7 @@ class ScriptWriterTool(AICPBaseTool):
                 logger.warning("Failed to generate script, retrying")
 
         logger.error("Failed to generate script, retries exhausted")
+
         return "Failed to generate script"
 
     def _arun(

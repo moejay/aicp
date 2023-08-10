@@ -57,24 +57,26 @@ class ProducerTool(AICPBaseTool):
         images_dict = {}
 
         upscaler_path = ""
-        if os.path.exists(os.path.join(utils.STORYBOARD_PATH, "img2img")):
-            # use gfpgan upscaled images if they exist
-            upscaler_path = "img2img"
+        # if os.path.exists(os.path.join(utils.STORYBOARD_PATH, "img2img")):
+        #    # use gfpgan upscaled images if they exist
+        #    upscaler_path = "img2img"
+
+        if self.video.production_config.voiceline_synced_storyboard:
             # Use voiceline synced storyboard images
             vo_lines = parsers.get_voiceover_lines()
             for i, vo_line in enumerate(vo_lines, start=1):
                 image = os.path.join(upscaler_path, f"scene_{i}_1.png")
                 images_dict[image] = vo_line.duration
+        else:
+            for i, scene in enumerate(scenes):
+                scene_images = glob.glob(
+                    os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
+                )
+                duration_per_image = scene.duration / len(scene_images)
 
-        for i, scene in enumerate(scenes):
-            scene_images = glob.glob(
-                os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
-            )
-            duration_per_image = scene.duration / len(scene_images)
-
-            for img in scene_images:
-                image = os.path.join(upscaler_path, os.path.basename(img))
-                images_dict[image] = duration_per_image
+                for img in scene_images:
+                    image = os.path.join(upscaler_path, os.path.basename(img))
+                    images_dict[image] = duration_per_image
 
         return images_dict
 
