@@ -146,6 +146,10 @@ def resolve_param_from_video(video: Video, param_name):
         program = video.program
         second_param = params[1]
         return getattr(program, second_param, "")
+    elif first_param == "production_config":
+        production_config = video.production_config
+        second_param = params[1]
+        return getattr(production_config, second_param, "")
     else:
         logger.warning(f"Unknown param: {param_name}")
         return ""

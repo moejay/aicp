@@ -66,6 +66,19 @@ class StoryBoardArtistTool(AICPBaseTool):
 
         prompts = []
         if self.video.production_config.voiceline_synced_storyboard:
+            # Summarize the script in a few sentences
+
+            if not os.path.exists(utils.SCRIPT_SUMMARY):
+                with open(utils.SCRIPT_SUMMARY, "w") as f:
+                    f.write(
+                        llms.get_llm(
+                            model=cast_member.model,
+                            template="Summarize the following script in 4 sentences",
+                        ).run(parsers.get_script())
+                    )
+            with open(utils.SCRIPT_SUMMARY, "r") as f:
+                script_summary = f.read()
+
             # Do it per scene and provide the dialog lines
             vo_lines = parsers.get_voiceover_lines()
             # Group by scene
@@ -76,7 +89,14 @@ class StoryBoardArtistTool(AICPBaseTool):
                     if vo_line.scene_index == scene_index
                 ]
 
-                params["input"] = yaml.dump(vo_lines_for_scene)
+                params["input"] = yaml.dump(
+                    {
+                        "script_summary": script_summary,
+                        "scene_title": scene.scene_title,
+                        "scene_description": scene.description,
+                        "dialog_lines": vo_lines_for_scene,
+                    }
+                )
                 prompts.extend(self._call_llm(chain, params, len(vo_lines_for_scene)))
         else:
             params["input"] = yaml.dump(
