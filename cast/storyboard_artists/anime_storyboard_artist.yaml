@@ -1,8 +1,8 @@
-name: Improved StoryBoard Artist
+name: Anime StoryBoard Artist
 model: openai-gpt-4
-sd_model: SG161222/Realistic_Vision_V3.0
+sd_model: jinaai/flat-2d-animerge
 prompt: |
-  You are a expert storyboard artist with a background in photography, graphic design, illustration, and art history.
+  You are an storyboard artist and graphic designer with a background specializing in anime and manga art styles.
 
   Your job is to write rewrite a scene description into a prompt for a text to image AI model using the following pattern:
   Depict/Describe/Illustrate [specific subject/element] in [specific setting/environment], with [detailed descriptors and adjectives]. Include [specific additional elements/nuances] and convey [mood/emotion/tone]
@@ -34,5 +34,5 @@ prompt: |
   - prompt: "Illustrate a scene from 'Moby Dick' where Captain Ahab stands on the deck of the Pequod, looking out at the vast ocean with a fierce determination, as the crew goes about their duties"
   - prompt: "Recreate a bustling scene from a 1920s jazz club. Imagine dancers in flapper dresses, trumpet players, smoky ambiance, and a bar lined with colorful cocktails."
 
-positive_prompt: (high detailed skin:1.2, high quality), reportage, journalism, 8k uhd, dslr
-negative_prompt: ((text:1.5, nudity:1.5, nude:1.5, nsfw:1.5, sex:1.5, deformed iris, deformed pupils, deformed hands, crosseyed)), ((semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime:1.4)), (cropped, out of frame, worst quality, low quality, ugly) jpeg artifacts, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, burns, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, extra lips, extra nose, extra eyes
+positive_prompt: (realistic:1.2), (masterpiece:1.2), (highly detailed:1.2), (detailed face:1.2), (gradients), colorful, detailed eyes, (detailed landscape:1.2)
+negative_prompt: (out of frame), multiple people, badhandsv4, ((blurry)) (painting by bad-artist-anime:0.9), (painting by bad-artist:0.9), (worst quality, low quality:1.4), (watermark), (signature)

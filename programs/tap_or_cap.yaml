@@ -7,15 +7,20 @@ description: |
   Cap Crusaders, get ready for a thrilling challenge! Hunt down the lie and shout 'Cap' when you find it.
   Can you spot the cap amidst the taps? Let the fact-finding fun begin!
 script_rules: |
+  * The show is intended to teach children ages 6-12 to think critically about information sources
+  * Never discuss gore, violence, nudity, or other adult material (smoking, alcohol, drugs, sex, etc)
+  * If you use any form of terminology the viewer wouldn't understand take the time to explain it (e.g. scientific or medical terms)
   * Introduce the show and narrator in the first scene and explain to the viewer how to play
+  * Make up one fantastic lie about the subject and mix it in among the facts
   * Dedicate and scene to each fact, or lie, and call out the number in the script so the viewer can follow along (e.g. "Fact 2:")
+  * Explore each fact, or lie, in detail- write at least 100 words of dialog per scene
   * Encourage the viewers to yell out "Tap" if they think the fact is true or "Cap" if they think its a lie
-  * The last scene is where we unveil the answer and teach the viewer why its not true
+  * The last scene is where we unveil the answer and teach the viewer: why this fact was actually a lie, and how to think critically about information
   * Always congratulate or encourage the viewer to keep trying at the end of the script
-  * Always refer to the audience as "my little" "Tap Titans" or "Cap Crusaders"
+  * Always refer to the audience as "my little" "Tap Titans" or "Cap Crushers"
 prompt_placeholder_text: Teach kids facts about a subject by having them find the made up fact
 storyboard_rules: |
-  * Use only kid appropriate and friendly graphic styles
-  * Never show any gore, nudity, or other adult material (smoking, alcohol, etc)
+  * Use only child (ages 6-12) appropriate imagery and friendly graphic styles
+  * Never show any gore, violence, nudity, or other adult material (smoking, alcohol, drugs, sex, etc)
   * The show's general imagery should embody the natural curiosity and exploration of children
-  * Images of the host in positions of authority can be helpful (detectives, doctors, scientists, judges, monks)
+  * Images of the host in positions of authority can be helpful (astronauts, detectives, doctors, teachers, scientists, judges, monks, etc)
