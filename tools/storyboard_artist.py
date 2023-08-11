@@ -64,45 +64,47 @@ class StoryBoardArtistTool(AICPBaseTool):
                 video=self.video, param_name=param
             )
 
-        script_input = yaml.dump(
-            [
-                {
-                    "scene_title": s.scene_title,
-                    "scene_description": s.description,
-                }
-                for s in parsers.get_scenes()
-            ]
-        )
-        params["input"] = script_input
+        prompts = []
+        if self.video.production_config.voiceline_synced_storyboard:
+            with open(utils.SCRIPT_SUMMARY, "r") as f:
+                script_summary = f.read()
 
-        retries = 3
+            # Do it per scene and provide the dialog lines
+            vo_lines = parsers.get_voiceover_lines()
+            # Group by scene
+            for scene_index, scene in enumerate(parsers.get_scenes()):
+                vo_lines_for_scene = [
+                    vo_line
+                    for vo_line in vo_lines
+                    if vo_line.scene_index == scene_index
+                ]
 
-        while retries > 0:
-            try:
-                # Use only the title and description lines to save tokens
-                response = chain.run(
-                    **params,
+                params["input"] = yaml.dump(
+                    {
+                        "script_summary": script_summary,
+                        "scene_title": scene.scene_title,
+                        "scene_description": scene.description,
+                        "dialog_lines": vo_lines_for_scene,
+                    }
                 )
-                logger.info(response)
+                prompts.extend(self._call_llm(chain, params, len(vo_lines_for_scene)))
+        else:
+            params["input"] = yaml.dump(
+                [
+                    {
+                        "scene_title": s.scene_title,
+                        "scene_description": s.description,
+                    }
+                    for s in parsers.get_scenes()
+                ]
+            )
+            prompts = self._call_llm(chain, params, len(parsers.get_scenes()))
 
-                parsed = yaml.load(response, Loader=yaml.Loader)
-                ## Check if parsed has the same number of scenes as the script
-                if len(parsed) != len(parsers.get_scenes()):
-                    raise Exception("Parsed prompts has different number of scenes")
-                # Save the updated script
-                with open(
-                    os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml"), "w"
-                ) as f:
-                    f.write(response)
+        # Save the prompts
+        with open(os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml"), "w") as f:
+            f.write(yaml.dump(prompts))
 
-                return parsed
-            except Exception as e:
-                logger.warning(e)
-                logger.info(f"Retrying {retries} more times...")
-                retries -= 1
-
-        logger.error("Failed to generate prompts, no more retries left")
-        raise Exception("Failed to generate prompts")
+        return prompts
 
     def img2img_upscaler(self):
         # setup stable diffusion pipeline
@@ -252,3 +254,26 @@ class StoryBoardArtistTool(AICPBaseTool):
     ) -> str:
         """Use the tool."""
         raise NotImplementedError("Async not implemented")
+
+    def _call_llm(self, chain, params, expected_number_of_prompts):
+        retries = 3
+        while retries > 0:
+            try:
+                # Use only the title and description lines to save tokens
+                response = chain.run(
+                    **params,
+                )
+                logger.info(response)
+
+                parsed = yaml.load(response, Loader=yaml.Loader)
+                ## Check if parsed has the same number of prompts as expected
+                if len(parsed) != expected_number_of_prompts:
+                    raise Exception("Parsed prompts has different number than expected")
+                return parsed
+            except Exception as e:
+                logger.warning(e)
+                logger.info(f"Retrying {retries} more times...")
+                retries -= 1
+
+        logger.error("Failed to generate prompts, no more retries left")
+        raise Exception("Failed to generate prompts")

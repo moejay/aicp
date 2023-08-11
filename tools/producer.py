@@ -21,7 +21,6 @@ class ProducerTool(AICPBaseTool):
         self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
     ) -> str:
         """Use the tool."""
-        scenes = parsers.get_scenes()
         audio_dict = {utils.FINAL_AUDIO_FILE: 0}
 
         # Create video from animated images
@@ -31,6 +30,7 @@ class ProducerTool(AICPBaseTool):
             )
         # Create video from still images
         else:
+            scenes = parsers.get_scenes()
             images = self.get_scene_images(scenes)
 
             resolution = (
@@ -56,21 +56,27 @@ class ProducerTool(AICPBaseTool):
     def get_scene_images(self, scenes):
         images_dict = {}
 
-        if os.path.exists(os.path.join(utils.STORYBOARD_PATH, "restored_imgs")):
-            # use gfpgan upscaled images if they exist
-            upscaler_path = "restored_imgs"
+        upscaler_path = ""
+        # if os.path.exists(os.path.join(utils.STORYBOARD_PATH, "img2img")):
+        #    # use gfpgan upscaled images if they exist
+        #    upscaler_path = "img2img"
+
+        if self.video.production_config.voiceline_synced_storyboard:
+            # Use voiceline synced storyboard images
+            vo_lines = parsers.get_voiceover_lines()
+            for i, vo_line in enumerate(vo_lines, start=1):
+                image = os.path.join(upscaler_path, f"scene_{i}_1.png")
+                images_dict[image] = vo_line.duration
         else:
-            upscaler_path = ""
+            for i, scene in enumerate(scenes):
+                scene_images = glob.glob(
+                    os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
+                )
+                duration_per_image = scene.duration / len(scene_images)
 
-        for i, scene in enumerate(scenes):
-            scene_images = glob.glob(
-                os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
-            )
-            duration_per_image = scene.duration / len(scene_images)
-
-            for img in scene_images:
-                image = os.path.join(upscaler_path, os.path.basename(img))
-                images_dict[image] = duration_per_image
+                for img in scene_images:
+                    image = os.path.join(upscaler_path, os.path.basename(img))
+                    images_dict[image] = duration_per_image
 
         return images_dict
 

@@ -1,0 +1,7 @@
+video_width: 432
+video_height: 768
+sd_base_image_width: 216
+sd_base_image_height: 384
+enable_subtitles: True
+voiceline_synced_storyboard: True
+num_images_per_scene: 1

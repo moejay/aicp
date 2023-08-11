@@ -13,6 +13,7 @@ from utils.utils import (
     THUMBNAIL_ARTIST_PATH,
     ANIMATION_ARTIST_PATH,
     YOUTUBE_DISTRIBUTOR_PATH,
+    PRODUCTION_CONFIG_PATH,
 )
 
 
@@ -89,12 +90,26 @@ class ProductionConfig:
     video_height: int
     sd_base_image_width: int
     sd_base_image_height: int
-    num_images_per_scene: int
+    num_images_per_scene: int = 10
 
     enable_subtitles: bool = False
     subtitles_alignment: int = 2
     subtitles_fontname: str = "DejaVu Sans"
     subtitles_fontsize: int = 26
+    voiceline_synced_storyboard: bool = False
+
+    @property
+    def storyboard_format(self):
+        """Return the storyboard format based on voiceline_synced_storyboard."""
+        prompt_file = os.path.join(
+            PRODUCTION_CONFIG_PATH,
+            "prompts",
+            "storyboard_format_vo.txt"
+            if self.voiceline_synced_storyboard
+            else "storyboard_format_original.txt",
+        )
+        # return the contents of the file
+        return open(prompt_file, "r").read()
 
     @classmethod
     def from_yaml(cls, yaml_file: str):
@@ -269,6 +284,18 @@ class Actor:
                 Loader=yaml.FullLoader,
             ),
         )
+
+
+@dataclass
+class VOLine:
+    """A voiceover line object."""
+
+    actor: Optional[Actor]
+    line: str
+    duration: float
+    scene_index: int
+    line_index: int
+    sentence_index: int
 
 
 @dataclass

@@ -320,7 +320,7 @@ def generate_speech_as_takes(
 ):
     current_take = 0
     takes = []
-
+    take_to_save = None
     while max_takes > 0:
         audio, is_bad, results = generate_speech(
             sentence, history_prompt, text_temp, waveform_temp, speech_wpm
@@ -338,18 +338,23 @@ def generate_speech_as_takes(
         takes.append((audio, is_bad, results))
         current_take += 1
         if not is_bad:
-            return audio
+            take_to_save = (audio, is_bad, results)
+            break
         print(f"Doing another take... {max_takes} left")
         max_takes -= 1
 
-    # If we get here, find the best take and use that
-    # Sorted by desc snr, then ascending duration
-    sorted_takes = sorted(
-        takes, key=lambda x: (x[2]["snr"], -x[2]["duration"]), reverse=True
-    )
-    best_take = sorted_takes[0]
-    print(f"Best take: {best_take[2]}")
-    return best_take[0]
+    if take_to_save is None:
+        # If we get here, find the best take and use that
+        # Sorted by desc text_similarity, snr, then ascending duration
+        sorted_takes = sorted(
+            takes,
+            key=lambda x: (x[2]["text_similarity"], x[2]["snr"], -x[2]["duration"]),
+            reverse=True,
+        )
+        take_to_save = sorted_takes[0]
+        print(f"Best take: {take_to_save[2]}")
+
+    return take_to_save
 
 
 def save_audio_signal_wav(audio_signal, sample_rate, output_file):

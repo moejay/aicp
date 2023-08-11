@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import logging
+import json
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
@@ -156,7 +157,7 @@ class VoiceOverArtistTool(AICPBaseTool):
                             pieces += [audio_array, silence]
                             continue
 
-                        audio_array = voice_gen.generate_speech_as_takes(
+                        take_to_save = voice_gen.generate_speech_as_takes(
                             sentence,
                             history_prompt=actor.speaker,
                             text_temp=actor.speaker_text_temp,
@@ -167,14 +168,26 @@ class VoiceOverArtistTool(AICPBaseTool):
                             output_dir=utils.VOICEOVER_PATH,
                             output_file_prefix=f"scene_{scene_index}_line_{line_index}_{sentence_index}-take",
                         )
+                        audio_array = take_to_save[0]
+
                         if actor.speaker_enhance:
                             audio_array = enhance(
                                 model, df_state, torch.tensor([audio_array])
                             )
                         pieces += [audio_array, silence]
+                        concatenated_take = np.concatenate([audio_array, silence])
                         voice_gen.save_audio_signal_wav(
-                            audio_array, voice_gen.NEW_SAMPLE_RATE, sentence_wav_file
+                            concatenated_take,
+                            voice_gen.NEW_SAMPLE_RATE,
+                            sentence_wav_file,
                         )
+                        # Save the result of the take
+                        with open(sentence_wav_file.replace(".wav", ".json"), "w") as f:
+                            # Update the duration to take into account the silence
+                            take_to_save[2]["duration"] = (
+                                len(concatenated_take) / voice_gen.NEW_SAMPLE_RATE
+                            )
+                            json.dump(take_to_save[2], f, indent=4)
 
                 timecodes.append(
                     math.ceil(sum([len(p) / voice_gen.NEW_SAMPLE_RATE for p in pieces]))

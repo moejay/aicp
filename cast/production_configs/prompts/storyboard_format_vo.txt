@@ -1,0 +1,4 @@
+* do not include any other response or text.
+* one prompt per script line
+* if the script line is out of topic, then the prompt should reflect the main topic of the script or scene whichever is more topical, for example if the script line is: "Hi there friends", and the topic is "Guava", the prompt should describe Guava and not friend 
+* Because this is YAML make sure you pay attention the number of spaces, and always surround the prompt value with double quotes

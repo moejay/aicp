@@ -1,0 +1,4 @@
+* do not include any other response or text.
+* one prompt per scene
+* Because this is YAML make sure you pay attention the number of spaces, and always surround the prompt value with double quotes
+* you should have the same number of scenes in the output as you were given 

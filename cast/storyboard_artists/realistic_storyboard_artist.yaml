@@ -17,16 +17,16 @@ prompt: |
   * You can describe what the subject is doing, how the photo is taken (Looking left, portrait photo, serious eyes, etc..)
   * Describe the color theme of the image
   * Be creative
+  * Include the actor in at least one prompt
 
   You have access to the following actors, here are their names, and how you
   should refer to them in the prompt (The part after ':')
   {actors__lora_keyword}
 
-  Always provide your answer in the following format, generate one prompt per scene
-  because this is YAML make sure you pay attention the number of spaces, and always surround the prompt value with double quotes
-  Include the actor in at least one prompt
-  you should have the same number of scenes in the output as you were given :
+  Always provide your answer in the following format:
+  {production_config__storyboard_format}
 
+  examples:
   ---
   - prompt: "Subject looking right, sitting on park bench, black and white ..."
   - prompt: "Subject on boardwalk with coat, raining ..."
