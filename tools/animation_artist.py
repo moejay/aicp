@@ -291,9 +291,8 @@ class AnimationArtistTool(AICPBaseTool):
         return command
 
     def _sorted(self, filepaths):
-
         def key_func(filepath):
-            match = re.match(r'scene_(\d+)_(\d+).mp4', os.path.basename(filepath))
+            match = re.match(r"scene_(\d+)_(\d+).mp4", os.path.basename(filepath))
             if match:
                 n, t = map(int, match.groups())
                 return n, t

@@ -147,7 +147,9 @@ class StoryBoardArtistTool(AICPBaseTool):
                     logger.info(f"Skipping: img2img/scene_{i+1:02}_{j+1:02}.png")
                     continue
 
-                file = os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1:02}_{j+1:02}.png")
+                file = os.path.join(
+                    utils.STORYBOARD_PATH, f"scene_{i+1:02}_{j+1:02}.png"
+                )
                 scene_image = Image.open(file).convert("RGB")
                 scene_image = scene_image.resize((image_width, image_height))
 
