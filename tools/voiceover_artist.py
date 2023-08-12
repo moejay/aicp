@@ -146,7 +146,7 @@ class VoiceOverArtistTool(AICPBaseTool):
                         print(f"{actor.name}: {sentence}")
                         sentence_wav_file = os.path.join(
                             utils.VOICEOVER_PATH,
-                            f"scene_{scene_index}_line_{line_index}_{sentence_index}.wav",
+                            f"scene_{scene_index:02}_line_{line_index:02}_{sentence_index:02}.wav",
                         )
                         if os.path.exists(sentence_wav_file):
                             print("Skipping line...")
@@ -166,7 +166,7 @@ class VoiceOverArtistTool(AICPBaseTool):
                             save_all_takes=True,
                             speech_wpm=actor.speaker_wpm,
                             output_dir=utils.VOICEOVER_PATH,
-                            output_file_prefix=f"scene_{scene_index}_line_{line_index}_{sentence_index}-take",
+                            output_file_prefix=f"scene_{scene_index:02}_line_{line_index:02}_{sentence_index:02}-take",
                         )
                         audio_array = take_to_save[0]
 

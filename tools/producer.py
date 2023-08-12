@@ -65,12 +65,12 @@ class ProducerTool(AICPBaseTool):
             # Use voiceline synced storyboard images
             vo_lines = parsers.get_voiceover_lines()
             for i, vo_line in enumerate(vo_lines, start=1):
-                image = os.path.join(upscaler_path, f"scene_{i}_1.png")
+                image = os.path.join(upscaler_path, f"scene_{i:02}_1.png")
                 images_dict[image] = vo_line.duration
         else:
             for i, scene in enumerate(scenes):
                 scene_images = glob.glob(
-                    os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
+                    os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1:02}_*.png")
                 )
                 duration_per_image = scene.duration / len(scene_images)
 

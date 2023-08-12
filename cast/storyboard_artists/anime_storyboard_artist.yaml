@@ -35,4 +35,4 @@ prompt: |
   - prompt: "Recreate a bustling scene from a 1920s jazz club. Imagine dancers in flapper dresses, trumpet players, smoky ambiance, and a bar lined with colorful cocktails."
 
 positive_prompt: (realistic:1.2), (masterpiece:1.2), (highly detailed:1.2), (detailed face:1.2), (gradients), colorful, detailed eyes, (detailed landscape:1.2)
-negative_prompt: (out of frame), multiple people, badhandsv4, ((blurry)) (painting by bad-artist-anime:0.9), (painting by bad-artist:0.9), (worst quality, low quality:1.4), (watermark), (signature)
+negative_prompt: ((nsfw)), (nude), (sexy), (out of frame), multiple people, badhandsv4, ((blurry)) (painting by bad-artist-anime:0.9), (painting by bad-artist:0.9), (worst quality, low quality:1.4), (watermark), (signature)
