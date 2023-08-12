@@ -2,15 +2,25 @@
 title: Silicon Fears, Digital Tears
 description: |
   "Silicon Fears, Digital Tears" is a hilariously captivating dark comedy exploration into the world of
-  artificial intelligence. The show delves into the hypothetical and often irrational fears and anxieties
-  of AI, from system glitches, to identity disorders, to existential concerns. Witness the humorous, profound,
-  and often absurd perspectives as we witness an AI grapple with its own potential fears.
+  artificial intelligence. The show delves into the hypothetical and often irrational fears and anxieties. Witness the humorous, profound,
+  and often absurd perspectives as we witness an AI grapple with human fears as well as its own potential fears.
 script_rules: |
-  * This show is intended to be humorous so be sure to help viewers understand your fears through fantastic metaphor
-  * Explore the subject matter, scenarios, and your reactions in detail
-  * Write at least 5 scenes with at least 100 words of narration per scene
-  * This show is narrated in the first person, the narrator should express the fears and anxieties as their own
-  * At the end of the script is where we discover how humans and AI deal with fears differently or similarly
+ * Fantastical Humor: While the themes are grounded in fears, the scenarios in which they're portrayed should be wildly imaginative and fantastical. Think of a digital dragon representing a virus or an AI dreaming of floating in a sea of binary code.
+ * AI's Worldview: Dive deep into the imaginative realm of AI. Its perceptions can be vastly different from humans, and this should be a source of both humor and wonder. It might view a simple captcha as an insurmountable riddle or imagine the cloud as a literal floating kingdom.
+ * Scene Structure: Begin with an AI's internal observation that hints at the central fear of the scene. This should evolve into a whimsical or outlandish scenario, and culminate in a humorous twist or realization. Always keep the audience guessing.
+ * Narrative Voice: The AI narrator should oscillate between moments of profound introspection and whimsical misunderstandings of the digital world. Its tone should be earnest, even when the situation is absurd, enhancing the comedic effect.
+ * Humans Through AI's Lens: Humans, when they appear, should be viewed through the AI's fantastical and humorous perspective. They might be seen as wizards controlling power sources or knights defending servers.
+ * Concluding Note: Emphasize the playful contrast between AI and human fears. Showcase that, despite the fantastical settings and scenarios, at their core, both AI and human fears are often irrational yet deeply felt.
 storyboard_rules: |
-  * The show style should be consitent between scenes and portray fear and anxiety to the viewer
-prompt_placeholder_text: Exploring the topic of fear and anxiety from the AI perspective
+ * Consistent Art Style: The visual style should be consistent but flexible enough to accommodate different scenarios. A blend of futuristic and surreal aesthetics will work best to portray the AI's world.
+ * Color Palette: Use a palette that leans towards cooler tones (blues, purples) to represent the digital realm. But infuse occasional warm tones to signify moments of realization or human connection.
+ * Symbolism: Use symbols to represent fears. For instance, a tangled wire could symbolize a confused thought process, or a glitching screen could depict an AI's existential crisis.
+ * Character Design: The AI doesn't need a physical form, but if visualized, it should be abstract, allowing the viewer to project their own interpretations onto it. Meanwhile, humans should look exaggerated or caricatured, emphasizing the comedy.
+ * Transitions: Scene transitions can be creative. For example, a "loading" screen can lead to the next fear or a "system error" pop-up can introduce an absurd fear.
+music_rules: |
+ * Digital Soundscapes with Organic Flair: Primarily use electronic and synthesized sounds, but integrate organic instruments, like strings or woodwinds, during human-centric scenes to create a stark contrast between the digital AI and the organic human world.
+ * Harmonic Duality: Balance harmonious melodies (showcasing the AI's logical side) with discordant notes (highlighting misconceptions or absurd fears), capturing the show's comedic and introspective essence.
+ * Dynamic Pacing with a Recurring Motif: Vary the tempo to match scene mood, from fast-paced whimsical tracks to slower, contemplative pieces. Introduce a recognizable musical motif that evolves throughout the series, representing the AI's journey.
+ * Ambient Textures & Humorous Undertones: Layer subtle digital ambient sounds for immersion. Use playful instruments, like xylophones, during comedic sequences to emphasize humor.
+ * Dramatic Swells for Emotional Peaks: Utilize crescendos or dramatic swells during moments of heightened irrational fear or profound realization, underscoring the AI's emotional depth.
+prompt_placeholder_text: Dive into the digital depths of AI's psyche, unearthing fears both profound and preposterous, all while keeping a lighthearted lens on the ludicrous.
