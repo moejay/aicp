@@ -3,6 +3,7 @@
 import glob
 import os
 import random
+import re
 import logging
 import numpy as np
 
@@ -91,13 +92,13 @@ class AnimationArtistTool(AICPBaseTool):
             # Use voiceline synced storyboard images
             vo_lines = parsers.get_voiceover_lines()
             for i, vo_line in enumerate(vo_lines, start=1):
-                image = os.path.join(image_path, f"scene_{i}_1.png")
+                image = os.path.join(image_path, f"scene_{i:02}_1.png")
                 images_dict[image] = vo_line.duration
         else:
             # use default storyboard images
             for i, scene in enumerate(scenes):
                 scene_images = glob.glob(
-                    os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_*.png")
+                    os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1:02}_*.png")
                 )
                 duration_per_image = scene.duration / len(scene_images)
 
@@ -278,11 +279,7 @@ class AnimationArtistTool(AICPBaseTool):
         """
 
         # get list of all video filenames in the directory
-        video_files = glob.glob(f"{video_dir}/*.mp4")
-        # Sort them by scene and then line, the files are in the format scene_{scene_index}_{line_index}.mp4
-        # Where scene_index, and line_index are 1,2,3 ....11,12 etc..
-        video_files.sort(key=lambda x: int(x.split("_")[1]))
-        video_files.sort(key=lambda x: int(x.split("_")[2].split(".")[0]))
+        video_files = self._sorted(glob.glob(f"{video_dir}/scene_*_*.mp4"))
 
         video_list = os.path.join(utils.PATH_PREFIX, "concat.txt")
         with open(video_list, "w") as f:
@@ -292,6 +289,16 @@ class AnimationArtistTool(AICPBaseTool):
 
         command = f"ffmpeg -f concat -safe 0 -i {video_list} -c copy {output_file}"
         return command
+
+    def _sorted(self, filepaths):
+        def key_func(filepath):
+            match = re.match(r"scene_(\d+)_(\d+).mp4", os.path.basename(filepath))
+            if match:
+                n, t = map(int, match.groups())
+                return n, t
+            return 0, 0
+
+        return sorted(filepaths, key=key_func)
 
     def random_sign(self):
         """

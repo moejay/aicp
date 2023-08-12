@@ -141,13 +141,15 @@ class StoryBoardArtistTool(AICPBaseTool):
                 # dont recreate images, its expensive
                 if os.path.exists(
                     os.path.join(
-                        utils.STORYBOARD_PATH, "img2img", f"scene_{i+1}_{j+1}.png"
+                        utils.STORYBOARD_PATH, "img2img", f"scene_{i+1:02}_{j+1:02}.png"
                     )
                 ):
-                    logger.info(f"Skipping: img2img/scene_{i+1}_{j+1}.png")
+                    logger.info(f"Skipping: img2img/scene_{i+1:02}_{j+1:02}.png")
                     continue
 
-                file = os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_{j+1}.png")
+                file = os.path.join(
+                    utils.STORYBOARD_PATH, f"scene_{i+1:02}_{j+1:02}.png"
+                )
                 scene_image = Image.open(file).convert("RGB")
                 scene_image = scene_image.resize((image_width, image_height))
 
@@ -165,7 +167,7 @@ class StoryBoardArtistTool(AICPBaseTool):
 
                 image.save(
                     os.path.join(
-                        utils.STORYBOARD_PATH, "img2img", f"scene_{i+1}_{j+1}.png"
+                        utils.STORYBOARD_PATH, "img2img", f"scene_{i+1:02}_{j+1:02}.png"
                     )
                 )
 
@@ -200,10 +202,10 @@ class StoryBoardArtistTool(AICPBaseTool):
             # dont recreate images, its expensive
             if os.path.exists(
                 os.path.join(
-                    utils.STORYBOARD_PATH, f"scene_{i+1}_{num_images_per_prompt}.png"
+                    utils.STORYBOARD_PATH, f"scene_{i+1:02}_{num_images_per_prompt}.png"
                 )
             ):
-                logger.info(f"Skipping: scene_{i+1}_{num_images_per_prompt}.png")
+                logger.info(f"Skipping: scene_{i+1:02}_{num_images_per_prompt}.png")
                 continue
 
             prompt = f"{scene['prompt']}, {self.positive_prompt}"
@@ -224,7 +226,7 @@ class StoryBoardArtistTool(AICPBaseTool):
             # enumerate image set and save each image
             for j, image in enumerate(images):
                 image.save(
-                    os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1}_{j+1}.png")
+                    os.path.join(utils.STORYBOARD_PATH, f"scene_{i+1:02}_{j+1:02}.png")
                 )
 
         # release models from vram
