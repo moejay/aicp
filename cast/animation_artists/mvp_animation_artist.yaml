@@ -1,7 +1,5 @@
 name: MVP Animation Artist
 model: None
 prompt: None
-roi_box1: 50
-roi_box2: 50
 zoom_factor: 0.0030
 fps: 60

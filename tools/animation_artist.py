@@ -37,8 +37,7 @@ class AnimationArtistTool(AICPBaseTool):
 
         # Load artist configuration
         cast_member = self.video.director.get_animation_artist()
-        roi_box1 = cast_member.roi_box1
-        roi_box2 = cast_member.roi_box2
+
         zoom_factor = cast_member.zoom_factor
         fps = cast_member.fps
 
@@ -59,7 +58,7 @@ class AnimationArtistTool(AICPBaseTool):
             zoom_factor = zoom_factor * self.random_sign()
             print(f"ZOOM FACTOR: {zoom_factor}")
 
-            box1, box2 = self.find_regions_of_interest(img, roi_box1, roi_box2)
+            box1, box2 = self.find_regions_of_interest(img)
             cmd = self.generate_animation_ffmpeg_command(
                 img, video_file, box1, box2, zoom_factor, duration
             )
@@ -108,7 +107,7 @@ class AnimationArtistTool(AICPBaseTool):
 
         return images_dict
 
-    def find_regions_of_interest(self, image_path, box1, box2):
+    def find_regions_of_interest(self, image_path):
         # Open the image file
         img = Image.open(image_path)
 
@@ -117,6 +116,14 @@ class AnimationArtistTool(AICPBaseTool):
 
         # Get image dimensions
         img_height, img_width = img_gray.shape
+
+        # Create boxes based on image dimensions
+        if img_width > img_height:
+            box1 = round(img_height / 2)
+            box2 = round(img_width / 4)
+        else:
+            box1 = round(img_width / 2)
+            box2 = round(img_height / 4)
 
         # Initialize ORB detector
         orb = ORB(n_keypoints=200)
