@@ -262,6 +262,7 @@ class Actor:
     speaker_enhance: bool = False
     speaker_wpm: int = 120
     lora_keyword: Optional[str] = None
+    voiceover_rules: str = ""
 
     @classmethod
     def from_yaml(cls, yaml_file: str):
