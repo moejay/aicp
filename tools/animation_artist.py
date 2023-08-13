@@ -6,6 +6,7 @@ import random
 import re
 import logging
 import numpy as np
+import cv2
 
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
@@ -23,6 +24,7 @@ from .base import AICPBaseTool
 
 logger = logging.getLogger(__name__)
 
+logger.setLevel(logging.DEBUG)
 
 class AnimationArtistTool(AICPBaseTool):
     name = "animationartist"
@@ -54,13 +56,20 @@ class AnimationArtistTool(AICPBaseTool):
             if os.path.exists(video_file):
                 continue
 
-            # Zoom in/out randomness
+            # Get points of interest from image
+            start_point, end_point = self.find_interest_points_by_thirds(img)
+
+            # Zoom in/out flipper
             zoom_factor = zoom_factor * self.random_sign()
+            if zoom_factor > 0:
+                temp_point = start_point
+                start_point = end_point
+                end_point = temp_point
+
             print(f"ZOOM FACTOR: {zoom_factor}")
 
-            box1, box2 = self.find_regions_of_interest(img)
             cmd = self.generate_animation_ffmpeg_command(
-                img, video_file, box1, box2, zoom_factor, duration
+                img, video_file, start_point, end_point, zoom_factor, duration
             )
             os.system(cmd)
 
@@ -107,98 +116,97 @@ class AnimationArtistTool(AICPBaseTool):
 
         return images_dict
 
-    def find_regions_of_interest(self, image_path):
-        # Open the image file
-        img = Image.open(image_path)
+    def find_interest_points_by_thirds(self, image_path):
+        """
+        Determine points of interest in an image and find the furthest third.
 
-        # Convert the image to grayscale
-        img_gray = rgb2gray(np.array(img))
+        Given an image path, this function uses the ORB method to detect keypoints
+        and then determines the quadrant (consisting of four "ninths" based on the rule
+        of thirds) that contains the most keypoints. It then calculates the center
+        point of that quadrant and the center point of the furthest third based on
+        the image's orientation.
 
-        # Get image dimensions
-        img_height, img_width = img_gray.shape
+        Parameters:
+        - image_path (str): Path to the input image.
 
-        # Create boxes based on image dimensions
-        if img_width > img_height:
-            box1 = round(img_height / 2)
-            box2 = round(img_width / 4)
-        else:
-            box1 = round(img_width / 2)
-            box2 = round(img_height / 4)
+        Returns:
+        - tuple: A tuple containing:
+          - (int, int): Coordinates (x, y) of the center of the quadrant with the most keypoints.
+          - (int, int): Coordinates (x, y) of the center of the furthest third.
 
-        # Initialize ORB detector
-        orb = ORB(n_keypoints=200)
+        Note:
+        The orientation of the image (portrait or landscape) affects the calculation
+        of the rule of thirds and the determination of the furthest third. In landscape
+        orientation, thirds are calculated from left to right, while in portrait
+        orientation, they are calculated from top to bottom.
+        """
+        # Load the image
+        image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+        height, width = image.shape
 
-        # Detect keypoints in the image
-        orb.detect_and_extract(img_gray)
+        # Determine image orientation
+        orientation = "portrait" if height > width else "landscape"
 
-        # Extract coordinates of detected keypoints
-        keypoints = orb.keypoints
+        # Calculate the rule of thirds grid
+        vertical_third_length = height // 3
+        horizontal_third_length = width // 3
 
-        # Initialize an empty array to count keypoints
-        keypoint_counts_box1 = np.zeros((img_height - box1 + 1, img_width - box1 + 1))
-        keypoint_counts_box2 = np.zeros((img_height - box2 + 1, img_width - box2 + 1))
+        # Define the quadrants made up of four ninths
+        quadrants = {
+            "upper_left": [(0, 0, horizontal_third_length, vertical_third_length),
+                           (0, vertical_third_length, horizontal_third_length, vertical_third_length*2),
+                           (horizontal_third_length, 0, horizontal_third_length*2, vertical_third_length),
+                           (horizontal_third_length, vertical_third_length, horizontal_third_length*2, vertical_third_length*2)],
 
-        # Count keypoints in each window
-        for y, x in keypoints:
-            for i in range(
-                max(0, int(y) - box1 + 1), min(int(y) + 1, img_height - box1 + 1)
-            ):
-                for j in range(
-                    max(0, int(x) - box1 + 1), min(int(x) + 1, img_width - box1 + 1)
-                ):
-                    keypoint_counts_box1[i, j] += 1
+            "upper_right": [(horizontal_third_length, 0, horizontal_third_length*2, vertical_third_length),
+                            (horizontal_third_length, vertical_third_length, horizontal_third_length*2, vertical_third_length*2),
+                            (horizontal_third_length*2, 0, width, vertical_third_length),
+                            (horizontal_third_length*2, vertical_third_length, width, vertical_third_length*2)],
 
-            for i in range(
-                max(0, int(y) - box2 + 1), min(int(y) + 1, img_height - box2 + 1)
-            ):
-                for j in range(
-                    max(0, int(x) - box2 + 1), min(int(x) + 1, img_width - box2 + 1)
-                ):
-                    keypoint_counts_box2[i, j] += 1
+            "lower_left": [(0, vertical_third_length, horizontal_third_length, vertical_third_length*2),
+                           (0, vertical_third_length*2, horizontal_third_length, height),
+                           (horizontal_third_length, vertical_third_length, horizontal_third_length*2, vertical_third_length*2),
+                           (horizontal_third_length, vertical_third_length*2, horizontal_third_length*2, height)],
 
-        # Find the window with the highest concentration of keypoints
-        max_keypoints_y_box1, max_keypoints_x_box1 = np.unravel_index(
-            keypoint_counts_box1.argmax(), keypoint_counts_box1.shape
-        )
+            "lower_right": [(horizontal_third_length, vertical_third_length, horizontal_third_length*2, vertical_third_length*2),
+                            (horizontal_third_length, vertical_third_length*2, horizontal_third_length*2, height),
+                            (horizontal_third_length*2, vertical_third_length, width, vertical_third_length*2),
+                            (horizontal_third_length*2, vertical_third_length*2, width, height)]
+        }
 
-        # Calculate the window's pixel coordinates
-        window_top_box1 = max_keypoints_y_box1
-        window_left_box1 = max_keypoints_x_box1
-        window_bottom_box1 = max_keypoints_y_box1 + box1
-        window_right_box1 = max_keypoints_x_box1 + box1
+        # Use ORB to detect keypoints
+        orb = cv2.ORB_create()
+        keypoints = orb.detect(image, None)
 
-        # Remove the overlapping region in the keypoint_counts_box2
-        keypoint_counts_box2[
-            max(0, window_top_box1 - box2) : min(
-                img_height - box2 + 1, window_bottom_box1
-            ),
-            max(0, window_left_box1 - box2) : min(
-                img_width - box2 + 1, window_right_box1
-            ),
-        ] = 0
+        # Count keypoints in each quadrant
+        quadrant_keypoint_counts = {}
+        for quadrant_name, boxes in quadrants.items():
+            count = sum([1 for kp in keypoints if any([box[0] <= kp.pt[0] < box[2] and box[1] <= kp.pt[1] < box[3] for box in boxes])])
+            quadrant_keypoint_counts[quadrant_name] = count
 
-        # Find the window with the highest concentration of keypoints in the updated keypoint_counts_box2
-        max_keypoints_y_box2, max_keypoints_x_box2 = np.unravel_index(
-            keypoint_counts_box2.argmax(), keypoint_counts_box2.shape
-        )
+        # Determine the quadrant of interest
+        max_quadrant = max(quadrant_keypoint_counts, key=quadrant_keypoint_counts.get)
 
-        # Calculate the window's pixel coordinates
-        window_top_box2 = max_keypoints_y_box2
-        window_left_box2 = max_keypoints_x_box2
-        window_bottom_box2 = max_keypoints_y_box2 + box2
-        window_right_box2 = max_keypoints_x_box2 + box2
+        # Calculate the center point of the quadrant of interest
+        x1, y1, x2, y2 = (quadrants[max_quadrant][0][0] + quadrants[max_quadrant][2][2]) // 2, (quadrants[max_quadrant][0][1] + quadrants[max_quadrant][2][3]) // 2, (quadrants[max_quadrant][1][0] + quadrants[max_quadrant][3][2]) // 2, (quadrants[max_quadrant][1][1] + quadrants[max_quadrant][3][3]) // 2
+        quadrant_center_x = (x1 + x2) // 2
+        quadrant_center_y = (y1 + y2) // 2
 
-        # Calculate the center points of the regions
-        center_box1 = (
-            (window_left_box1 + window_right_box1) // 2,
-            (window_top_box1 + window_bottom_box1) // 2,
-        )
-        center_box2 = (
-            (window_left_box2 + window_right_box2) // 2,
-            (window_top_box2 + window_bottom_box2) // 2,
-        )
+        # Find the center point of the furthest third
+        if orientation == "landscape":
+            if "left" in max_quadrant:
+                furthest_third_x = horizontal_third_length * 5 // 2
+            else:
+                furthest_third_x = horizontal_third_length // 2
+            furthest_third_y = height // 2
+        else:  # portrait
+            if "upper" in max_quadrant:
+                furthest_third_y = vertical_third_length * 5 // 2
+            else:
+                furthest_third_y = vertical_third_length // 2
+            furthest_third_x = width // 2
 
-        return center_box1, center_box2
+        return (quadrant_center_x, quadrant_center_y), (furthest_third_x, furthest_third_y)
 
     def generate_animation_ffmpeg_command(
         self,
@@ -244,18 +252,8 @@ class AnimationArtistTool(AICPBaseTool):
 
         # zoom out
         if zoom_factor < 0:
-            # try to understand how much movement is to happen for this clip
-            movement_factor = sqrt((end_x - start_x) ** 2 + (end_y - start_y) ** 2) / (
-                fps * duration
-            )
-
-            # reduce factor for long movements
-            if movement_factor > 1.0:
-                movement_factor = movement_factor / aspect_ratio
-
-            # initial zoom padding when zooming out
-            zoom_padding = (abs(zoom_factor) * movement_factor) * (fps * duration)
-
+            # this will likely break down for really long clips (e.g. >30 seconds)
+            zoom_padding = round(6.666 * (duration / fps), 3)
             print(f"{input_image_path} zoom padding: {zoom_padding}")
             command = (
                 f"ffmpeg -loop 1 -i {input_image_path} -vf "
