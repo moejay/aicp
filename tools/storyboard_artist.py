@@ -20,6 +20,8 @@ from .base import AICPBaseTool
 
 logger = logging.getLogger(__name__)
 
+logger.setLevel(logging.DEBUG)
+
 
 class StoryBoardArtistTool(AICPBaseTool):
     name = "storyboardartist"
@@ -54,7 +56,6 @@ class StoryBoardArtistTool(AICPBaseTool):
         """Run the script through the mind of the storyboard artist
         to generate more descriptive prompts"""
         cast_member = self.video.director.get_storyboard_artist()
-        chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
         prompt_params = parsers.get_params_from_prompt(cast_member.prompt)
         # This is in addition to the input (Human param)
         # Resolve params from existing config/director/program
@@ -73,21 +74,89 @@ class StoryBoardArtistTool(AICPBaseTool):
             vo_lines = parsers.get_voiceover_lines()
             # Group by scene
             for scene_index, scene in enumerate(parsers.get_scenes()):
+                logger.info(f"Generating prompts for scene {scene_index}")
+                # If we already have prompts for this scene, load them
+                prompts_file = os.path.join(
+                    utils.STORYBOARD_PATH, f"scene_{scene_index}_prompts.yaml"
+                )
+                if os.path.exists(prompts_file):
+                    with open(prompts_file) as prompts:
+                        logger.info(
+                            f"Loading existing prompts from: scene_{scene_index}_prompts.yaml"
+                        )
+                        prompts = yaml.load(prompts.read().strip(), Loader=yaml.Loader)
+                        prompts.extend(prompts)
+                        continue
+
                 vo_lines_for_scene = [
                     vo_line
                     for vo_line in vo_lines
                     if vo_line.scene_index == scene_index
                 ]
 
-                params["input"] = yaml.dump(
-                    {
-                        "script_summary": script_summary,
-                        "scene_title": scene.scene_title,
-                        "scene_description": scene.description,
-                        "dialog_lines": vo_lines_for_scene,
-                    }
-                )
-                prompts.extend(self._call_llm(chain, params, len(vo_lines_for_scene)))
+                if len(vo_lines_for_scene) > 8:
+                    logger.info(
+                        f"Splitting scene {scene_index} into multiple prompts because it has {len(vo_lines_for_scene)} lines"
+                    )
+                    # Group and split by line_index as well
+                    # Get all the line indexes
+                    line_indexes = set(
+                        [vo_line.line_index for vo_line in vo_lines_for_scene]
+                    )
+                    # Group by line index
+                    vo_lines_for_scene = [
+                        [
+                            vo_line
+                            for vo_line in vo_lines_for_scene
+                            if vo_line.line_index == line_index
+                        ]
+                        for line_index in sorted(line_indexes)
+                    ]
+                    # call llm for each group
+                    scene_prompts = []
+                    for vo_lines_for_line_index in vo_lines_for_scene:
+                        logger.info(
+                            f"Generating prompts for scene {scene_index} line {vo_lines_for_line_index[0].line_index}"
+                        )
+                        params["input"] = yaml.dump(
+                            {
+                                "script_summary": script_summary,
+                                "scene_title": scene.scene_title,
+                                "scene_description": scene.description,
+                                "number_of_expected_prompts": len(
+                                    vo_lines_for_line_index
+                                ),
+                                "dialog_lines": [
+                                    {"line": vo_line.line}
+                                    for vo_line in vo_lines_for_line_index
+                                ],
+                            }
+                        )
+                        scene_prompts.extend(
+                            self._call_llm(params, len(vo_lines_for_line_index))
+                        )
+
+                else:
+                    logger.info(f"Generating prompts for scene {scene_index}")
+                    params["input"] = yaml.dump(
+                        {
+                            "script_summary": script_summary,
+                            "scene_title": scene.scene_title,
+                            "scene_description": scene.description,
+                            "number_of_expected_prompts": len(vo_lines_for_scene),
+                            "dialog_lines": [
+                                {"line": vo_line.line} for vo_line in vo_lines_for_scene
+                            ],
+                        }
+                    )
+                    scene_prompts = self._call_llm(params, len(vo_lines_for_scene))
+                prompts.extend(scene_prompts)
+                # Save the prompts so we don't recompute them if failure
+                with open(
+                    prompts_file,
+                    "w",
+                ) as f:
+                    f.write(yaml.dump(scene_prompts))
         else:
             params["input"] = yaml.dump(
                 [
@@ -98,7 +167,7 @@ class StoryBoardArtistTool(AICPBaseTool):
                     for s in parsers.get_scenes()
                 ]
             )
-            prompts = self._call_llm(chain, params, len(parsers.get_scenes()))
+            prompts = self._call_llm(params, len(parsers.get_scenes()))
 
         # Save the prompts
         with open(os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml"), "w") as f:
@@ -257,20 +326,40 @@ class StoryBoardArtistTool(AICPBaseTool):
         """Use the tool."""
         raise NotImplementedError("Async not implemented")
 
-    def _call_llm(self, chain, params, expected_number_of_prompts):
+    def _call_llm(self, params, expected_number_of_prompts):
         retries = 3
         while retries > 0:
+            cast_member = self.video.director.get_storyboard_artist()
+            chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
             try:
                 # Use only the title and description lines to save tokens
                 response = chain.run(
                     **params,
                 )
-                logger.info(response)
-
+                logger.debug(response)
                 parsed = yaml.load(response, Loader=yaml.Loader)
                 ## Check if parsed has the same number of prompts as expected
                 if len(parsed) != expected_number_of_prompts:
-                    raise Exception("Parsed prompts has different number than expected")
+                    logger.info(
+                        f"Unexpected number of prompts: {len(parsed)} != {expected_number_of_prompts}"
+                    )
+                    logger.info("Trying to reply with, YOU'RE WRONG, LLM")
+                    # Copy params
+                    params_copy = params.copy()
+                    params.update(
+                        {
+                            "input": "I received the wrong number of prompts, please try again"
+                        }
+                    )
+                    response = chain.run(
+                        **params_copy,
+                    )
+                    logger.debug(response)
+                    parsed = yaml.load(response, Loader=yaml.Loader)
+                    if len(parsed) != expected_number_of_prompts:
+                        raise Exception(
+                            "Parsed prompts has different number than expected"
+                        )
                 return parsed
             except Exception as e:
                 logger.warning(e)

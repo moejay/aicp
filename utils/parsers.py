@@ -33,7 +33,7 @@ def get_voiceover_lines():
         if file.endswith(".json") and "take" not in file  # Change to json later
     ]
     vo_lines = []
-    # The file name is of the pattern `scene_{scene_index}_line_{line_index}_{sentence_index}.txt`
+    # The file name is of the pattern `scene_{scene_index}_line_{line_index}_{sentence_index}.json`
     # Extract that info and read the file to get the duration and the text
     # in order to create VOLine objects
     for file in files:
@@ -93,21 +93,21 @@ def get_scenes():
             )
         )
 
-    # Check if timecodes are available
-    if not os.path.exists(utils.VOICEOVER_TIMECODES):
-        return scenes
-    timecodes = [
-        float(t)
-        for t in open(utils.VOICEOVER_TIMECODES, "r").readlines()
-        if t.strip() != ""
-    ]
     # Calculate duration of each scene
+    # If script file exists
+    if not os.path.exists(utils.VOICEOVER_WAV_FILE):
+        return scenes
+
+    vo_lines = get_voiceover_lines()
+    duration_so_far = 0
     for i, scene in enumerate(scenes):
-        if i == len(scenes) - 1:
-            scene.duration = get_voiceover_duration() - timecodes[i]
-        else:
-            scene.duration = timecodes[i + 1] - timecodes[i]
-        scene.start_time = timecodes[i]
+        vo_lines_for_scene = [
+            vo_line for vo_line in vo_lines if vo_line.scene_index == i
+        ]
+        scene_duration = sum([vo_line.duration for vo_line in vo_lines_for_scene])
+        scene.duration = scene_duration
+        scene.start_time = duration_so_far
+        duration_so_far += scene_duration
 
     return scenes
 
