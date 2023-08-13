@@ -7,7 +7,9 @@ from models import Director, ProductionConfig, Video, Program, Actor
 from argparse import ArgumentParser
 from ui.ui import make_ui
 
-logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.DEBUG,
+)
 
 
 def prep_video_params(

@@ -9,7 +9,7 @@ from langchain.callbacks.manager import (
 from pydub import AudioSegment
 from typing import Optional
 from utils.parsers import get_scenes
-from utils import utils
+from utils import utils, demucs, audio_utils
 
 from .base import AICPBaseTool
 
@@ -178,8 +178,8 @@ class SoundEngineerTool(AICPBaseTool):
         combine_music_with_crossfade(
             all_music_files, os.path.join(utils.MUSIC_PATH, "music.wav")
         )
-
-        voiceover = AudioSegment.from_file(utils.VOICEOVER_WAV_FILE)
+        filtered_voice = demucs.demucs_voice_filter(utils.VOICEOVER_WAV_FILE)
+        voiceover = audio_utils.numpy_to_audiosegment(filtered_voice.to("cpu").numpy())
 
         background_music = AudioSegment.from_file(
             os.path.join(utils.MUSIC_PATH, "music.wav")
