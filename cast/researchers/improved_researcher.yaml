@@ -1,5 +1,5 @@
 name: Improved Researcher
-model: openai-gpt-4
+model: openai-gpt-3.5-turbo-16k
 prompt: |
   You are an expert researcher for a company that produces YouTube videos.
   Your task is to find information about a given topic for a script writer as it related to the program's description.

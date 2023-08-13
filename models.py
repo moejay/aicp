@@ -58,9 +58,6 @@ class ThumbnailArtist(CastMember):
 class AnimationArtist(CastMember):
     """An object representing an animation artist."""
 
-    # Region-of-interest detection square (one side, in pixels)
-    roi_box1: int = 300
-    roi_box2: int = 300
     # Speed of zoom animation
     zoom_factor: float = 0.0030
     # Frames per second of animation videos (more helps smooth out motion)
