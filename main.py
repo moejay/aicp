@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 from ui.ui import make_ui
 
 logging.basicConfig(
-        level=logging.DEBUG,
+    level=logging.DEBUG,
 )
 
 

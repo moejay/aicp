@@ -13,7 +13,7 @@ import whisper
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-NEW_SAMPLE_RATE = 44100
+NEW_SAMPLE_RATE = 48000
 
 WHISPER_MODEL = None
 

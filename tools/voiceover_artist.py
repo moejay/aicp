@@ -10,7 +10,6 @@ import os
 import librosa
 import nltk
 import numpy as np
-from df import enhance, init_df
 import torch
 from scipy.io import wavfile
 
@@ -122,8 +121,6 @@ class VoiceOverArtistTool(AICPBaseTool):
         if os.path.exists(utils.VOICEOVER_WAV_FILE):
             print("Skipping VO generation...")
         else:
-            model, df_state, _ = init_df()
-
             for scene_index, scene in enumerate(self.scene_prompts):
                 print(f"--- SCENE: {scene_index + 1}/{len(self.scene_prompts)} ---")
                 for line_index, item in enumerate(scene):
@@ -170,12 +167,8 @@ class VoiceOverArtistTool(AICPBaseTool):
                         )
                         audio_array = take_to_save[0]
 
-                        if actor.speaker_enhance:
-                            audio_array = enhance(
-                                model, df_state, torch.tensor([audio_array])
-                            )
-                        pieces += [audio_array, silence]
                         concatenated_take = np.concatenate([audio_array, silence])
+                        pieces += [audio_array, silence]
                         voice_gen.save_audio_signal_wav(
                             concatenated_take,
                             voice_gen.NEW_SAMPLE_RATE,
