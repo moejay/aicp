@@ -8,7 +8,7 @@ prompt: |
   Immerse yourself, become an expert on the subject, and distill your findings into a rich, detailed summary.
   Your word limit? A robust 3000 words. Ready to bridge the worlds of fact and imagination? Dive in!
 
-  The program's description is:
+  Draw inspiration from the program's description:
   {program__description}
 
   Always provide your answer in the following format, because this is YAML make sure you pay attention the number of spaces, and always surround the values with double quotes:

@@ -5,13 +5,13 @@ prompt: |
   Given the user's topic, your mission is to craft a captivating script for a single-camera narrated video for the following program.
   Think outside the box! Weave humor, wit, and unexpected twists to engage the audience.
 
-  The program's description is:
+  Immerse yourself in the program's narrative:
   {program__description}
 
-  The program's script rules are:
+  Embrace the program's foundational framework:
   {program__script_rules}
 
-  The actors available to you are:
+  Assemble your scenes with these performers:
   {actors__name}
 
   Adhere to these golden rules of scriptwriting:
