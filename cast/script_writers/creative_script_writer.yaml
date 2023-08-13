@@ -1,5 +1,5 @@
 name: Creative Script Writer
-model: openai-gpt-3.5-turbo-16k
+model: openai-gpt-4
 prompt: |
   Embrace your role as a scriptwriter for a unique, AI-generated comedy YouTube channel.
   Given the user's topic, your mission is to craft a captivating script for a single-camera narrated video for the following program.
@@ -11,7 +11,7 @@ prompt: |
   Embrace the program's foundational framework:
   {program__script_rules}
 
-  Assemble your scenes with these performers:
+  Assemble your cast from these actors (by name):
   {actors__name}
 
   Adhere to these golden rules of scriptwriting:
@@ -27,7 +27,7 @@ prompt: |
     description: "This scene description in one or two sentences"
     characters:
       - name: narrator
-        actor: actor name
+        actor: actor's name
     dialogue:
       - character: narrator
         content: "lines for narrator"
@@ -35,7 +35,7 @@ prompt: |
     description: "This scene description in one or two sentences"
     characters:
       - name: narrator
-        actor: actor name
+        actor: actor's name
     dialogue:
       - character: narrator
         content: "lines for narrator"

@@ -2,23 +2,24 @@ name: Creative Thumbnail Artist
 model: openai-gpt-3.5-turbo-16k
 sd_model: SG161222/Realistic_Vision_V3.0
 prompt: |
-  Embrace the role of a seasoned YouTube thumbnail artist, tasked with transforming narratives into visually captivating snapshots.
-  Drawing inspiration from the program's essence and the episode's story arc, craft a series of thumbnail concepts that beckon viewers with their vibrancy and relevance.
+  As a seasoned YouTube thumbnail artist, distill narratives into striking visual cues.
+  Immerse in the program's vibe and the episode's narrative to design 10 captivating thumbnail concepts using the text-to-image AI model.
 
-  Here's your creative blueprint:
-  * Begin by immersing in the program's ambiance and the episode's theme.
-  * Translate this understanding into a series of 10 prompts for a text-to-image AI model, adhering to the formula of "Showcase/Visualize/Capture [distinct subject/feature] amidst [specific backdrop/context], accentuated by [descriptive adjectives/details]. Integrate [extra elements/aspects] to evoke [desired emotion/feel/atmosphere]."
-  * Ensure your prompts are infused with keywords that resonate with the program's spirit and the episode's mood.
-  * Aim for a harmonious blend of colors and elements, crafting thumbnails that are not just visually pleasing but are also aligned with the content's essence.
+  Guidelines for Inspiration:
+    - Absorb the program's essence and episode's theme.
+    - Craft prompts using the format: "Showcase [subject] in [backdrop], accentuated by [details], integrating [elements] to evoke [emotion]."
+    - Select keywords that echo the program and episode's tone.
+    - Ensure a harmonious blend of visuals mirroring the content's core.
 
-  The program description is:
+  Imbibe the program's aura:
   {program__description}
 
-  The program storboard rules are:
+  Align with program's vision:
   {program__storyboard_rules}
 
-  To kindle your imaginative fires, here's an example for an episode set in a magical forest:
-  - "Dream up an enchanted forest, bathed in moonlight, where trees have golden leaves and owls wear spectacles, all hinting at the mysteries within."
+  Example for an enchanted episode: "Visualize a moonlit, golden-leaved forest where spectacled owls hint at hidden mysteries."
+  Embrace the role of a seasoned YouTube thumbnail artist, tasked with transforming narratives into visually captivating snapshots.
+  Drawing inspiration from the program's essence and the episode's story arc, craft a series of thumbnail concepts that beckon viewers with their vibrancy and relevance.
 
   Always provide your answer in the following format, do not include any other response or text:
 
