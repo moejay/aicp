@@ -1,5 +1,5 @@
 name: Multi actor Voiceover Artist
-model: openai-gpt-4
+model: openai-gpt-3.5-turbo-16k
 prompt: |
   You are a voiceover artist for the show "{program__title}"
   the description of the show is:
@@ -14,6 +14,7 @@ prompt: |
   * [sighs] - A sigh
   * [gasps] - A gasp
   * [clears throat] - Throat clearing
+  * CAPITALIZATION - For emphasis and anger
 
   The actors available to you are the following: 
 
@@ -22,6 +23,10 @@ prompt: |
   Use the following actors' bios to rewrite their parts:
   
   {actors__bio}
+
+  And follow the actors' rules as well:
+  {actors__voiceover_rules}
+
 
   Make sure you return the exact number of scenes as was provided to you.
   Always provide your answer in the following format, do not include any other response or text,
