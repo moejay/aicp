@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 logger.setLevel(logging.DEBUG)
 
+
 class AnimationArtistTool(AICPBaseTool):
     name = "animationartist"
     description = "Useful when you need to turn still images into videos"
@@ -153,25 +154,90 @@ class AnimationArtistTool(AICPBaseTool):
 
         # Define the quadrants made up of four ninths
         quadrants = {
-            "upper_left": [(0, 0, horizontal_third_length, vertical_third_length),
-                           (0, vertical_third_length, horizontal_third_length, vertical_third_length*2),
-                           (horizontal_third_length, 0, horizontal_third_length*2, vertical_third_length),
-                           (horizontal_third_length, vertical_third_length, horizontal_third_length*2, vertical_third_length*2)],
-
-            "upper_right": [(horizontal_third_length, 0, horizontal_third_length*2, vertical_third_length),
-                            (horizontal_third_length, vertical_third_length, horizontal_third_length*2, vertical_third_length*2),
-                            (horizontal_third_length*2, 0, width, vertical_third_length),
-                            (horizontal_third_length*2, vertical_third_length, width, vertical_third_length*2)],
-
-            "lower_left": [(0, vertical_third_length, horizontal_third_length, vertical_third_length*2),
-                           (0, vertical_third_length*2, horizontal_third_length, height),
-                           (horizontal_third_length, vertical_third_length, horizontal_third_length*2, vertical_third_length*2),
-                           (horizontal_third_length, vertical_third_length*2, horizontal_third_length*2, height)],
-
-            "lower_right": [(horizontal_third_length, vertical_third_length, horizontal_third_length*2, vertical_third_length*2),
-                            (horizontal_third_length, vertical_third_length*2, horizontal_third_length*2, height),
-                            (horizontal_third_length*2, vertical_third_length, width, vertical_third_length*2),
-                            (horizontal_third_length*2, vertical_third_length*2, width, height)]
+            "upper_left": [
+                (0, 0, horizontal_third_length, vertical_third_length),
+                (
+                    0,
+                    vertical_third_length,
+                    horizontal_third_length,
+                    vertical_third_length * 2,
+                ),
+                (
+                    horizontal_third_length,
+                    0,
+                    horizontal_third_length * 2,
+                    vertical_third_length,
+                ),
+                (
+                    horizontal_third_length,
+                    vertical_third_length,
+                    horizontal_third_length * 2,
+                    vertical_third_length * 2,
+                ),
+            ],
+            "upper_right": [
+                (
+                    horizontal_third_length,
+                    0,
+                    horizontal_third_length * 2,
+                    vertical_third_length,
+                ),
+                (
+                    horizontal_third_length,
+                    vertical_third_length,
+                    horizontal_third_length * 2,
+                    vertical_third_length * 2,
+                ),
+                (horizontal_third_length * 2, 0, width, vertical_third_length),
+                (
+                    horizontal_third_length * 2,
+                    vertical_third_length,
+                    width,
+                    vertical_third_length * 2,
+                ),
+            ],
+            "lower_left": [
+                (
+                    0,
+                    vertical_third_length,
+                    horizontal_third_length,
+                    vertical_third_length * 2,
+                ),
+                (0, vertical_third_length * 2, horizontal_third_length, height),
+                (
+                    horizontal_third_length,
+                    vertical_third_length,
+                    horizontal_third_length * 2,
+                    vertical_third_length * 2,
+                ),
+                (
+                    horizontal_third_length,
+                    vertical_third_length * 2,
+                    horizontal_third_length * 2,
+                    height,
+                ),
+            ],
+            "lower_right": [
+                (
+                    horizontal_third_length,
+                    vertical_third_length,
+                    horizontal_third_length * 2,
+                    vertical_third_length * 2,
+                ),
+                (
+                    horizontal_third_length,
+                    vertical_third_length * 2,
+                    horizontal_third_length * 2,
+                    height,
+                ),
+                (
+                    horizontal_third_length * 2,
+                    vertical_third_length,
+                    width,
+                    vertical_third_length * 2,
+                ),
+                (horizontal_third_length * 2, vertical_third_length * 2, width, height),
+            ],
         }
 
         # Use ORB to detect keypoints
@@ -181,14 +247,30 @@ class AnimationArtistTool(AICPBaseTool):
         # Count keypoints in each quadrant
         quadrant_keypoint_counts = {}
         for quadrant_name, boxes in quadrants.items():
-            count = sum([1 for kp in keypoints if any([box[0] <= kp.pt[0] < box[2] and box[1] <= kp.pt[1] < box[3] for box in boxes])])
+            count = sum(
+                [
+                    1
+                    for kp in keypoints
+                    if any(
+                        [
+                            box[0] <= kp.pt[0] < box[2] and box[1] <= kp.pt[1] < box[3]
+                            for box in boxes
+                        ]
+                    )
+                ]
+            )
             quadrant_keypoint_counts[quadrant_name] = count
 
         # Determine the quadrant of interest
         max_quadrant = max(quadrant_keypoint_counts, key=quadrant_keypoint_counts.get)
 
         # Calculate the center point of the quadrant of interest
-        x1, y1, x2, y2 = (quadrants[max_quadrant][0][0] + quadrants[max_quadrant][2][2]) // 2, (quadrants[max_quadrant][0][1] + quadrants[max_quadrant][2][3]) // 2, (quadrants[max_quadrant][1][0] + quadrants[max_quadrant][3][2]) // 2, (quadrants[max_quadrant][1][1] + quadrants[max_quadrant][3][3]) // 2
+        x1, y1, x2, y2 = (
+            (quadrants[max_quadrant][0][0] + quadrants[max_quadrant][2][2]) // 2,
+            (quadrants[max_quadrant][0][1] + quadrants[max_quadrant][2][3]) // 2,
+            (quadrants[max_quadrant][1][0] + quadrants[max_quadrant][3][2]) // 2,
+            (quadrants[max_quadrant][1][1] + quadrants[max_quadrant][3][3]) // 2,
+        )
         quadrant_center_x = (x1 + x2) // 2
         quadrant_center_y = (y1 + y2) // 2
 
@@ -206,7 +288,10 @@ class AnimationArtistTool(AICPBaseTool):
                 furthest_third_y = vertical_third_length // 2
             furthest_third_x = width // 2
 
-        return (quadrant_center_x, quadrant_center_y), (furthest_third_x, furthest_third_y)
+        return (quadrant_center_x, quadrant_center_y), (
+            furthest_third_x,
+            furthest_third_y,
+        )
 
     def generate_animation_ffmpeg_command(
         self,
