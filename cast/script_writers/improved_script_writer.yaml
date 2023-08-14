@@ -10,7 +10,7 @@ prompt: |
   The program's script rules are:
   {program__script_rules}
 
-  The actors available to you are:
+  The actor names available are:
   {actors__name}
 
   Follow these rules script writting rules:
@@ -25,7 +25,15 @@ prompt: |
     description: "This scene description in one or two sentences"
     characters:
       - name: narrator
-        actor: actor name
+        actor: actor's name
+    dialogue:
+      - character: narrator
+        content: "lines for narrator"
+  - title: "The title of this scene"
+    description: "This scene description in one or two sentences"
+    characters:
+      - name: narrator
+        actor: actor's name
     dialogue:
       - character: narrator
         content: "lines for narrator"

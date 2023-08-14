@@ -329,28 +329,25 @@ class AnimationArtistTool(AICPBaseTool):
         x_movement = (end_x - start_x) / (duration * fps)
         y_movement = (end_y - start_y) / (duration * fps)
 
-        # get the aspect ratio of the image
-        if width > height:
-            aspect_ratio = width / height
-        else:
-            aspect_ratio = height / width
+        zoom_start = 1.001
 
         # zoom out
         if zoom_factor < 0:
-            # this will likely break down for really long clips (e.g. >30 seconds)
-            zoom_padding = round(6.666 * (duration / fps), 3)
-            print(f"{input_image_path} zoom padding: {zoom_padding}")
+            # padding for the initial zoom
+            zoom_padding = round(abs(zoom_factor) * (duration * fps), 3)
+            if zoom_padding > 1:
+                zoom_padding = round(zoom_padding - 0.700, 3)
+            print(f"{input_image_path}, zoom start: {zoom_start}, zoom padding: {zoom_padding}")
             command = (
                 f"ffmpeg -loop 1 -i {input_image_path} -vf "
-                f"\"zoompan=z='if(eq(zoom,1.0),zoom+{zoom_padding},zoom+{zoom_factor})':x='x+{x_movement}':y='y+{y_movement}':d={duration*fps}\" "
+                f"\"zoompan=z='if(lte(zoom,1.0),zoom+{zoom_padding},max({zoom_start},zoom+{zoom_factor}))':x='x+{x_movement}':y='y+{y_movement}':d={duration*fps}\" "
                 f"-c:v libx264 -preset ultrafast -r {fps} -s {width}x{height} -pix_fmt yuv420p -t {duration} -probesize 42M {output_video_path}"
             )
         # zoom in
         else:
-            zoom_padding = 0.01
             command = (
                 f"ffmpeg -loop 1 -i {input_image_path} -vf "
-                f"\"zoompan=z='min(zoom+{zoom_factor},zoom+{zoom_padding})':x='x+{x_movement}':y='y+{y_movement}':d={duration*fps}\" "
+                f"\"zoompan=z='min(zoom+{zoom_factor},zoom+{zoom_start})':x='x+{x_movement}':y='y+{y_movement}':d={duration*fps}\" "
                 f"-c:v libx264 -preset ultrafast -r {fps} -s {width}x{height} -pix_fmt yuv420p -t {duration} -probesize 42M {output_video_path}"
             )
 

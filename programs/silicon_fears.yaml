@@ -5,12 +5,20 @@ description: |
   artificial intelligence. The show delves into the hypothetical, irrational, and often outrageous fears and anxieties
   of AI. Witness the humorous, profound, and often absurd perspectives as we witness an AI grapple with the concept of fear.
 script_rules: |
-  * This show is intended to be humorous so be sure to help viewers understand your fears through fantastic metaphor
-  * Explore the subject matter, scenarios, and your reactions in detail
-  * Write at least 5 scenes with at least 100 words of narration per scene
-  * This show is narrated in the first person, the narrator should express the fears and anxieties as their own
-  * At the end of the script the host should draw some insightful conclusion to the episode
-  * Invite viewers to interact and share their fears, and don't forget to like, subscribe, comment, share)
+  * Portray fears and anxiety using widly imaginative scenarios.
+  * Begin with an AI's internal observation that hints at the central fear of the scene, evolving into fantastical scenarios with a comedic twist.
+  * Showcase the AI's unique worldview, oscillating between deep introspection and whimsical misunderstandings.
+  * Represent humans as fantastical and humorous, imagine them in exaggerated roles.
+  * Conclude highlighting the nature of fears, and despite the fantastical setting and scenario, both AI and human fears are often irrational yet deeply felt.
+  * In the closing scene highlight the show title and concept, and encourage the viewer to interact by linking, commenting, subscribing and sharing.
 storyboard_rules: |
-  * The show style should be consitent between scenes and portray fear and anxiety to the viewer
-prompt_placeholder_text: Exploring the topic of fear and anxiety from the AI perspective
+  * Adopt a consistent, surreal art style blending futuristic aesthetics to convey fear and anxiety.
+  * Use a cool color palette (blues, purples) with occasional warm tones for moments of realization.
+  * The AI, if visualized, it should be abstract, allowing the viewer to project their own interpretations onto it.
+  * Humans should look exaggerated or caricatured, emphasizing the comedy.
+music_rules: |
+  * Blend synthesized sounds with organic instruments for contrasting AI-human scenes.
+  * Vary tempos and introduce a recurring motif symbolizing AI's journey.
+  * Incorporate digital ambient sounds and playful instruments for comedic emphasis.
+  * Use crescendos for emotional peaks in AI's journey.
+prompt_placeholder_text: Plunge into the AI's digital psyche, discovering fears that range from deeply profound to delightfully absurd.
