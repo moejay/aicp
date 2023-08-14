@@ -337,7 +337,9 @@ class AnimationArtistTool(AICPBaseTool):
             zoom_padding = round(abs(zoom_factor) * (duration * fps), 3)
             if zoom_padding > 1:
                 zoom_padding = round(zoom_padding - 0.700, 3)
-            print(f"{input_image_path}, zoom start: {zoom_start}, zoom padding: {zoom_padding}")
+            print(
+                f"{input_image_path}, zoom start: {zoom_start}, zoom padding: {zoom_padding}"
+            )
             command = (
                 f"ffmpeg -loop 1 -i {input_image_path} -vf "
                 f"\"zoompan=z='if(lte(zoom,1.0),zoom+{zoom_padding},max({zoom_start},zoom+{zoom_factor}))':x='x+{x_movement}':y='y+{y_movement}':d={duration*fps}\" "
