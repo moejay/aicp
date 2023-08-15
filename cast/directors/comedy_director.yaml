@@ -2,7 +2,7 @@ music_composer: mvp_music_composer
 researcher: comedy_researcher
 script_writer: comedy_script_writer
 storyboard_artist: improved_storyboard_artist 
-animation_artist: None
-thumbnail_artist: None 
+animation_artist: mvp_animation_artist 
+thumbnail_artist: mvp_thumbnail_artist
 voiceover_artist: multi_character_voiceover_artist
 youtube_distributor: mvp_youtube_distributor

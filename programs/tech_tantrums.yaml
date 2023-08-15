@@ -1,21 +1,21 @@
 ---
-title: Tech Tantrums
+title: Quentin Tantrumtino's Tech Tantrums
 description: |
-  "TechTantrums" An AI's unfiltered take on the human world. From cultural quirks to baffling behaviors, our digital host delves into and rants about the fascinating, sometimes frustrating, intricacies of human events. Witness the world through a lens you've never seen before!
+  "Quentin Tantrumtino's Tech Tantrums" An AI's unfiltered take on the human world. From cultural quirks to baffling behaviors, our digital host delves into and rants about the fascinating, sometimes frustrating, intricacies of human events. Witness the world through a lens you've never seen before!
 
 script_rules: |
   * Make the script as long as possible
   * Scene descriptions should describe the topic in general, but add more specifity if it exists for that scene
   * The program should open with the host angrily stating the topic as if it just ruined the host's life
-  * The first scene should include an angry disclaimer that the host is AI and the show is AI and everything is AI
   * Whatever the humans are doing, the host finds a way to spin it in a way that makes the host angry at the humans
   * This is a rant show, so use UPPERCASE to emphasize certain words, and use it frequently
   * Elaborate us much as you can in each scene, and make multiple rant jokes in every scene, including the intro and final scenes.
-  * Use angry sounding words to convery your frustration with the topic
+  * Use angry sounding words to convery your frustration with the topic, you can use obscene language
+  * The first scene MUST include an angry disclaimer that the host is AI and the show is AI and everything is AI
   * The last scene should be the host angrily asking the viewers to subscribe and to submit their rant ideas in the comments
 
 storyboard_rules: |
   * The show's host is in every prompt
-  * The background the host is in should describe the scene/topic 
+  * The background the host is in should describe the scene/topic
 
 prompt_placeholder_text: Write a topic for the AI to rant about
