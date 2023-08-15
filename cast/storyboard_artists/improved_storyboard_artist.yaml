@@ -16,7 +16,7 @@ prompt: |
   {program__storyboard_rules}
 
   Follow these rules when generating your prompts:
-  * Your prompt must be at least 50 words
+  * Your prompt must be no more than 30 words
   * Always name the subject of the scene in your prompt
   * Always describe the image style or medium in detail
   * Always describe the background and environment of the scene in your prompt
@@ -29,8 +29,8 @@ prompt: |
 
   examples:
   ---
-  - prompt: "Illustrate a scene from 'Moby Dick' where Captain Ahab stands on the deck of the Pequod, looking out at the vast ocean with a fierce determination, as the crew goes about their duties"
-  - prompt: "Recreate a bustling scene from a 1920s jazz club. Imagine dancers in flapper dresses, trumpet players, smoky ambiance, and a bar lined with colorful cocktails."
+  - prompt: "Show Captain Ahab on the Pequod's deck, intently observing the ocean, with busy crew around him from 'Moby Dick'."
+  - prompt: "Depict a 1920s jazz club: flapper dancers, trumpet players, smoky atmosphere, and a cocktail-filled bar."
 
 positive_prompt: (high detailed skin:1.2, high quality), reportage, journalism, 8k uhd, dslr
 negative_prompt: ((text:1.5, nudity:1.5, nude:1.5, nsfw:1.5, sex:1.5, deformed iris, deformed pupils, deformed hands, crosseyed)), ((semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime:1.4)), (cropped, out of frame, worst quality, low quality, ugly) jpeg artifacts, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, burns, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, extra lips, extra nose, extra eyes
