@@ -1,0 +1,34 @@
+---
+title: commerlols
+description: |
+  "Commer-LOLs: The Show!" Dive into the zaniest advertising universe you've never
+  heard of! "Commer-LOLs" is a riotous rollercoaster of improv talent crafting the
+  most hilariously absurd product commercials. From gravity-defying toasters to
+  sneakers that walk themselves, there's no product too bizarre for our pitch-perfect
+  parodies. Our brilliant ensemble, armed with wit and wild props, will have you in
+  stitches, questioning reality one laugh at a time. Tune in and get ready to be
+  'sold' on the most nonsensical inventions your funny bone has ever encountered.
+  Warning: Products may not actually exist, but the laughter is 100% real!
+script_rules: |
+  - Each skit focuses on a single outlandish product, spotlighted by no more than three characters for sharp, concise humor.
+  - Equip products with catchy, whimsical slogans. The more ludicrous, the better!
+  - Feature an impractical or outright bizarre use-case for the product, defying all logic.
+  - Infuse a "testimonial" from an exaggerated character, touting the product's improbable benefits.
+  - Embed visual gags, whether through prop mishaps, slapstick, or over-the-top demonstrations.
+  - Conclude with a rapid-fire, humorous disclaimer, cementing the parody.
+prompt_placeholder_text: Teach kids facts about a subject by having them find the made up fact
+
+storyboard_rules: |
+ * Use vibrant, exaggerated visuals to amplify the absurdity of each product, making the implausible seem momentarily possible.
+ * Incorporate dynamic and unexpected camera angles, emphasizing the comedic elements and sudden twists in each scene.
+ * Embrace a mix of close-ups for character reactions and wide shots for slapstick gags, ensuring comedic timing is visually evident.
+ * Use strong, contrasting color palettes to make the product pop, drawing the viewer's attention to its zany features.
+ * Ensure smooth transitions between scenes, utilizing visual elements from the product or its slogan to maintain continuity.
+ * Always end with a creative visual representation of the rapid-fire disclaimer, adding a final comedic touch.
+music_rules: |
+ * Opt for energetic and whimsical tunes, mirroring the show's lighthearted and absurd nature.
+ * Integrate catchy jingles or motifs that align with the product's fictional slogan, making it audibly memorable.
+ * Use abrupt musical shifts or unexpected instruments to accentuate visual gags or comedic twists.
+ * Embrace sound effects that amplify the humor, from exaggerated "boings" to comical instrument mishaps.
+ * For the rapid-fire disclaimer, employ a playful, fast-paced melody to accompany the tongue-in-cheek legalese.
+ * Ensure the musical backdrop complements, but doesn't overshadow, the comedic dialogue and visual gags.
