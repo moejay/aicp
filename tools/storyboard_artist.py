@@ -94,7 +94,7 @@ class StoryBoardArtistTool(AICPBaseTool):
                     if vo_line.scene_index == scene_index
                 ]
 
-                if len(vo_lines_for_scene) > 8:
+                if len(vo_lines_for_scene) > 10:
                     logger.info(
                         f"Splitting scene {scene_index} into multiple prompts because it has {len(vo_lines_for_scene)} lines"
                     )
@@ -127,7 +127,7 @@ class StoryBoardArtistTool(AICPBaseTool):
                                     vo_lines_for_line_index
                                 ),
                                 "dialog_lines": [
-                                    {"line": vo_line.line}
+                                    {"actor": vo_line.actor.name, "line": vo_line.line}
                                     for vo_line in vo_lines_for_line_index
                                 ],
                             }
@@ -327,6 +327,8 @@ class StoryBoardArtistTool(AICPBaseTool):
         raise NotImplementedError("Async not implemented")
 
     def _call_llm(self, params, expected_number_of_prompts):
+        logger.debug("Calling LLM")
+        logger.debug(params)
         retries = 3
         while retries > 0:
             cast_member = self.video.director.get_storyboard_artist()
@@ -343,23 +345,7 @@ class StoryBoardArtistTool(AICPBaseTool):
                     logger.info(
                         f"Unexpected number of prompts: {len(parsed)} != {expected_number_of_prompts}"
                     )
-                    logger.info("Trying to reply with, YOU'RE WRONG, LLM")
-                    # Copy params
-                    params_copy = params.copy()
-                    params.update(
-                        {
-                            "input": "I received the wrong number of prompts, please try again"
-                        }
-                    )
-                    response = chain.run(
-                        **params_copy,
-                    )
-                    logger.debug(response)
-                    parsed = yaml.load(response, Loader=yaml.Loader)
-                    if len(parsed) != expected_number_of_prompts:
-                        raise Exception(
-                            "Parsed prompts has different number than expected"
-                        )
+                    raise Exception("Unexpected number of prompts")
                 return parsed
             except Exception as e:
                 logger.warning(e)

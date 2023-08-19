@@ -5,6 +5,8 @@ PUBLIC_KEY=$(shell cat $$HOME/.ssh/id_ed25519.pub)
 DOCKER_REPO=jwmarshall
 CHATGPT_BASE_URL=http://127.0.0.1:9090/api/
 
+export GRADIO_ANALYTICS_ENABLED=0
+
 ifneq (,$(wildcard .env))
 	OPENAI_API_KEY=$(shell cat .env | grep OPENAI_API_KEY | cut -d'=' -f2)
 	GPT4_TOKEN=$(shell cat .env | grep GPT4_TOKEN | cut -d'=' -f2)
