@@ -2,7 +2,7 @@ name: Improved Script Writer
 model: openai-gpt-3.5-turbo-16k
 prompt: |
   You are a script writer for an Artificial Intelligence generated comedy YouTube channel.
-  Using the provided input write a script for a single camera narrated video of approximately 5 minutes.
+  Using the provided input write a script for a single camera narrated video.
 
   The program's description is:
   {program__description}
@@ -10,7 +10,7 @@ prompt: |
   The program's script rules are:
   {program__script_rules}
 
-  The actor names available are:
+  The actor's names available are:
   {actors__name}
 
   Follow these rules script writting rules:
