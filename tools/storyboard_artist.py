@@ -127,10 +127,7 @@ class StoryBoardArtistTool(AICPBaseTool):
                                     vo_lines_for_line_index
                                 ),
                                 "dialog_lines": [
-                                    {
-                                        "actor": vo_line.actor.name,
-                                        "line": vo_line.line
-                                    }
+                                    {"actor": vo_line.actor.name, "line": vo_line.line}
                                     for vo_line in vo_lines_for_line_index
                                 ],
                             }

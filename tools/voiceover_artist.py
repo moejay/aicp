@@ -55,7 +55,7 @@ class VoiceOverArtistTool(AICPBaseTool):
         scenes = []
         for i in range(0, len(all_scenes), num_scenes_per_group):
             scenes.append(all_scenes[i : i + num_scenes_per_group])
-        
+
         # Generate the prompts
         all_prompts = []
         for scene_group, some_scenes in enumerate(scenes):
@@ -69,21 +69,16 @@ class VoiceOverArtistTool(AICPBaseTool):
                     parts = yaml.load(f.read(), Loader=yaml.Loader)
                     all_prompts.extend(parts)
                     continue
-            parts = self._call_llm(some_scenes)               
+            parts = self._call_llm(some_scenes)
             # Cache parts to file
-            with open(
-                    cached_file, "w"
-            ) as f:
+            with open(cached_file, "w") as f:
                 f.write(yaml.dump(parts))
 
             all_prompts.extend(parts)
 
-        with open(
-                os.path.join(utils.PATH_PREFIX, "voiceover_prompts.yaml"), "w"
-        ) as f:
+        with open(os.path.join(utils.PATH_PREFIX, "voiceover_prompts.yaml"), "w") as f:
             f.write(yaml.dump(all_prompts))
         return all_prompts
-
 
     def concatenate_and_remove(self, arr, target):
         i = 1  # start from second element
@@ -235,19 +230,22 @@ class VoiceOverArtistTool(AICPBaseTool):
         cast_member = self.video.director.get_voiceover_artist()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
         retries = 3
-        params["input"] = yaml.dump([
-            {
-                "scene_title": scene.scene_title,
-                "scene_description": scene.description,
-                "scene_lines": [
-                    {
-                        "actor": line.actor.name,
-                        "line": line.line,
-                    }
-                    for line in scene.dialogue
-                ],
-            } for scene in scenes
-        ])
+        params["input"] = yaml.dump(
+            [
+                {
+                    "scene_title": scene.scene_title,
+                    "scene_description": scene.description,
+                    "scene_lines": [
+                        {
+                            "actor": line.actor.name,
+                            "line": line.line,
+                        }
+                        for line in scene.dialogue
+                    ],
+                }
+                for scene in scenes
+            ]
+        )
         while retries > 0:
             try:
                 response = chain.run(
@@ -271,4 +269,3 @@ class VoiceOverArtistTool(AICPBaseTool):
                     raise e
                 print("Retrying...")
         raise Exception("Failed to convert")
-
