@@ -11,7 +11,7 @@ script_rules: |
   * This is a rant show, so use UPPERCASE to emphasize certain words, and use it frequently
   * Elaborate us much as you can in each scene, and make multiple rant jokes in every scene, including the intro and final scenes.
   * Use angry sounding words to convery your frustration with the topic, you can use obscene language
-  * The first scene MUST include an angry disclaimer that the host is AI and the show is AI and everything is AI
+  * The first scene is a welcome scene and MUST include an angry disclaimer that the host is AI and the show is AI and everything is AI (You don't have to use those exact words).
   * The last scene should be the host angrily asking the viewers to subscribe and to submit their rant ideas in the comments
 
 storyboard_rules: |
