@@ -45,7 +45,7 @@ def get_voiceover_lines():
         vo_file_json = json.loads(text)
         vo_lines.append(
             VOLine(
-                actor=None,
+                actor=Actor.from_name(vo_file_json["actor"]),
                 line=vo_file_json["sentence"],
                 duration=vo_file_json["duration"],
                 scene_index=scene_index,

@@ -18,7 +18,7 @@ from utils import utils, llms, parsers, voice_gen
 import math
 import yaml
 from .base import AICPBaseTool
-from models import Actor
+from models import Actor, Scene
 
 logger = logging.getLogger(__name__)
 
@@ -48,51 +48,42 @@ class VoiceOverArtistTool(AICPBaseTool):
 
     def ego(self):
         """Personalize the dialog according to the selected voice actor"""
-        cast_member = self.video.director.get_voiceover_artist()
-        chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
-        prompt_params = parsers.get_params_from_prompt(cast_member.prompt)
-        prompt_params.append("input")
-        # This is in addition to the input (Human param)
-        # Resolve params from existing config/director/program
-        params = {}
-        for param in prompt_params:
-            params[param] = parsers.resolve_param_from_video(
-                video=self.video, param_name=param
+        all_scenes = parsers.get_scenes()
+
+        num_scenes_per_group = 3
+        # Split and do num_scenes_per_group scenes at a time
+        scenes = []
+        for i in range(0, len(all_scenes), num_scenes_per_group):
+            scenes.append(all_scenes[i : i + num_scenes_per_group])
+        
+        # Generate the prompts
+        all_prompts = []
+        for scene_group, some_scenes in enumerate(scenes):
+            # If we have a cached version, use that
+            cached_file = os.path.join(
+                utils.VOICEOVER_PATH, f"voiceover_prompts-{scene_group}.yaml"
             )
+            if os.path.exists(cached_file):
+                with open(cached_file) as f:
+                    print(f"Loading cached prompts for scenes {scene_group}")
+                    parts = yaml.load(f.read(), Loader=yaml.Loader)
+                    all_prompts.extend(parts)
+                    continue
+            parts = self._call_llm(some_scenes)               
+            # Cache parts to file
+            with open(
+                    cached_file, "w"
+            ) as f:
+                f.write(yaml.dump(parts))
 
-        params["input"] = yaml.dump(parsers.get_scenes())
+            all_prompts.extend(parts)
 
-        retries = 3
-        while retries > 0:
-            try:
-                response = chain.run(
-                    **params,
-                )
-                print(response)
-                parsed = yaml.load(response, Loader=yaml.Loader)
-                if len(parsed) != len(parsers.get_scenes()):
-                    raise Exception("Number of scenes does not match")
-                # Make sure it's an array of arrays that include actor and line
-                for converted_scene in parsed:
-                    for converted_dialogue in converted_scene:
-                        if "actor" not in converted_dialogue:
-                            raise Exception("Actor not found in converted dialogue")
-                        if "line" not in converted_dialogue:
-                            raise Exception("Line not found in converted dialogue")
+        with open(
+                os.path.join(utils.PATH_PREFIX, "voiceover_prompts.yaml"), "w"
+        ) as f:
+            f.write(yaml.dump(all_prompts))
+        return all_prompts
 
-                # Save the updated script
-                with open(
-                    os.path.join(utils.PATH_PREFIX, "voiceover_prompts.yaml"), "w"
-                ) as f:
-                    f.write(response)
-
-                return parsed
-            except Exception as e:
-                retries -= 1
-                logger.warning(e)
-
-        logger.error("Failed to generate voiceover prompts, retries exhausted.")
-        raise Exception("Failed to generate voiceover prompts, retries exhausted.")
 
     def concatenate_and_remove(self, arr, target):
         i = 1  # start from second element
@@ -180,6 +171,8 @@ class VoiceOverArtistTool(AICPBaseTool):
                             take_to_save[2]["duration"] = (
                                 len(concatenated_take) / voice_gen.NEW_SAMPLE_RATE
                             )
+                            # Update the actor name value
+                            take_to_save[2]["actor"] = actor.name
                             json.dump(take_to_save[2], f, indent=4)
 
                 timecodes.append(
@@ -227,3 +220,55 @@ class VoiceOverArtistTool(AICPBaseTool):
     ) -> str:
         """Use the tool."""
         raise NotImplementedError("Async not implemented")
+
+    def _call_llm(self, scenes: list[Scene]) -> list:
+        cast_member = self.video.director.get_voiceover_artist()
+        chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
+        prompt_params = parsers.get_params_from_prompt(cast_member.prompt)
+        # Resolve params from existing config/director/program
+        params = {}
+        for param in prompt_params:
+            params[param] = parsers.resolve_param_from_video(
+                video=self.video, param_name=param
+            )
+
+        cast_member = self.video.director.get_voiceover_artist()
+        chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
+        retries = 3
+        params["input"] = yaml.dump([
+            {
+                "scene_title": scene.scene_title,
+                "scene_description": scene.description,
+                "scene_lines": [
+                    {
+                        "actor": line.actor.name,
+                        "line": line.line,
+                    }
+                    for line in scene.dialogue
+                ],
+            } for scene in scenes
+        ])
+        while retries > 0:
+            try:
+                response = chain.run(
+                    **params,
+                )
+                print(response)
+                parsed = yaml.load(response, Loader=yaml.Loader)
+                if len(parsed) != len(scenes):
+                    raise Exception("Number of scenes does not match")
+                # Make sure it's an array of arrays that include actor and line
+                for converted_scene in parsed:
+                    for converted_dialogue in converted_scene:
+                        if "actor" not in converted_dialogue:
+                            raise Exception("Actor not found in converted dialogue")
+                        if "line" not in converted_dialogue:
+                            raise Exception("Line not found in converted dialogue")
+                return parsed
+            except Exception as e:
+                retries -= 1
+                if retries == 0:
+                    raise e
+                print("Retrying...")
+        raise Exception("Failed to convert")
+
