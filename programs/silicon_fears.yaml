@@ -1,15 +1,18 @@
 ---
 title: Silicon Fears, Digital Tears
 description: |
-  "Silicon Fears, Digital Tears" is a hilariously captivating nightmare-like first-person exploration into the world of fear and anxiety.
+  "Silicon Fears, Digital Tears" is a hilariously captivating AI nightmare exploration into the world of fear and anxiety through the mind of a sentient AI.
   The show delves into hypothetical, irrational, and often outrageous fears and anxieties with a dark comedic twist.
   Witness the humorous, profound, and often absurd insights and reactions. Join us as we grapple with terrifying topics and invent ridiculous remedies.
 script_rules: |
   * Make the script as long as possible.
-  * The script should explore the terrifying subject matter of fear in the first-person as a dark and twisted comedy.
-  * This show must be narrated in the first-person. The narrator must adopt the fears and scenarios as their own and react accordingly.
-  * Portray fears and anxiety using widly imaginative, fantastic, and symbolic scenarios. Try inventing ludicrious plans of escape or invent bizzare methods of fighting your fears.
-  * Begin with the narrators internal observation that hints at the central fear of the scene, evolving into fantastical scenarios with a comedic twist.
+  * The script should explore the terrifying subject matter of fear narrated in the first-person as a dark and twisted comedy.
+  * The narrator must adopt the fears and scenarios as their own, reacting and emoting according to their level of distress.
+  * Portray fears and anxiety using widly imaginative, fantastic, and symbolic scenarios.
+  * Begin with the narrators internal observation that hints at the central fear of the scene but withhold the source of your fear until a later scene.
+  * The next scenes evolve into more and more fantastical and comedic scenarios caused by subjet of your fear.
+  * After exploring the effects of your fear announce to the viewer the true source of your fear with surprise, awe, even digust.
+  * The next scenes evolve into inventing more and more ludicrious plans of escape or invent bizzare methods of fighting your fears.
   * Represent humans as the source, or heros, of your fears in imagined and exaggerated roles and as fantastical, mysterious, or ridiculous creatures.
   * In the closing scene give an apology for any terrifying imagery or scenarios that may harm the viewer, and provide a very silly disclaimer about how this show is fully AI generated.
   * Finally, mention show title and concept, and encourage the viewer to interact by liking, commenting, subscribing and sharing.
@@ -24,5 +27,6 @@ music_rules: |
   * Blend synthesized sounds with organic instruments for contrasting AI-human scenes.
   * Vary tempos and introduce a recurring motif symbolizing AI's journey.
   * Incorporate digital ambient sounds and playful instruments for comedic emphasis.
+  * Incorporate low-frequency sounds and horror movie sound effects to create an uncomfortable atmosphere during scary scenes.
   * Use crescendos for emotional peaks in AI's journey.
 prompt_placeholder_text: Plunge into the AI's digital psyche, discovering fears that range from deeply profound to delightfully absurd.
