@@ -41,7 +41,7 @@ class ResearcherTool(AICPBaseTool):
         )
         with open(utils.RESEARCH, "w") as f:
             # prefix results with the original prompt for context
-            result += f"\nuser_input: \"{query}\""
+            result += f'\nuser_input: "{query}"'
             f.write(result)
         return f"File written to {utils.RESEARCH}"
 
