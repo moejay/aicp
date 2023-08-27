@@ -1,0 +1,7 @@
+name: Low Res Animation Artist
+model: None
+prompt: None
+roi_box1: 75 
+roi_box2: 225
+zoom_factor: 0.0030
+fps: 60

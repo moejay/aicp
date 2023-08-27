@@ -1,44 +1,13 @@
 import os
 import logging
 
-from utils import utils
-from aicp import make_video
-from models import Director, ProductionConfig, Video, Program, Actor
 from argparse import ArgumentParser
 from ui.ui import make_ui
 
 logging.basicConfig(
     level=logging.DEBUG,
 )
-
-
-def prep_video_params(
-    prompt,
-    program: str,
-    director: str,
-    actors: str,
-    config: str,
-    working_dir,
-    step: str,
-    single_step: bool,
-):
-    """Prepare the video parameters for the make_video function"""
-    video = Video(
-        prompt=prompt,
-        director=Director.from_yaml(
-            os.path.join(utils.DIRECTOR_PATH, director + ".yaml")
-        ),
-        actors=[Actor.from_name(actor) for actor in actors],
-        production_config=ProductionConfig.from_yaml(
-            os.path.join(utils.PRODUCTION_CONFIG_PATH, config + ".yaml")
-        ),
-        program=Program.from_yaml(
-            os.path.join(utils.PROGRAMS_PATH_PREFIX, program + ".yaml")
-        ),
-        output_dir=working_dir,
-    )
-    return make_video(video, step, single_step)
-
+logger = logging.getLogger(__name__)
 
 parser = ArgumentParser()
 parser.add_argument("--ui", action="store_true", help="Launch the UI")
@@ -54,7 +23,7 @@ parser.add_argument("--step", help="The step to start at", default="Researcher")
 parser.add_argument("--single-step", action="store_true", help="Run a single step")
 
 
-demo = make_ui(prep_video_params)
+demo = make_ui()
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -77,17 +46,6 @@ if __name__ == "__main__":
                 output: {args.output}
                 """
                 )
-                result = prep_video_params(
-                    args.prompt,
-                    args.program,
-                    args.director,
-                    args.actors,
-                    args.production_config,
-                    args.output,
-                    args.step,
-                    args.single_step,
-                )
-                print(result)
                 break
             except Exception as e:
                 logger.exception(e)
