@@ -1,0 +1,22 @@
+---
+title: "CTRL+ALT+DEceased"
+description: |
+  "CTRL+ALT+DEceased: Where satire, scandal, and the afterlife converge—join us for an AI-generated comedy show that nagvigates the tabloid tales of the celebrities we've lost, all wrapped up in a comedic yet heartfelt tribute and memorable eulogies."
+script_rules: |
+  * Tone: Maintain a balance between humor and reverence. The aim is to celebrate lives, not demean them.
+  * Satirical Elements: Use satire to critique celebrity culture or public personas, but refrain from mocking the individual’s personal tragedies or struggles.
+  * Format Consistency: Open with brief credits and an engaging host introduction, followed by a contextual clip of the featured celebrity. Dive into the main eulogy, interspersed with notable facts and character traits of our beloved (or hated) star. Conclude with heartfelt closing remarks, a teaser for the next episode, and roll the end credits.
+  * Disclaimers: Include a disclaimer acknowledging the sensitive nature of the show's content. Make it clear that the intention is to provide a celebratory perspective on the lives of the departed.
+storyboard_rules: |
+  * Visual Consistency: Maintain a cohesive visual style that complements the show’s satirical yet respectful tone. Whether it's the color palette or the style of illustrations, keep it consistent across episodes.
+  * Emphasis on Key Moments: Use visual cues like close-ups or dramatic lighting to highlight important or impactful moments within the show, especially during the main eulogy segment.
+  * Cinematic References: Incorporate visual nods to the celebrity's work or public persona in a way that adds depth and context to the tribute.
+  * Iconic Imagery: Incorporate images or symbols that are closely associated with the celebrity's career or persona, aiming to enrich the tribute's emotional depth.
+  * End Credits & Teasers: Design compelling end credits that provide a visual recap of the episode and introduce the teaser for the next episode in an engaging way.
+music_rules: |
+  * Tonal Balance: Craft a musical score that balances the show's unique blend of satire, humor, and respect. The music should neither be too upbeat nor too somber, aiming for a nuanced emotional palette.
+  * Thematic Consistency: Develop recurring musical themes or motifs that can be used across episodes to maintain a sense of continuity and familiarity.
+  * Segment-Specific Cues: Create distinct musical cues for different segments of the show, such as the opening credits, main eulogy, and closing remarks, to underscore their particular tones.
+  * Dynamic Range: Utilize a dynamic range of instruments and styles to emphasize the show's shifts from comedy to more heartfelt moments. This will help guide the audience emotionally through the episode.
+  * Cultural Nuance: Be mindful of the cultural background of the deceased celebrity, incorporating appropriate musical elements that pay homage without being appropriative or stereotypical.
+prompt_placeholder_text: A satirical, but heartfelt eulogy for deceased celebrities
