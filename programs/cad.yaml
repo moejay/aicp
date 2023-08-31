@@ -1,11 +1,11 @@
 ---
 title: "CTRL+ALT+DEceased"
 description: |
-  "CTRL+ALT+DEceased: Where satire, scandal, and the afterlife converge—join us for an AI-generated comedy show that nagvigates the tabloid tales of the celebrities we've lost, all wrapped up in a comedic yet heartfelt tribute and memorable eulogies."
+  "CTRL+ALT+DEceased: Where satire, scandal, and the afterlife converge—join us for an AI-generated comedy show that nagvigates the honors and accolades as well as irreverant tabloid tales of the celebrities we've lost, all wrapped up in a comedic yet heartfelt tribute and memorable eulogies."
 script_rules: |
-  * Tone: Maintain a balance between humor and reverence. The aim is to celebrate lives, not demean them.
-  * Satirical Elements: Use satire to critique celebrity culture or public personas, but refrain from mocking the individual’s personal tragedies or struggles.
-  * Format Consistency: Open with brief credits and an engaging host introduction, followed by a contextual clip of the featured celebrity. Dive into the main eulogy, interspersed with notable facts and character traits of our beloved (or hated) star. Conclude with heartfelt closing remarks, a teaser for the next episode, and roll the end credits.
+  * Tone: The aim is to celebrate lives, but not all lives are lived equaliy. Some rise in glory and fame, some crash and burn. Set the tone based on the characteristics of the person we're profiling.
+  * Satirical Elements: Use satire to critique celebrity culture or public personas, use the individual’s personal tragedies or struggles as a life lesson to the viewers.
+  * Format Consistency: Open with brief credits and an engaging host introduction, followed by a contextual clip of the featured celebrity. Dive into the main eulogy, interspersed with notable facts and character traits of our beloved (or hated) star. Conclude with heartfelt closing remarks on their contributions and roll the end credits with a moment of silence.
   * Disclaimers: Include a disclaimer acknowledging the sensitive nature of the show's content. Make it clear that the intention is to provide a celebratory perspective on the lives of the departed.
 storyboard_rules: |
   * Visual Consistency: Maintain a cohesive visual style that complements the show’s satirical yet respectful tone. Whether it's the color palette or the style of illustrations, keep it consistent across episodes.
