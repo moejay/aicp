@@ -3,6 +3,7 @@ import logging
 
 from argparse import ArgumentParser
 from ui.ui import make_ui
+from models import AICPVideo
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -46,6 +47,7 @@ if __name__ == "__main__":
                 output: {args.output}
                 """
                 )
+                
                 break
             except Exception as e:
                 logger.exception(e)

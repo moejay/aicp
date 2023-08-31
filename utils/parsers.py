@@ -1,116 +1,9 @@
-import os
-import json
 import re
-
-import contextlib
-import wave
 import logging
-import yaml
 
-from models import Scene, SceneDialogue, Video, Actor, VOLine
-from utils import utils
+from models import AICPVideo, AICPClip
 
 logger = logging.getLogger(__name__)
-
-
-def get_voiceover_duration():
-    """Get the duration of the voiceover script."""
-    with contextlib.closing(wave.open(utils.VOICEOVER_WAV_FILE, "r")) as f:
-        frames = f.getnframes()
-        rate = f.getframerate()
-        duration = frames / float(rate)
-    return int(duration)
-
-
-def get_voiceover_lines():
-    """Get the successful takes of the recorded VO lines."""
-    # List all the files in the voiceover directory
-    files = os.listdir(utils.VOICEOVER_PATH)
-    # Filter only the files that end with .json and don't have the word "take" in them
-    files = [
-        file
-        for file in files
-        if file.endswith(".json") and "take" not in file  # Change to json later
-    ]
-    vo_lines = []
-    # The file name is of the pattern `scene_{scene_index}_line_{line_index}_{sentence_index}.json`
-    # Extract that info and read the file to get the duration and the text
-    # in order to create VOLine objects
-    for file in files:
-        scene_index, line_index, sentence_index = [
-            int(i) for i in re.findall(r"\d+", file)
-        ]
-        with open(os.path.join(utils.VOICEOVER_PATH, file), "r") as f:
-            text = f.read()
-        vo_file_json = json.loads(text)
-        vo_lines.append(
-            VOLine(
-                actor=Actor.from_name(vo_file_json["actor"]),
-                line=vo_file_json["sentence"],
-                duration=vo_file_json["duration"],
-                scene_index=scene_index,
-                line_index=line_index,
-                sentence_index=sentence_index,
-            )
-        )
-    # Sort the lines by scene index, line index and sentence index
-    vo_lines.sort(key=lambda x: (x.scene_index, x.line_index, x.sentence_index))
-    return vo_lines
-
-
-def get_script():
-    """Retrieve the script from the script file."""
-    with open(utils.SCRIPT, "r") as file:
-        return yaml.load(file.read(), Loader=yaml.Loader)
-
-
-def get_scenes():
-    """Retrieve the scenes from the script file."""
-    script = get_script()
-    scenes = []
-    for scene in script:
-        characters_in_script = {}
-        for character in scene["characters"]:
-            characters_in_script[character["name"]] = Actor.from_name(
-                character["actor"].strip().lower()
-            )
-
-        scenes.append(
-            Scene(
-                scene_title=scene["title"].strip(),
-                description=scene["description"].strip(),
-                start_time=None,
-                duration=None,
-                characters=characters_in_script,
-                dialogue=[
-                    SceneDialogue(
-                        actor=characters_in_script[dialogue["character"]],
-                        character_name=dialogue["character"],
-                        line=dialogue["content"],
-                    )
-                    for dialogue in scene["dialogue"]
-                ],
-            )
-        )
-
-    # Calculate duration of each scene
-    # If script file exists
-    if not os.path.exists(utils.VOICEOVER_WAV_FILE):
-        return scenes
-
-    vo_lines = get_voiceover_lines()
-    duration_so_far = 0
-    for i, scene in enumerate(scenes):
-        vo_lines_for_scene = [
-            vo_line for vo_line in vo_lines if vo_line.scene_index == i
-        ]
-        scene_duration = sum([vo_line.duration for vo_line in vo_lines_for_scene])
-        scene.duration = scene_duration
-        scene.start_time = duration_so_far
-        duration_so_far += scene_duration
-
-    return scenes
-
 
 def get_params_from_prompt(prompt: str) -> list[str]:
     """Given a text with formattable {} parameters, return them as a list."""
@@ -121,7 +14,7 @@ def get_params_from_prompt(prompt: str) -> list[str]:
     return matches
 
 
-def resolve_param_from_video(video: Video, param_name):
+def resolve_param_from_video(clip: AICPClip, param_name):
     """Given a parameter name, return its value from the user.
     params are defined like such:
 
