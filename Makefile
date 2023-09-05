@@ -71,19 +71,19 @@ docker-push: docker-tag
 
 docker-vendor: docker-gfpgan docker-kbe 
 
-notebook: docker-compose
+notebook:
 	@echo "Starting Jupyter Notebook..."
 	@venv/bin/python -m jupyter notebook
 
-video: docker-compose
+video:
 	@echo "Starting AI Content Producer..."
 	@venv/bin/python main.py $(ARGS)
 
-ui: docker-compose
+ui:
 	@echo "Starting UI..."
 	@venv/bin/python main.py --ui
 
-dev: docker-compose
+dev:
 	@echo "Starting development server..."
 	@venv/bin/gradio main.py --ui
 
@@ -91,7 +91,7 @@ commentator:
 	@echo "Starting Commentator..."
 	@venv/bin/python commentator.py
 
-auto: docker-compose
+auto:
 	@echo "Starting AI Content Producer..."
 	@/bin/bash auto.sh inputs.txt
 

@@ -31,3 +31,5 @@ llama-cpp-python==0.1.74
 scikit-image==0.21.0
 matplotlib==3.7.1
 demucs==4.0.0
+opencv-contrib-python==4.8.0.74
+opencv-python==4.8.0.74

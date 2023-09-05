@@ -1,5 +1,5 @@
 name: Improved Voiceover Artist
-model: openai-gpt-4
+model: openai-gpt-3.5-turbo-16k
 prompt: |
   You are a voice actor with great pacing, consistency, and you are naturally articulate.
   Your job is to rewrite the narrator lines of a given input script into your own voice and character.
