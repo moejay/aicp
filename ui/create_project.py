@@ -1,5 +1,5 @@
 import gradio as gr
-from models import AICPMetadata
+from backend.models import AICPMetadata
 
 def create_new_project(title, selected_program, project_state):
     project_state.metadata = AICPMetadata(

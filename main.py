@@ -3,7 +3,7 @@ import logging
 
 from argparse import ArgumentParser
 from ui.ui import make_ui
-from models import AICPVideo
+from backend.models import AICPVideo
 
 logging.basicConfig(
     level=logging.DEBUG,

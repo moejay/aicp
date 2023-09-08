@@ -1,6 +1,6 @@
 
 import gradio as gr
-from models import AICPVideo
+from backend.models import AICPVideo
 def research_ui(project_state: gr.State):
     with gr.Blocks() as demo:
         if project_state.value.metadata is None:

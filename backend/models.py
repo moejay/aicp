@@ -85,11 +85,12 @@ class AICPScript(BaseModel):
 
 class AICPProgram(BaseModel):
     """Class encapsulating the program for an AICP video."""
-    name: str
+    title: str
     description: str
     prompt_placeholder_text: str
-    script_rules: str | None
-    storyboards: str | None
+    script_rules: str | None = None
+    storyboard_rules: str | None = None
+    music_rules: str | None = None
 
 class AICPProductionConfig(BaseModel):
     """Class encapsulating the production config for an AICP video."""
@@ -103,9 +104,8 @@ class AICPProductionConfig(BaseModel):
 
 class AICPProject(BaseModel):
     """Class encapsulating the project for an AICP video."""
+    id: str
     name: str
-    description: str | None
+    description: str | None = None
     program: AICPProgram
     production_config: AICPProductionConfig
-
-

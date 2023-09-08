@@ -1,5 +1,5 @@
 from langchain.tools import BaseTool
-from models import Video, Director, ProductionConfig, Actor
+from backend.models import Video, Director, ProductionConfig, Actor
 
 
 class AICPBaseTool(BaseTool):

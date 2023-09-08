@@ -1,7 +1,7 @@
 import re
 import logging
 
-from models import AICPVideo, AICPClip
+from backend.models import AICPVideo, AICPClip
 
 logger = logging.getLogger(__name__)
 

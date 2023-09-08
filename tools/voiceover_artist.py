@@ -18,7 +18,7 @@ from utils import utils, llms, parsers, voice_gen
 import math
 import yaml
 from .base import AICPBaseTool
-from models import Actor, Scene
+from backend.models import Actor, Scene
 
 logger = logging.getLogger(__name__)
 

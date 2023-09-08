@@ -2,7 +2,7 @@ from ui.create_project import create_project_ui
 from ui.research import research_ui
 from ui.scriptwriter import scriptwriter_ui
 import gradio as gr
-from models import AICPVideo, AICPMetadata
+from backend.models import AICPVideo, AICPMetadata
 
 def make_ui():
     """Prepare UI blocks"""

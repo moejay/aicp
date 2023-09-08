@@ -1,5 +1,5 @@
 
-from models import AICPVideo
+from backend.models import AICPVideo
 from utils import llms, parsers
 
 class Writer():
