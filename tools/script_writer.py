@@ -6,13 +6,15 @@ from dotenv import load_dotenv
 import logging
 import yaml
 
+from backend.utils import llms
+
 load_dotenv()
 
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
-from utils import utils, llms, parsers
+from utils import utils, parsers
 
 from .base import AICPBaseTool
 

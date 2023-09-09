@@ -14,7 +14,8 @@ import torch
 from scipy.io import wavfile
 
 from bark.generation import preload_models, clean_models
-from utils import utils, llms, parsers, voice_gen
+from backend.utils import llms
+from utils import utils, parsers, voice_gen
 import math
 import yaml
 from .base import AICPBaseTool

@@ -50,9 +50,6 @@ class AICPSequence(AICPClip):
 class AICPOutline(AICPClip):
     """Class encapsulating the outline for an AICP video."""
 
-class AICPVideo(BaseModel):
-    """Class encapsulating the video for an AICP video."""
-
 class AICPActor(BaseModel):
     """Class encapsulating the actor for an AICP video."""
     name: str
@@ -70,8 +67,25 @@ class AICPResearch(BaseModel):
     result: str
     # We can other research artifacts later here
 
+class AICPScriptLine(BaseModel):
+    """Class encapsulating the script line for an AICP video."""
+    character: str
+    line: str
+class AICPScriptScene(BaseModel):
+    """Class encapsulating the script scene for an AICP video."""
+    title: str
+    description: str
+    lines: list[AICPScriptLine] = []
+class AICPScriptSequence(BaseModel):
+    """Class encapsulating the script sequence for an AICP video."""
+    title: str
+    description: str
+    scenes: list[AICPScriptScene] = []
 class AICPScript(BaseModel):
     """Class encapsulating the script for an AICP video."""
+    title: str
+    sequences: list[AICPScriptSequence] = []
+
     
 
 
@@ -102,3 +116,16 @@ class AICPProject(BaseModel):
     program: AICPProgram
     production_config: AICPProductionConfig
     actors: list[AICPActor] = []
+
+
+class AICPResearcher(BaseModel):
+    """Class encapsulating the researcher for an AICP video."""
+    name: str
+    model: str
+    prompt: str
+
+class AICPScriptWriter(BaseModel):
+    """Class encapsulating the scriptwriter for an AICP video."""
+    name: str
+    model: str
+    prompt: str

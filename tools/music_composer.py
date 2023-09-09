@@ -10,8 +10,9 @@ from langchain.callbacks.manager import (
     CallbackManagerForToolRun,
 )
 from typing import Optional
+from backend.utils import llms
 from utils.parsers import get_scenes
-from utils import utils, llms, parsers
+from utils import utils, parsers
 from .base import AICPBaseTool
 
 logger = logging.getLogger(__name__)

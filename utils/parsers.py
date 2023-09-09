@@ -1,7 +1,7 @@
 import re
 import logging
 
-from backend.models import AICPProject
+from backend.models import AICPProject, AICPScript
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +43,8 @@ def resolve_param_from_video(video: AICPProject, param_name):
         production_config = video.production_config
         second_param = params[1]
         return getattr(production_config, second_param, "")
+    elif first_param == "script_schema":
+        return AICPScript.schema_json(indent=2)
     else:
         logger.warning(f"Unknown param: {param_name}")
         return ""
