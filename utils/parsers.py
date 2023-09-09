@@ -1,7 +1,7 @@
 import re
 import logging
 
-from backend.models import AICPVideo, AICPClip
+from backend.models import AICPProject
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ def get_params_from_prompt(prompt: str) -> list[str]:
     return matches
 
 
-def resolve_param_from_video(clip: AICPClip, param_name):
+def resolve_param_from_video(video: AICPProject, param_name):
     """Given a parameter name, return its value from the user.
     params are defined like such:
 

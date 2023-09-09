@@ -1,11 +1,6 @@
 from fastapi import APIRouter
-import os
-import yaml
-from backend.utils.storage import read_file
 from backend.models import AICPProgram
-from backend import settings
-
-PROGRAMS_PATH = os.path.join(settings.AICP_YAMLS_DIR, "programs")
+from backend.managers import programs 
 
 router = APIRouter(
     prefix="/programs",
@@ -18,23 +13,11 @@ def get_program(program_id: str) -> AICPProgram:
         by reading yamls/programs directory
         the id is the filename
     """
-    file = read_file(os.path.join( "programs", f"{program_id}.yaml"))
-    program = yaml.load(file, Loader=yaml.FullLoader)
-    return AICPProgram.model_validate(program)
+    return programs.get_program(program_id)
 
 @router.get("/")
 def get_programs() -> list[AICPProgram]:
     """Get all programs
         by reading yamls/programs directory
     """
-    programs = []
-    for filename in os.listdir(PROGRAMS_PATH):
-        if filename.endswith(".yaml"):
-            # Load yaml
-            program_contents = read_file(os.path.join( PROGRAMS_PATH, f"{filename}"))
-            program = yaml.load(program_contents, Loader=yaml.FullLoader)
-            programs.append(AICPProgram.model_validate(program))
-
-
-    return programs
-
+    return programs.list_programs()

@@ -1,6 +1,5 @@
 from __future__ import annotations
 from pydantic import BaseModel
-from abc import ABC, abstractmethod
 
 class AICPMetadata(BaseModel):
     """Class encapsulating the metadata for an AICP video."""
@@ -8,17 +7,10 @@ class AICPMetadata(BaseModel):
     title: str
     description: str | None
 
-class Processable(BaseModel, ABC):
-    """Class encapsulating the processable for an AICP video."""
+class AICPLayer():
+    """Class encapsulating the layer for an AICP video."""
     id: str
     duration: float | None
-
-    @abstractmethod
-    def process(self):
-        pass
-
-class AICPLayer(Processable):
-    """Class encapsulating the layer for an AICP video."""
     
 class AICPVoiceoverLayer(AICPLayer):
     """Class encapsulating the voiceover layer for an AICP video."""
@@ -40,7 +32,7 @@ class AICPVideoLayer(AICPLayer):
     width: int
     height: int
 
-class AICPClip(Processable):
+class AICPClip():
     """Class encapsulating the clip for an AICP video."""
     layers: list[AICPLayer] = []
     children: list[AICPClip] = []
@@ -109,3 +101,4 @@ class AICPProject(BaseModel):
     description: str | None = None
     program: AICPProgram
     production_config: AICPProductionConfig
+    actors: list[AICPActor] = []
