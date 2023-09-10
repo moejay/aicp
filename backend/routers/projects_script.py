@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import Annotated
 import json
-from agents.script import ScriptAgent
+from backend.agents.script import ScriptAgent
 from backend.managers import projects, script as script_manager, research as research_manager
 from backend.models import AICPScript 
 

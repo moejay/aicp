@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import Annotated
-from agents.research import ResearchAgent
+from backend.agents.research import ResearchAgent
 from backend.managers import research as research_manager, projects
 from backend.models import AICPResearch
 

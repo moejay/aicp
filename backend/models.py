@@ -1,6 +1,5 @@
 from __future__ import annotations
 from pydantic import BaseModel
-
 class AICPMetadata(BaseModel):
     """Class encapsulating the metadata for an AICP video."""
 
@@ -34,8 +33,8 @@ class AICPVideoLayer(AICPLayer):
 
 class AICPClip():
     """Class encapsulating the clip for an AICP video."""
+    id: str
     layers: list[AICPLayer] = []
-    children: list[AICPClip] = []
     # transitions: list[AICPTransition]
 
 class AICPShot(AICPClip):
@@ -43,12 +42,17 @@ class AICPShot(AICPClip):
 
 class AICPScene(AICPClip):
     """Class encapsulating the scene for an AICP video."""
+    shots: list[AICPShot] = []
+    summary: str | None
 
 class AICPSequence(AICPClip):
     """Class encapsulating the sequence for an AICP video."""
+    scenes : list[AICPScene] = []
+    summary: str | None
 
 class AICPOutline(AICPClip):
     """Class encapsulating the outline for an AICP video."""
+    sequences: list[AICPSequence] = []
 
 class AICPActor(BaseModel):
     """Class encapsulating the actor for an AICP video."""
@@ -85,9 +89,6 @@ class AICPScript(BaseModel):
     """Class encapsulating the script for an AICP video."""
     title: str
     sequences: list[AICPScriptSequence] = []
-
-    
-
 
 class AICPProgram(BaseModel):
     """Class encapsulating the program for an AICP video."""
