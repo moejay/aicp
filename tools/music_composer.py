@@ -3,15 +3,16 @@ import math
 import yaml
 import logging
 
-from audiocraft.models import MusicGen
+from audiocraft.models import musicgen 
 from audiocraft.data.audio import audio_write
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
 from typing import Optional
+from backend.utils import llms
 from utils.parsers import get_scenes
-from utils import utils, llms, parsers
+from utils import utils, parsers
 from .base import AICPBaseTool
 
 logger = logging.getLogger(__name__)
@@ -85,7 +86,7 @@ class MusicComposerTool(AICPBaseTool):
     ) -> str:
         self.initialize_agent()
 
-        model = MusicGen.get_pretrained("medium")
+        model = musicgen.MusicGen(name="facebook/musicgen-medium").get_pretrained("medium")
         scenes = get_scenes()
 
         for i, scene in enumerate(scenes):

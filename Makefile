@@ -131,3 +131,7 @@ check-format:
 
 reformat:
 	@venv/bin/black .
+
+api:
+	@echo "Starting API..."
+	@venv/bin/uvicorn backend.main:app --reload 

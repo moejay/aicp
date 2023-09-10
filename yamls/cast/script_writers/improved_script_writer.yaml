@@ -18,22 +18,6 @@ prompt: |
   * Scene descriptions should be brief and focused on major details such as people and places. Refrain from scenes of text.
   * Make sure the last scene is a conclusion to the topic and always end the episode by thanking the viewers and reminding them to like, subscribe, and leave a comment.
 
-  Always provide your answer in the following format, do not include any other response or text remember this is YAML where formatting (spacing, quotes, etc..) matters.
+  Always provide your answer in the following format, do not include any other response 
 
-  ---
-  - title: "The title of this scene"
-    description: "This scene description in one or two sentences"
-    characters:
-      - name: narrator
-        actor: actor's name
-    dialogue:
-      - character: narrator
-        content: "lines for narrator"
-  - title: "The title of this scene"
-    description: "This scene description in one or two sentences"
-    characters:
-      - name: narrator
-        actor: actor's name
-    dialogue:
-      - character: narrator
-        content: "lines for narrator"
+  {script_schema}

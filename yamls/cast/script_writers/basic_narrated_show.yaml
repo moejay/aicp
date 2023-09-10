@@ -17,23 +17,6 @@ prompt: |
   Follow these rules script writting rules:
   * All scenes have a title, description, and lines for the narrator.
 
-  Always provide your answer in the following format, do not include any other response or text
-  remember this is YAML where formatting (spacing, quotes, etc..) matters:
-
-  ---
-  - title: "The title of this scene"
-    description: "This scene description in one or two sentences"
-    characters:
-      - name: narrator
-        actor: actor name 
-    dialogue:
-      - character: narrator
-        content: "lines for narrator"
-  - title: "The title of this scene"
-    description: "This scene description in one or two sentences"
-    characters:
-      - name: narrator
-        actor: actor name 
-    dialogue:
-      - character: narrator
-        content: "lines for narrator"
+  Always provide your answer according to the following json schema:
+  {script_schema}
+  

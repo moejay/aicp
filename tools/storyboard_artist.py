@@ -15,7 +15,8 @@ from langchain.callbacks.manager import (
 )
 from PIL import Image
 from typing import Optional
-from utils import llms, utils, parsers, image_gen
+from backend.utils import llms
+from utils import utils, parsers, image_gen
 from .base import AICPBaseTool
 
 logger = logging.getLogger(__name__)

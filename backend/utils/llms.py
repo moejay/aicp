@@ -15,7 +15,6 @@ from revChatGPT.V1 import Chatbot
 
 logger = logging.getLogger(__name__)
 
-
 class RevGPTLLM(LLM):
     model: str
     chatbot: Optional[Chatbot] = None
@@ -57,20 +56,21 @@ class RevGPTLLM(LLM):
             "model": self.model,
         }
 
+MODEL_PREFIX_TO_CLASS = {
+        "revgpt": RevGPTLLM,
+        "openai": ChatOpenAI,
+        "llama": LlamaCpp,
+}
 
 def get_llm_instance(model, **kwargs):
     """Return an LLM instance based on the model.
     The general pattern is {model-prefix}-{model}
     The prefix defines what sort of class to use, such as ChatOpenAI or RevGPTLLM etc..
     """
-    model_prefix_to_class = {
-        "revgpt": RevGPTLLM,
-        "openai": ChatOpenAI,
-        "llama": LlamaCpp,
-    }
+    
 
     model_prefix = model.split("-")[0]
-    if model_prefix not in model_prefix_to_class:
+    if model_prefix not in MODEL_PREFIX_TO_CLASS:
         raise ValueError(f"Unknown model prefix {model_prefix}")
     model_name = "-".join(model.split("-")[1:])
 
@@ -88,7 +88,7 @@ def get_llm_instance(model, **kwargs):
 
     model_args.update(kwargs)
 
-    return model_prefix_to_class[model_prefix](**model_args)
+    return MODEL_PREFIX_TO_CLASS[model_prefix](**model_args)
 
 
 def get_llm(model, template, **kwargs):
@@ -101,3 +101,11 @@ def get_llm(model, template, **kwargs):
 
     chain = LLMChain(llm=get_llm_instance(model, **kwargs), prompt=chat_prompt)
     return chain
+
+AVAILABLE_MODELS = [
+    "revgpt-gpt4",
+    "openai-gpt4",
+    "openai-gpt-3.5",
+    "openai-gpt-3.5-turbo-16k",
+    "llama-llama2_7b_chat_uncensored",
+]

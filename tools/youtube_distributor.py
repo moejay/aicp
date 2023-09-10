@@ -3,13 +3,15 @@
 import logging
 import yaml
 
+from backend.utils import llms
+
 from .base import AICPBaseTool
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
 from typing import Optional
-from utils import utils, llms, parsers
+from utils import utils, parsers
 
 
 logger = logging.getLogger(__name__)
