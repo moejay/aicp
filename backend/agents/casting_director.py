@@ -107,3 +107,10 @@ class CastingDirectorChain(Chain):
     @property
     def _chain_type(self) -> str:
         return "casting_director_chain"
+
+
+class CastingDirectorAgent():
+
+    def generate(self, project: AICPProject, script: AICPScript, actors: list[AICPActor]) -> dict[str, str]:
+        chain = CastingDirectorChain(llm=llms.get_llm_instance("openai-gpt-4"))
+        return chain.run({"project": project, "script": script, "actors": project.actors})

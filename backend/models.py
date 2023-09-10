@@ -90,6 +90,15 @@ class AICPScript(BaseModel):
     title: str
     sequences: list[AICPScriptSequence] = []
 
+    def get_all_characters(self):
+        """Returns a list of all characters in the script."""
+        characters = set()
+        for sequence in self.sequences:
+            for scene in sequence.scenes:
+                for line in scene.lines:
+                    characters.add(line.character)
+        return characters
+
 class AICPProgram(BaseModel):
     """Class encapsulating the program for an AICP video."""
     title: str
