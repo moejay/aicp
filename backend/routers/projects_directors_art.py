@@ -5,9 +5,9 @@ from backend.managers import (
     actors,
     projects,
     script as script_manager,
-    casting as casting_manager,
 )
 from backend.agents.art_director import ArtDirectorAgent
+from backend.managers import director_art as art_manager
 
 router = APIRouter(
     prefix="/project/{project_id}/director/art",
@@ -27,3 +27,15 @@ def generate_outline(project_id: str) -> AICPOutline:
     )
     result = ArtDirectorAgent().generate(project, script, project.actors)
     return result
+
+@router.put("/", summary="Updates the outline with the user's input")
+def update_outline(project_id: str, outline: AICPOutline):
+    """
+    Updates the outline with the user's input
+    """
+    art_manager.save_outline(project_id, outline)
+    return outline 
+
+@router.get("/")
+def get_outline(project_id: str):
+    return art_manager.get_outline(project_id)

@@ -49,4 +49,7 @@ def create_project(new_project: AICPProject) -> AICPProject:
         os.path.join(project_dir, "project.yaml"),
         yaml.safe_dump(new_project.model_dump()),
     )
+    # Create logs directories in project directory
+    os.makedirs(os.path.join(project_dir, "logs"), exist_ok=True)
+
     return new_project

@@ -1,11 +1,9 @@
-import json
 from fastapi import APIRouter, HTTPException
-from backend.models import AICPActor
 from backend.managers import (
     actors,
+    director_casting as casting_manager,
     projects,
     script as script_manager,
-    casting as casting_manager,
 )
 from backend.agents.casting_director import CastingDirectorAgent
 
@@ -26,7 +24,7 @@ def cast_actors(project_id: str):
         actors.list_actors() if len(project.actors) == 0 else project.actors
     )
     result = CastingDirectorAgent().generate(project, script, project.actors)
-    return json.loads(result)
+    return result 
 
 
 @router.put("/", summary="Updates the cast with the user's input")

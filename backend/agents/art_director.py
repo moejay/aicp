@@ -99,18 +99,22 @@ class ArtDirectorChain(Chain):
                     seq.scenes.append(AICPScene.model_validate(json.load(open(os.path.join(self.tmp_path, f"seq-{seq_idx}-scene-{scene_idx}.json")))))
                     continue
                 scn = AICPScene(id=uuid.uuid4().__str__())
-                # TODO Summarize the scene
+                # Summarize the scene
                 scene_json_dump = scene.model_dump_json(indent=2)
-                # summary_input = f"""
-                # Summarize this scene in one or two sentences:
-                # {scene_json_dump}
-                # """
-                # scn_summary = self.llm.generate_prompt(
-                #             [
-                #             StringPromptValue(text=summary_input)
-                #             ], callbacks=run_manager.get_child() if run_manager else None,
-                # )
-                # TODO Split the scene into shots
+                summary_input = f"""
+                Summarize this scene in one or two sentences:
+                {scene_json_dump}
+                """
+                scn_summary = self.llm.generate_prompt(
+                            [
+                            StringPromptValue(text=summary_input)
+                            ], callbacks=run_manager.get_child() if run_manager else None,
+                )
+                if run_manager:
+                    run_manager.on_text(scn_summary.generations[0][0].text)
+                scn.summary = scn_summary.generations[0][0].text
+
+                # Split the scene into shots
                 split_input = f"""
                 You are an art director for the following program:
                 title: {project.program.title}
@@ -134,6 +138,9 @@ class ArtDirectorChain(Chain):
                 """
                 @retry(stop=stop_after_attempt(5))
                 def gen():
+                    if run_manager:
+                        run_manager.on_text(f"Generating shots for scene {scene_idx} in sequence {seq_idx}")
+                        run_manager.on_text(split_input)
                     split_result = self.llm.generate_prompt(
                         [StringPromptValue(text=split_input)],
                         callbacks=run_manager.get_child() if run_manager else None,

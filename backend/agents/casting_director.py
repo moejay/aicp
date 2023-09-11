@@ -126,6 +126,8 @@ class CastingDirectorAgent:
         self, project: AICPProject, script: AICPScript, actors: list[AICPActor]
     ) -> dict[str, str]:
         chain = CastingDirectorChain(llm=llms.get_llm_instance("openai-gpt-4"))
-        return chain.run(
+        result = chain.run(
             {"project": project, "script": script, "actors": project.actors}
         )
+        json.loads(result)
+        return result
