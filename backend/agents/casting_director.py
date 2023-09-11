@@ -3,10 +3,17 @@ from __future__ import annotations
 import json
 import uuid
 
-from langchain import PromptTemplate
-from langchain.prompts.base import StringPromptValue 
- 
-from backend.models import AICPProject, AICPScript, AICPOutline, AICPSequence, AICPScene, AICPShot , AICPActor
+from langchain.prompts.base import StringPromptValue
+
+from backend.models import (
+    AICPProject,
+    AICPScript,
+    AICPOutline,
+    AICPSequence,
+    AICPScene,
+    AICPShot,
+    AICPActor,
+)
 from backend.utils import llms
 from utils import parsers
 from typing import Any
@@ -19,7 +26,6 @@ from langchain.callbacks.manager import (
     CallbackManagerForChainRun,
 )
 from langchain.chains.base import Chain
-from langchain.schema.prompt import PromptValue
 
 
 class CastingDirectorChain(Chain):
@@ -61,7 +67,11 @@ class CastingDirectorChain(Chain):
 
         project = AICPProject.model_validate(inputs["project"])
         script = AICPScript.model_validate(inputs["script"])
-        actors = project.actors if len(project.actors) > 0 else [AICPActor.model_validate(actor) for actor in inputs["actors"]]
+        actors = (
+            project.actors
+            if len(project.actors) > 0
+            else [AICPActor.model_validate(actor) for actor in inputs["actors"]]
+        )
         # Get all characters in the script, put them in a set, and add two of their lines
         characters = dict()
         for sequence in script.sequences:
@@ -71,10 +81,13 @@ class CastingDirectorChain(Chain):
                         characters[line.character] = [line.line]
                     elif len(characters[line.character]) < 2:
                         characters[line.character].append(line.line)
-                
+
         # Given the characters and lines, assign actors to characters
         # Ask the llm to do that, and return it in JSON format
-        actors_string = [f"{actor.name}: {actor.physical_description}, {actor.bio}\n" for actor in actors]
+        actors_string = [
+            f"{actor.name}: {actor.physical_description}, {actor.bio}\n"
+            for actor in actors
+        ]
         input_value = f"""You are a casting director, your job is to assign available actors to the characters in the script.
                 Here are the available actors, physical descriptions and their bios:
                 {actors_string}
@@ -87,9 +100,8 @@ class CastingDirectorChain(Chain):
                     "other_actor_name": ["character3", "character4"]
                 }}"""
         result = self.llm.generate_prompt(
-            [
-               StringPromptValue (text=input_value)
-            ], callbacks=run_manager.get_child() if run_manager else None,
+            [StringPromptValue(text=input_value)],
+            callbacks=run_manager.get_child() if run_manager else None,
         )
         if run_manager:
             run_manager.on_text(result.generations[0][0].text)
@@ -103,14 +115,17 @@ class CastingDirectorChain(Chain):
         run_manager: AsyncCallbackManagerForChainRun | None = None,
     ) -> dict[str, str]:
         return self._call(inputs, run_manager)
-        
+
     @property
     def _chain_type(self) -> str:
         return "casting_director_chain"
 
 
-class CastingDirectorAgent():
-
-    def generate(self, project: AICPProject, script: AICPScript, actors: list[AICPActor]) -> dict[str, str]:
+class CastingDirectorAgent:
+    def generate(
+        self, project: AICPProject, script: AICPScript, actors: list[AICPActor]
+    ) -> dict[str, str]:
         chain = CastingDirectorChain(llm=llms.get_llm_instance("openai-gpt-4"))
-        return chain.run({"project": project, "script": script, "actors": project.actors})
+        return chain.run(
+            {"project": project, "script": script, "actors": project.actors}
+        )

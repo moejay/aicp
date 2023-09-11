@@ -5,6 +5,7 @@ from backend.models import AICPProject, AICPScript
 
 logger = logging.getLogger(__name__)
 
+
 def get_params_from_prompt(prompt: str) -> list[str]:
     """Given a text with formattable {} parameters, return them as a list."""
     # Regex to find anythin within single curly brackets

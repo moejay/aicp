@@ -15,6 +15,7 @@ from revChatGPT.V1 import Chatbot
 
 logger = logging.getLogger(__name__)
 
+
 class RevGPTLLM(LLM):
     model: str
     chatbot: Optional[Chatbot] = None
@@ -56,18 +57,19 @@ class RevGPTLLM(LLM):
             "model": self.model,
         }
 
+
 MODEL_PREFIX_TO_CLASS = {
-        "revgpt": RevGPTLLM,
-        "openai": ChatOpenAI,
-        "llama": LlamaCpp,
+    "revgpt": RevGPTLLM,
+    "openai": ChatOpenAI,
+    "llama": LlamaCpp,
 }
+
 
 def get_llm_instance(model, **kwargs):
     """Return an LLM instance based on the model.
     The general pattern is {model-prefix}-{model}
     The prefix defines what sort of class to use, such as ChatOpenAI or RevGPTLLM etc..
     """
-    
 
     model_prefix = model.split("-")[0]
     if model_prefix not in MODEL_PREFIX_TO_CLASS:
@@ -101,6 +103,7 @@ def get_llm(model, template, **kwargs):
 
     chain = LLMChain(llm=get_llm_instance(model, **kwargs), prompt=chat_prompt)
     return chain
+
 
 AVAILABLE_MODELS = [
     "revgpt-gpt4",

@@ -4,8 +4,8 @@ from backend.models import AICPProject, AICPResearch
 from backend.utils import llms
 from utils import parsers
 
-class ScriptAgent():
 
+class ScriptAgent:
     def __init__(self, model, template):
         self.model = model
         self.template = template
@@ -18,12 +18,8 @@ class ScriptAgent():
             params[param] = parsers.resolve_param_from_video(
                 video=project, param_name=param
             )
-        params["input"] = research.result 
+        params["input"] = research.result
         result = self.chain.run(
             **params,
         )
         return result
-
-
-
-

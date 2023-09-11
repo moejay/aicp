@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class Generator(ABC):
     def __init__(self):
         self.name = "Generator"
@@ -15,4 +16,3 @@ class Generator(ABC):
     @abstractmethod
     def unload_model(self):
         """Unload the model"""
-

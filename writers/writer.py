@@ -1,15 +1,14 @@
-
 from backend.models import AICPVideo
 from backend.utils import llms
 from utils import parsers
 
-class Writer():
 
+class Writer:
     def __init__(self, llm_model, prompt_template):
         self.model = llm_model
         self.prompt = prompt_template
         self.chain = llms.get_llm(model=self.model, template=self.prompt)
-        
+
     def full_prompt(self, query) -> dict:
         prompt_params = parsers.get_params_from_prompt(self.prompt)
         # This is in addition to the input (Human param)

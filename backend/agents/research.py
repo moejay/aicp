@@ -5,8 +5,8 @@ from backend.models import AICPProject
 from backend.utils import llms
 from utils import parsers
 
-class ResearchAgent():
 
+class ResearchAgent:
     def __init__(self, model, template):
         self.model = model
         self.template = template
@@ -24,7 +24,3 @@ class ResearchAgent():
             **params,
         )
         return result
-
-
-
-

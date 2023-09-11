@@ -7,20 +7,23 @@ router = APIRouter(
     tags=["projects"],
 )
 
+
 @router.get("/")
 def get_projects() -> list[AICPProject]:
     """Get all projects
-        by reading output/projects directory
+    by reading output/projects directory
     """
     return projects.list_projects()
+
 
 @router.get("/{project_id}")
 def get_project(project_id: str) -> AICPProject:
     """Get a project
-        by reading output/projects/{project_id}
+    by reading output/projects/{project_id}
     """
     return projects.get_project(project_id)
-    
+
+
 @router.post("/")
 def create_project(new_project: AICPProject) -> AICPProject:
     """
@@ -28,4 +31,3 @@ def create_project(new_project: AICPProject) -> AICPProject:
     create a directory output/projects/{project_id}
     """
     return projects.create_project(new_project)
-    

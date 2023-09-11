@@ -1,6 +1,7 @@
 from generators.base import Generator
 from transformers import AutoProcessor, BarkModel
 
+
 class Voiceover(Generator):
     def __init__(self):
         super().__init__()
@@ -18,7 +19,6 @@ class Voiceover(Generator):
         sr = self.model.generation_config.sample_rate
         return audio_array.cpu().numpy().squeeze(), sr
 
-        
     def unload_model(self):
         self.processor = None
         self.model = None

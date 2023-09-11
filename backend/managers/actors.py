@@ -7,9 +7,12 @@ from backend import settings
 
 ACTORS_PATH = os.path.join(settings.AICP_YAMLS_DIR, "cast", "actors")
 
+
 class ActorNotFound(Exception):
     """Exception raised when an actor is not found."""
+
     pass
+
 
 def list_actors():
     """List all actors."""
@@ -19,15 +22,16 @@ def list_actors():
     for filename in os.listdir(ACTORS_PATH):
         if filename.endswith(".yaml"):
             # Load yaml
-            actor_contents = read_file(os.path.join( ACTORS_PATH, f"{filename}"))
+            actor_contents = read_file(os.path.join(ACTORS_PATH, f"{filename}"))
             actor = yaml.load(actor_contents, Loader=yaml.FullLoader)
             actors.append(AICPActor.model_validate(actor))
-    
+
     return actors
+
 
 def get_actor(actor_id):
     """Get an actor by id."""
-    actor_file = os.path.join( ACTORS_PATH, f"{actor_id.lower()}.yaml")
+    actor_file = os.path.join(ACTORS_PATH, f"{actor_id.lower()}.yaml")
     if not os.path.exists(actor_file):
         raise ActorNotFound(f"Actor {actor_id} not found.")
     file = read_file(actor_file)
