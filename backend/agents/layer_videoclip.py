@@ -6,6 +6,7 @@ import uuid
 from langchain.callbacks.file import FileCallbackHandler
 from langchain.callbacks.stdout import StdOutCallbackHandler
 from langchain.prompts.base import StringPromptValue
+from tenacity import retry, stop_after_attempt, wait_fixed
 from backend import settings
 
 from backend.models import (
@@ -54,7 +55,7 @@ class LayerVideoclipChain(Chain):
 
         :meta private:
         """
-        return ["text"]
+        return ["text", "storyboard_artist"]
 
     @property
     def output_keys(self) -> list[str]:
@@ -72,19 +73,18 @@ class LayerVideoclipChain(Chain):
         """Runs the chain."""
         
         text = inputs["text"]
+        sb_artist = AICPStoryboardArtist.model_validate(inputs["storyboard_artist"])
         
         input_value = f"""
-        How to define a video clip:
-        {{
-            "prompt": "A description of what you percieve as the first frame of the video clip",
-            "camera": "A description of the camera movement",
-            "action": "A description of the actions in the video clip, someone talking, walking, etc. an object moving, glowing etc.",
-        }}
+        {sb_artist.ego_prompt}
+
         Given the following information about a shot:
         {text}
-        Create a video clip definition based on the shot.
 
-        Remember the video clip definitions above.
+        Return your description of the video in the following format:
+        {{
+            "prompt": "A description of what you percieve as the first frame of the video clip",
+        }}
         """
         result = self.llm.generate_prompt(
             [StringPromptValue(text=input_value)],
@@ -108,6 +108,7 @@ class LayerVideoclipChain(Chain):
 
 
 class VideoclipLayerAgent:
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
     def generate(
         self, project: AICPProject, shot: AICPShot,
         storyboard_artist: AICPStoryboardArtist
@@ -123,7 +124,7 @@ class VideoclipLayerAgent:
                     StdOutCallbackHandler("green"),
 
                 ], )
-        result = chain.run({"text": shot.model_dump_json(indent=2)})
+        result = chain.run({"text": shot.model_dump_json(indent=2), "storyboard_artist": storyboard_artist})
         # Parse the result
         parsed_result = json.loads(result)
         return AICPVideoLayer(

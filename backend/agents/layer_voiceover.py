@@ -6,6 +6,7 @@ import uuid
 from langchain.callbacks.file import FileCallbackHandler
 from langchain.callbacks.stdout import StdOutCallbackHandler
 from langchain.prompts.base import StringPromptValue
+from tenacity import retry, stop_after_attempt, wait_fixed
 from backend import settings
 
 from backend.models import (
@@ -55,7 +56,7 @@ class LayerVoiceoverChain(Chain):
 
         :meta private:
         """
-        return ["text"]
+        return ["text", "actor", "character"]
 
     @property
     def output_keys(self) -> list[str]:
@@ -73,17 +74,26 @@ class LayerVoiceoverChain(Chain):
         """Runs the chain."""
         
         text = inputs["text"]
+        character = inputs["character"]
+        actor = AICPActor.model_validate(inputs["actor"])
         
         input_value = f"""
-        How to define a voiceover clip:
-        {{
-            "prompt": "The voiceover line said in the style of the actor.",
-        }}
-        Given the following information about a shot:
-        {text}
-        Create a video clip definition based on the shot.
+        You are the actor {actor.name}.
+        Your physical description is {actor.physical_description}.
+        Your bio is {actor.bio}.
 
-        Remember the video clip definitions above.
+        You are playing the character {character}.
+
+        Given the following information about the shot you are about to record:
+        {text}
+
+        Read the dialog_line how you think the character would say it in the style of the actor.
+        
+        Make sure you return the result in the following JSON format:
+        {{
+            "prompt": "The voiceover line said in the style of the actor."
+        }}
+
         """
         result = self.llm.generate_prompt(
             [StringPromptValue(text=input_value)],
@@ -107,6 +117,7 @@ class LayerVoiceoverChain(Chain):
 
 
 class LayerVoiceoverAgent:
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
     def generate(
         self, project: AICPProject, shot: AICPShot, cast: dict[str, AICPActor]
     ) -> AICPVoiceoverLayer:
@@ -116,12 +127,13 @@ class LayerVoiceoverAgent:
             settings.AICP_OUTPUT_DIR, f"{project.id}", "logs", "layer_voiceover.log"
         )
 
+        actor = cast[shot.dialog_character]
         chain = LayerVoiceoverChain(llm=llms.get_llm_instance("openai-gpt-4"),callbacks=[
                     FileCallbackHandler(filename=log_file),
                     StdOutCallbackHandler("green"),
                 ], )
-        result = chain.run({"text": shot.model_dump_json(indent=2)})
-        # Parse the result
+        
+        result = chain.run({"text": shot.model_dump_json(indent=2), "actor": actor, "character": shot.dialog_character})
         parsed_result = json.loads(result)
         return AICPVoiceoverLayer(
             id=str(uuid.uuid4()),

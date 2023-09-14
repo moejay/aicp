@@ -188,8 +188,10 @@ class ArtDirectorChain(Chain):
         for sequence in outline.sequences:
             for scene in sequence.scenes:
                 for shot in scene.shots:
+                    shot.layers = [] # Clear the layers
                     shot.layers.append(VideoclipLayerAgent().generate(project, shot, storyboard_artist))
-                    shot.layers.append(LayerVoiceoverAgent().generate(project, shot, ))
+                    if shot.dialog_character in cast.keys():
+                        shot.layers.append(LayerVoiceoverAgent().generate(project, shot, cast=cast))
 
 
         return {self.output_key: outline.model_dump_json(indent=2)}
@@ -207,7 +209,11 @@ class ArtDirectorChain(Chain):
 
 
 class ArtDirectorAgent:
-    def generate(self, project: AICPProject, script: AICPScript, actors: list[AICPActor], storyboard_artist: AICPStoryboardArtist) -> AICPOutline:
+    def generate(self, 
+                 project: AICPProject, 
+                 script: AICPScript, 
+                 cast: dict[str, AICPActor],
+                 storyboard_artist: AICPStoryboardArtist) -> AICPOutline:
         """Generate an outline from a script."""
         log_file = os.path.join(
             settings.AICP_OUTPUT_DIR, f"{project.id}", "logs", "art_director.log"
@@ -216,7 +222,7 @@ class ArtDirectorAgent:
         os.makedirs(tmp_dir, exist_ok=True)
         parsed = json.loads(
             ArtDirectorChain(verbose=True, tmp_path=tmp_dir, llm=llms.get_llm_instance("openai-gpt-4")).run(
-                {"project": project, "script": script, "storyboard_artist": storyboard_artist},
+                {"project": project, "script": script, "storyboard_artist": storyboard_artist, "cast": cast},
                 callbacks=[
                     FileCallbackHandler(filename=log_file),
                     StdOutCallbackHandler("green"),

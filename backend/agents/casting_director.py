@@ -129,5 +129,7 @@ class CastingDirectorAgent:
         result = chain.run(
             {"project": project, "script": script, "actors": project.actors}
         )
-        json.loads(result)
-        return result
+        parsed = json.loads(result)
+        # Change from actor: [characters] to character: actor
+        return {character: actor for actor, characters in parsed.items() for character in characters}
+        

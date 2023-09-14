@@ -28,7 +28,7 @@ def cast_actors(project_id: str):
 
 
 @router.put("/", summary="Updates the cast with the user's input")
-def update_cast(project_id: str, cast: dict[str, list[str]]):
+def update_cast(project_id: str, cast: dict[str, str]):
     """
     Updates the cast with the user's input
     """

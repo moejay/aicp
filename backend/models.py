@@ -225,5 +225,6 @@ class AICPStoryboardArtist(BaseModel):
     sd_model: str
     positive_prompt: str
     negative_prompt: str
+    ego_prompt: str
 
    
