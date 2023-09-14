@@ -2,6 +2,7 @@ import os
 import logging
 from langchain import LLMChain
 from langchain.chat_models import ChatOpenAI
+from langchain.callbacks.stdout import StdOutCallbackHandler
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -101,7 +102,9 @@ def get_llm(model, template, **kwargs):
         [system_message_prompt, human_message_prompt]
     )
 
-    chain = LLMChain(llm=get_llm_instance(model, **kwargs), prompt=chat_prompt)
+    chain = LLMChain(llm=get_llm_instance(model, **kwargs), prompt=chat_prompt, callbacks=kwargs.pop("callbacks", [
+                StdOutCallbackHandler("green"),
+    ]), verbose=True)
     return chain
 
 

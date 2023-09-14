@@ -23,3 +23,4 @@ def get_programs() -> list[AICPProgram]:
     by reading yamls/programs directory
     """
     return programs.list_programs()
+

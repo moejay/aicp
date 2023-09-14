@@ -13,7 +13,7 @@ class AICPLayer(BaseModel):
     """Class encapsulating the layer for an AICP video."""
 
     id: str
-    duration: float | None
+    duration: float | None = None
 
 
 class AICPVoiceoverLayer(AICPLayer):
@@ -33,7 +33,7 @@ class AICPMusicLayer(AICPLayer):
 
 class AICPVideoLayer(AICPLayer):
     """Class encapsulating the video layer for an AICP video."""
-
+    prompt: str
     positive_prompt: str
     negative_prompt: str
     model: str
@@ -46,8 +46,15 @@ class AICPClip(BaseModel):
     """Class encapsulating the clip for an AICP video."""
 
     id: str
-    layers: list[AICPLayer] = []
+    layers: list[AICPVideoLayer|AICPVoiceoverLayer|AICPMusicLayer] = []
     # transitions: list[AICPTransition]
+
+    def get_layer_by_id(self, id: str) -> AICPLayer | None:
+        """Returns the layer with the given id."""
+        for layer in self.layers:
+            if layer.id == id:
+                return layer
+        return None
 
 
 class AICPShot(AICPClip):
@@ -65,6 +72,12 @@ class AICPScene(AICPClip):
     shots: list[AICPShot] = []
     summary: str | None = None
 
+    def get_shot_by_id(self, id: str) -> AICPShot | None:
+        """Returns the shot with the given id."""
+        for shot in self.shots:
+            if shot.id == id:
+                return shot
+        return None
 
 class AICPSequence(AICPClip):
     """Class encapsulating the sequence for an AICP video."""
@@ -72,11 +85,25 @@ class AICPSequence(AICPClip):
     scenes: list[AICPScene] = []
     summary: str | None
 
+    def get_scene_by_id(self, id: str) -> AICPScene | None:
+        """Returns the scene with the given id."""
+        for scene in self.scenes:
+            if scene.id == id:
+                return scene
+        return None
+
 
 class AICPOutline(AICPClip):
     """Class encapsulating the outline for an AICP video."""
 
     sequences: list[AICPSequence] = []
+
+    def get_sequence_by_id(self, id: str) -> AICPSequence | None:
+        """Returns the sequence with the given id."""
+        for sequence in self.sequences:
+            if sequence.id == id:
+                return sequence
+        return None
 
 
 class AICPActor(BaseModel):
@@ -172,6 +199,7 @@ class AICPProject(BaseModel):
     program: AICPProgram
     production_config: AICPProductionConfig
     actors: list[AICPActor] = []
+    seed: int
 
 
 class AICPResearcher(BaseModel):
@@ -188,3 +216,14 @@ class AICPScriptWriter(BaseModel):
     name: str
     model: str
     prompt: str
+
+
+class AICPStoryboardArtist(BaseModel):
+    """Class encapsulating the storyboard artist for an AICP video."""
+
+    name: str
+    sd_model: str
+    positive_prompt: str
+    negative_prompt: str
+
+   

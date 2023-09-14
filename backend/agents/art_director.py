@@ -9,6 +9,8 @@ from langchain.callbacks.file import FileCallbackHandler
 from langchain.callbacks.stdout import StdOutCallbackHandler
 from tenacity import retry, stop_after_attempt
 from backend import settings
+from backend.agents.layer_videoclip import VideoclipLayerAgent
+from backend.agents.layer_voiceover import LayerVoiceoverAgent
 from backend.models import (
     AICPActor,
     AICPProject,
@@ -17,6 +19,7 @@ from backend.models import (
     AICPSequence,
     AICPScene,
     AICPShot,
+    AICPStoryboardArtist,
 )
 from typing import Any
 from backend.utils import llms
@@ -52,7 +55,7 @@ class ArtDirectorChain(Chain):
 
         :meta private:
         """
-        return ["project", "script"]
+        return ["project", "script", "storyboard_artist", "cast"]
 
     @property
     def output_keys(self) -> list[str]:
@@ -71,6 +74,9 @@ class ArtDirectorChain(Chain):
 
         project = AICPProject.model_validate(inputs["project"])
         script = AICPScript.model_validate(inputs["script"])
+        storyboard_artist = AICPStoryboardArtist.model_validate(inputs["storyboard_artist"])
+        cast: dict[str, AICPActor] = inputs["cast"]
+
         outline = AICPOutline(id=project.id)
         for seq_idx, sequence in enumerate(script.sequences, start=1):
             if os.path.exists(os.path.join(self.tmp_path, f"seq-{seq_idx}.json")):
@@ -163,6 +169,29 @@ class ArtDirectorChain(Chain):
             with open(os.path.join(self.tmp_path, f"seq-{seq_idx}.json"), "w") as f:
                 f.write(seq.model_dump_json(indent=2))
 
+        # Enumerate sequences, scenes, and shots
+        # Let's generate the layers for each of them starting with the sequence
+        # We pass the updated outline to the next bit, so what gets generated is taken 
+        # into account when generating the layers for the next bit
+        # for example:
+        # Generate layers for sequence 1 (which apply to all scenes and shots in sequence 1)
+        # Generate layers for scene 1 (which apply to all shots in scene 1)
+        # Generate layers for shot 1 (which apply to all layers in shot 1)
+        # Generate layers for shot 2 (which apply to all layers in shot 2)
+        # Generate layers for scene 2 (which apply to all shots in scene 2)
+        # Generate layers for shot 1 (which apply to all layers in shot 1)
+        # Generate layers for shot 2 (which apply to all layers in shot 2)
+        # Generate layers for shot 3 (which apply to all layers in shot 3)
+        # Generate layers for sequence 2 (which apply to all scenes and shots in sequence 2)
+        # etc...
+        
+        for sequence in outline.sequences:
+            for scene in sequence.scenes:
+                for shot in scene.shots:
+                    shot.layers.append(VideoclipLayerAgent().generate(project, shot, storyboard_artist))
+                    shot.layers.append(LayerVoiceoverAgent().generate(project, shot, ))
+
+
         return {self.output_key: outline.model_dump_json(indent=2)}
 
     async def _acall(
@@ -178,7 +207,7 @@ class ArtDirectorChain(Chain):
 
 
 class ArtDirectorAgent:
-    def generate(self, project: AICPProject, script: AICPScript, actors: list[AICPActor]) -> AICPOutline:
+    def generate(self, project: AICPProject, script: AICPScript, actors: list[AICPActor], storyboard_artist: AICPStoryboardArtist) -> AICPOutline:
         """Generate an outline from a script."""
         log_file = os.path.join(
             settings.AICP_OUTPUT_DIR, f"{project.id}", "logs", "art_director.log"
@@ -187,7 +216,7 @@ class ArtDirectorAgent:
         os.makedirs(tmp_dir, exist_ok=True)
         parsed = json.loads(
             ArtDirectorChain(verbose=True, tmp_path=tmp_dir, llm=llms.get_llm_instance("openai-gpt-4")).run(
-                {"project": project, "script": script},
+                {"project": project, "script": script, "storyboard_artist": storyboard_artist},
                 callbacks=[
                     FileCallbackHandler(filename=log_file),
                     StdOutCallbackHandler("green"),

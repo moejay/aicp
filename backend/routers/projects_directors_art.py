@@ -1,13 +1,14 @@
 import json
 from fastapi import APIRouter, HTTPException
-from backend.models import AICPActor, AICPOutline
+from backend.models import AICPActor, AICPLayer, AICPOutline
 from backend.managers import (
     actors,
     projects,
     script as script_manager,
 )
 from backend.agents.art_director import ArtDirectorAgent
-from backend.managers import director_art as art_manager
+from backend.agents.layer_videoclip import VideoclipLayerAgent
+from backend.managers import director_art as art_manager, artists_storyboard as storyboard_manager
 
 router = APIRouter(
     prefix="/project/{project_id}/director/art",
@@ -25,7 +26,8 @@ def generate_outline(project_id: str) -> AICPOutline:
     project.actors = (
         actors.list_actors() if len(project.actors) == 0 else project.actors
     )
-    result = ArtDirectorAgent().generate(project, script, project.actors)
+    sb_artist = storyboard_manager.get_storyboard("improved_storyboard_artist")
+    result = ArtDirectorAgent().generate(project, script, project.actors, sb_artist)
     return result
 
 @router.put("/", summary="Updates the outline with the user's input")
@@ -39,3 +41,18 @@ def update_outline(project_id: str, outline: AICPOutline):
 @router.get("/")
 def get_outline(project_id: str):
     return art_manager.get_outline(project_id)
+
+
+@router.post("/sequences/{sequence_id}/scenes/{scene_id}/shots/{shot_id}/layers/", summary="Generate a layer for a shot")
+def generate_layer(project_id: str, sequence_id: str, scene_id: str, shot_id: str, storyboard_artist_id: str):
+    """
+    Generate a layer for a shot
+    """
+    project = projects.get_project(project_id)
+    outline = art_manager.get_outline(project_id)
+    sequence = outline.get_sequence_by_id(sequence_id)
+    scene = sequence.get_scene_by_id(scene_id)
+    shot = scene.get_shot_by_id(shot_id)
+    storyboard_artist = storyboard_manager.get_storyboard(storyboard_artist_id)
+    agent = VideoclipLayerAgent()
+    return agent.generate(project, shot, storyboard_artist)
