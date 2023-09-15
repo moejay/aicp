@@ -7,6 +7,7 @@ def get_audio_file_length(path: str) -> float:
     """Get the length of an audio file in seconds."""
     return AudioSegment.from_file(path).duration_seconds
 
+
 def mix_audio_files(audio_files: list[str], output_path: str) -> None:
     """Mix audio files together."""
     combined = AudioSegment.empty()

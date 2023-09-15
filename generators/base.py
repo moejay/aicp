@@ -12,7 +12,7 @@ class Generator(ABC):
         self.is_ready = True
 
     @abstractmethod
-    def generate(self,prompt: str, output_path: str, **kwargs):
+    def generate(self, prompt: str, output_path: str, **kwargs):
         """Run the generation"""
         if not self.is_ready:
             raise Exception("Model not loaded")

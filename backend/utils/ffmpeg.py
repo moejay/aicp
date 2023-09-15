@@ -4,6 +4,7 @@ import os
 import subprocess
 import json
 
+
 def get_video_info(video_path: str) -> dict:
     """Get information about a video file."""
     result = subprocess.run(
@@ -23,9 +24,8 @@ def get_video_info(video_path: str) -> dict:
     )
     return json.loads(result.stdout)
 
-def concatenate_clips(
-    clips: list[str], output_path: str
-) -> None:
+
+def concatenate_clips(clips: list[str], output_path: str) -> None:
     """Concatenate clips into a single video file."""
     # Create a file with the list of clips to concatenate
     concat_file_path = "concat.txt"
@@ -53,7 +53,8 @@ def concatenate_clips(
                         "-b:a",
                         "192k",
                         new_clip,
-                    ], check=True
+                    ],
+                    check=True,
                 )
             f.write(f"file '{new_clip}'\n")
     # Concatenate the clips
@@ -76,7 +77,8 @@ def concatenate_clips(
             "-b:a",
             "192k",
             output_path,
-        ], check=True,
+        ],
+        check=True,
     )
     # Remove the file with the list of clips to concatenate
     os.remove(concat_file_path)
@@ -101,12 +103,12 @@ def create_video_from_image(
             "-pix_fmt",
             "yuv420p",
             output_path,
-        ], check=True
+        ],
+        check=True,
     )
 
-def combine_audio_and_video(
-    audio_path: str, video_path: str, output_path: str
-) -> None:
+
+def combine_audio_and_video(audio_path: str, video_path: str, output_path: str) -> None:
     """Combine audio and video files into a single video file."""
     subprocess.run(
         [
@@ -123,8 +125,10 @@ def combine_audio_and_video(
             "-strict",
             "experimental",
             output_path,
-        ], check=True
+        ],
+        check=True,
     )
+
 
 def overlay_video_on_video(
     video_path: str, overlay_path: str, output_path: str
@@ -145,19 +149,22 @@ def overlay_video_on_video(
             "-c:a",
             "copy",
             output_path,
-        ], check=True
+        ],
+        check=True,
     )
+
 
 def mix_wav_files(input_files, output_file):
     if len(input_files) == 0:
         raise ValueError("No input files provided.")
 
     input_str = "".join(["-i " + file + " " for file in input_files])
-    filter_complex_str = f"amix=inputs={len(input_files)}:duration=longest:dropout_transition=3"
+    filter_complex_str = (
+        f"amix=inputs={len(input_files)}:duration=longest:dropout_transition=3"
+    )
 
     command = (
-        f"ffmpeg -y {input_str} -filter_complex \"{filter_complex_str}\" {output_file}"
+        f'ffmpeg -y {input_str} -filter_complex "{filter_complex_str}" {output_file}'
     )
 
     subprocess.run(command, shell=True, check=True)
-

@@ -19,7 +19,7 @@ from backend.models import (
     AICPShot,
     AICPActor,
     AICPVideoLayer,
-    AICPStoryboardArtist
+    AICPStoryboardArtist,
 )
 from backend.utils import llms
 from utils import parsers
@@ -71,10 +71,10 @@ class LayerVideoclipChain(Chain):
         run_manager: CallbackManagerForChainRun | None = None,
     ) -> dict[str, str]:
         """Runs the chain."""
-        
+
         text = inputs["text"]
         sb_artist = AICPStoryboardArtist.model_validate(inputs["storyboard_artist"])
-        
+
         input_value = f"""
         {sb_artist.ego_prompt}
 
@@ -110,21 +110,30 @@ class LayerVideoclipChain(Chain):
 class VideoclipLayerAgent:
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
     def generate(
-        self, project: AICPProject, shot: AICPShot,
-        storyboard_artist: AICPStoryboardArtist
+        self,
+        project: AICPProject,
+        shot: AICPShot,
+        storyboard_artist: AICPStoryboardArtist,
     ) -> AICPVideoLayer:
-        """Generate an AICPVideoLayer for """
+        """Generate an AICPVideoLayer for"""
         # Call the chain and parse the resultA
         log_file = os.path.join(
             settings.AICP_OUTPUT_DIR, f"{project.id}", "logs", "layer_videoclip.log"
         )
 
-        chain = LayerVideoclipChain(llm=llms.get_llm_instance("openai-gpt-4"),callbacks=[
-                    FileCallbackHandler(filename=log_file),
-                    StdOutCallbackHandler("green"),
-
-                ], )
-        result = chain.run({"text": shot.model_dump_json(indent=2), "storyboard_artist": storyboard_artist})
+        chain = LayerVideoclipChain(
+            llm=llms.get_llm_instance("openai-gpt-4"),
+            callbacks=[
+                FileCallbackHandler(filename=log_file),
+                StdOutCallbackHandler("green"),
+            ],
+        )
+        result = chain.run(
+            {
+                "text": shot.model_dump_json(indent=2),
+                "storyboard_artist": storyboard_artist,
+            }
+        )
         # Parse the result
         parsed_result = json.loads(result)
         return AICPVideoLayer(
@@ -137,6 +146,3 @@ class VideoclipLayerAgent:
             width=project.production_config.video_width,
             height=project.production_config.video_height,
         )
-
-
-        

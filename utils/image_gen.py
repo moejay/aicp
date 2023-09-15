@@ -11,7 +11,9 @@ def get_pipeline_with_loras(
     """Get a StableDiffusionPipeline with zero or more loras loaded."""
 
     pipeline = StableDiffusionPipeline.from_pretrained(
-        base_model_path, torch_dtype=torch.float16, safety_checker=None,
+        base_model_path,
+        torch_dtype=torch.float16,
+        safety_checker=None,
     )
     pipeline.to("cuda")
     pipeline.enable_xformers_memory_efficient_attention()

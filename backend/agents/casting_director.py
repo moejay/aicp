@@ -131,5 +131,8 @@ class CastingDirectorAgent:
         )
         parsed = json.loads(result)
         # Change from actor: [characters] to character: actor
-        return {character: actor for actor, characters in parsed.items() for character in characters}
-        
+        return {
+            character: actor
+            for actor, characters in parsed.items()
+            for character in characters
+        }

@@ -33,6 +33,7 @@ class AICPMusicLayer(AICPLayer):
 
 class AICPVideoLayer(AICPLayer):
     """Class encapsulating the video layer for an AICP video."""
+
     prompt: str
     positive_prompt: str
     negative_prompt: str
@@ -46,7 +47,7 @@ class AICPClip(BaseModel):
     """Class encapsulating the clip for an AICP video."""
 
     id: str
-    layers: list[AICPVideoLayer|AICPVoiceoverLayer|AICPMusicLayer] = []
+    layers: list[AICPVideoLayer | AICPVoiceoverLayer | AICPMusicLayer] = []
     # transitions: list[AICPTransition]
 
     def get_layer_by_id(self, id: str) -> AICPLayer | None:
@@ -59,6 +60,7 @@ class AICPClip(BaseModel):
 
 class AICPShot(AICPClip):
     """Class encapsulating the shot for an AICP video."""
+
     title: str
     description: str
     artistic_direction: str
@@ -78,6 +80,7 @@ class AICPScene(AICPClip):
             if shot.id == id:
                 return shot
         return None
+
 
 class AICPSequence(AICPClip):
     """Class encapsulating the sequence for an AICP video."""
@@ -226,5 +229,3 @@ class AICPStoryboardArtist(BaseModel):
     positive_prompt: str
     negative_prompt: str
     ego_prompt: str
-
-   

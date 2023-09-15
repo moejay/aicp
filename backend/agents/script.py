@@ -9,6 +9,7 @@ from utils import parsers
 from langchain.callbacks.file import FileCallbackHandler
 from langchain.callbacks.stdout import StdOutCallbackHandler
 
+
 class ScriptAgent:
     def __init__(self, model, template):
         self.model = model
@@ -32,6 +33,5 @@ class ScriptAgent:
                 FileCallbackHandler(filename=log_file),
                 StdOutCallbackHandler("green"),
             ],
-        
         )
         return result

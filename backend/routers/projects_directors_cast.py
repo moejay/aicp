@@ -24,7 +24,7 @@ def cast_actors(project_id: str):
         actors.list_actors() if len(project.actors) == 0 else project.actors
     )
     result = CastingDirectorAgent().generate(project, script, project.actors)
-    return result 
+    return result
 
 
 @router.put("/", summary="Updates the cast with the user's input")

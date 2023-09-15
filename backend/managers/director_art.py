@@ -13,6 +13,7 @@ def get_outline(project_id) -> AICPOutline:
     outline = yaml.load(file, Loader=yaml.FullLoader)
     return AICPOutline.model_validate(outline)
 
+
 def save_outline(project_id, outline: AICPOutline):
     """Save the outline for a project."""
     write_file(

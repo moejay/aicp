@@ -1,7 +1,17 @@
 import json
 import os
 from backend import settings
-from backend.models import AICPClip, AICPLayer, AICPMusicLayer, AICPOutline, AICPScene, AICPSequence, AICPShot, AICPVideoLayer, AICPVoiceoverLayer
+from backend.models import (
+    AICPClip,
+    AICPLayer,
+    AICPMusicLayer,
+    AICPOutline,
+    AICPScene,
+    AICPSequence,
+    AICPShot,
+    AICPVideoLayer,
+    AICPVoiceoverLayer,
+)
 from generators.image import ImageGenerator
 from generators.voiceover import VoiceoverGenerator
 from backend.utils import ffmpeg, audio_utils
@@ -10,10 +20,12 @@ from backend.utils import ffmpeg, audio_utils
 image_generator = ImageGenerator()
 voiceover_generator = VoiceoverGenerator()
 
+
 def save_layer_parameters_to_file(params: dict, layer_id: str, output_dir: str) -> None:
     """Save the layer parameters to a file."""
     with open(output_dir + layer_id + ".json", "w") as f:
         f.write(json.dumps(params))
+
 
 def load_layer_parameters_from_file(layer_id: str, output_dir: str) -> dict:
     """Load the layer parameters from a file."""
@@ -21,15 +33,18 @@ def load_layer_parameters_from_file(layer_id: str, output_dir: str) -> dict:
         return {}
     with open(output_dir + layer_id + ".json", "r") as f:
         return json.loads(f.read())
-    
+
+
 def compare_layer_parameters(params1: dict, params2: dict) -> bool:
     """Compare two sets of layer parameters."""
     return params1 == params2
+
 
 def unload_all_generators():
     """Unload all generators."""
     image_generator.unload_model()
     voiceover_generator.unload_model()
+
 
 def render_video_layer(layer: AICPVideoLayer, output_dir: str) -> str:
     """Render the video layer."""
@@ -55,9 +70,9 @@ def render_video_layer(layer: AICPVideoLayer, output_dir: str) -> str:
     new_duration = layer.duration
     existing_params.pop("duration", None)
     layer_params_dict.pop("duration", None)
-    image_path =os.path.join(output_dir , layer.id + ".png")
+    image_path = os.path.join(output_dir, layer.id + ".png")
     if not compare_layer_parameters(layer_params_dict, existing_params):
-        # If the parameters are different, we need to regenerate the image 
+        # If the parameters are different, we need to regenerate the image
         image_generator.generate(
             prompt=layer.prompt + layer.positive_prompt,
             negative_prompt=layer.negative_prompt,
@@ -69,6 +84,7 @@ def render_video_layer(layer: AICPVideoLayer, output_dir: str) -> str:
     layer_params_dict["duration"] = new_duration
     save_layer_parameters_to_file(layer_params_dict, layer.id, output_dir)
     return output_path
+
 
 def render_voiceover_layer(layer: AICPVoiceoverLayer, output_dir: str) -> str:
     """Render the voiceover layer."""
@@ -95,9 +111,9 @@ def render_voiceover_layer(layer: AICPVoiceoverLayer, output_dir: str) -> str:
     save_layer_parameters_to_file(layer_params_dict, layer.id, output_dir)
     return output_path
 
+
 def render_music_layer(layer: AICPMusicLayer, output_dir: str) -> str:
     """Render the music layer."""
-
 
 
 def render_layer(layer: AICPLayer, output_dir: str) -> str:
@@ -110,8 +126,11 @@ def render_layer(layer: AICPLayer, output_dir: str) -> str:
         return render_music_layer(layer, output_dir)
     else:
         raise ValueError(f"Unknown layer type: {type(layer)}")
-    
-def render_and_mix_layers(layers: list[AICPLayer], output_path: str, default_duration: float = 1.0) -> str:
+
+
+def render_and_mix_layers(
+    layers: list[AICPLayer], output_path: str, default_duration: float = 1.0
+) -> str:
     """Render the layers."""
     # Determine the duration of the clip, if possible
     # by looking at the duration of the all the layers
@@ -136,14 +155,18 @@ def render_and_mix_layers(layers: list[AICPLayer], output_path: str, default_dur
 
     if max_duration == 0.0:
         max_duration = default_duration
-    
+
     for layer in layers:
         if not layer.duration:
             layer.duration = max_duration
         render_layer(layer, output_dir)
-    
+
     # Get all layers of type audio
-    audio_layers = [layer for layer in layers if isinstance(layer, AICPVoiceoverLayer) or isinstance(layer, AICPMusicLayer)]
+    audio_layers = [
+        layer
+        for layer in layers
+        if isinstance(layer, AICPVoiceoverLayer) or isinstance(layer, AICPMusicLayer)
+    ]
     # Get all layers of type video
     video_layers = [layer for layer in layers if isinstance(layer, AICPVideoLayer)]
     # Mix the audio layers
@@ -169,38 +192,63 @@ def render_and_mix_layers(layers: list[AICPLayer], output_path: str, default_dur
     return output_path
 
 
-
-
 def combine_clips(clips: list[str], output_path: str) -> str:
     """Combine the clips."""
     ffmpeg.concatenate_clips(clips, output_path)
     return output_path
-    
-def render_shot(shot: AICPShot, scene_id: str, sequence_id: str, project_id: str) -> str:
+
+
+def render_shot(
+    shot: AICPShot, scene_id: str, sequence_id: str, project_id: str
+) -> str:
     """Render the shot."""
-    output_dir = os.path.join(settings.AICP_OUTPUT_DIR, project_id, "output", "sequences", sequence_id, "scenes", scene_id, "shots", shot.id)
+    output_dir = os.path.join(
+        settings.AICP_OUTPUT_DIR,
+        project_id,
+        "output",
+        "sequences",
+        sequence_id,
+        "scenes",
+        scene_id,
+        "shots",
+        shot.id,
+    )
     os.makedirs(output_dir, exist_ok=True)
-    return render_and_mix_layers(shot.layers, os.path.join(output_dir , shot.id + ".mp4"))
+    return render_and_mix_layers(
+        shot.layers, os.path.join(output_dir, shot.id + ".mp4")
+    )
+
 
 def render_scene(scene: AICPScene, sequence_id: str, project_id: str) -> str:
     """Render the scene."""
     shot_paths = []
-    output_dir = os.path.join(settings.AICP_OUTPUT_DIR, project_id, "output", "sequences", sequence_id, "scenes", scene.id)
+    output_dir = os.path.join(
+        settings.AICP_OUTPUT_DIR,
+        project_id,
+        "output",
+        "sequences",
+        sequence_id,
+        "scenes",
+        scene.id,
+    )
     os.makedirs(output_dir, exist_ok=True)
     for shot in scene.shots:
         shot_paths.append(render_shot(shot, scene.id, sequence_id, project_id))
     return combine_clips(shot_paths, os.path.join(output_dir, "scene.mp4"))
 
+
 def render_sequence(sequence: AICPSequence, project_id: str) -> str:
     """Render the sequence."""
     scene_paths = []
-    output_dir = os.path.join(settings.AICP_OUTPUT_DIR, project_id, "output", "sequences", sequence.id)
+    output_dir = os.path.join(
+        settings.AICP_OUTPUT_DIR, project_id, "output", "sequences", sequence.id
+    )
     os.makedirs(output_dir, exist_ok=True)
     for scene in sequence.scenes:
         scene_paths.append(render_scene(scene, sequence.id, project_id))
 
     return combine_clips(scene_paths, os.path.join(output_dir, "sequence.mp4"))
-    
+
 
 def render_outline(outline: AICPOutline, project_id: str) -> str:
     """Render the outline."""

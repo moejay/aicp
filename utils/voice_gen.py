@@ -357,6 +357,7 @@ def generate_speech_as_takes(
 
     return take_to_save
 
+
 def generate_long_sentence_as_takes(
     sentence,
     history_prompt,
@@ -368,7 +369,6 @@ def generate_long_sentence_as_takes(
     output_dir=None,
     output_file_prefix=None,
 ):
-    
     sentence_parts = nltk.sent_tokenize(sentence)
 
     silence = np.zeros(int(0.25 * NEW_SAMPLE_RATE))
@@ -388,7 +388,6 @@ def generate_long_sentence_as_takes(
 
         pieces += [best_take[0], silence]
 
-    
     return np.concatenate(pieces)
 
 

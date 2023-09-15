@@ -20,7 +20,7 @@ from backend.models import (
     AICPActor,
     AICPVideoLayer,
     AICPStoryboardArtist,
-    AICPVoiceoverLayer
+    AICPVoiceoverLayer,
 )
 from backend.utils import llms
 from utils import parsers
@@ -72,11 +72,11 @@ class LayerVoiceoverChain(Chain):
         run_manager: CallbackManagerForChainRun | None = None,
     ) -> dict[str, str]:
         """Runs the chain."""
-        
+
         text = inputs["text"]
         character = inputs["character"]
         actor = AICPActor.model_validate(inputs["actor"])
-        
+
         input_value = f"""
         You are the actor {actor.name}.
         Your physical description is {actor.physical_description}.
@@ -121,19 +121,28 @@ class LayerVoiceoverAgent:
     def generate(
         self, project: AICPProject, shot: AICPShot, cast: dict[str, AICPActor]
     ) -> AICPVoiceoverLayer:
-        """Generate an AICPVideoLayer for """
+        """Generate an AICPVideoLayer for"""
         # Call the chain and parse the resultA
         log_file = os.path.join(
             settings.AICP_OUTPUT_DIR, f"{project.id}", "logs", "layer_voiceover.log"
         )
 
         actor = cast[shot.dialog_character]
-        chain = LayerVoiceoverChain(llm=llms.get_llm_instance("openai-gpt-4"),callbacks=[
-                    FileCallbackHandler(filename=log_file),
-                    StdOutCallbackHandler("green"),
-                ], )
-        
-        result = chain.run({"text": shot.model_dump_json(indent=2), "actor": actor, "character": shot.dialog_character})
+        chain = LayerVoiceoverChain(
+            llm=llms.get_llm_instance("openai-gpt-4"),
+            callbacks=[
+                FileCallbackHandler(filename=log_file),
+                StdOutCallbackHandler("green"),
+            ],
+        )
+
+        result = chain.run(
+            {
+                "text": shot.model_dump_json(indent=2),
+                "actor": actor,
+                "character": shot.dialog_character,
+            }
+        )
         parsed_result = json.loads(result)
         return AICPVoiceoverLayer(
             id=str(uuid.uuid4()),
@@ -142,6 +151,3 @@ class LayerVoiceoverAgent:
             speaker_text_temp=cast[shot.dialog_character].speaker_text_temp,
             speaker_waveform_temp=cast[shot.dialog_character].speaker_waveform_temp,
         )
-
-
-        
