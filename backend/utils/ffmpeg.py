@@ -42,7 +42,7 @@ def concatenate_clips(
                         "-f",
                         "lavfi",
                         "-i",
-                        "anullsrc=channel_layout=stereo:sample_rate=44100",
+                        "anullsrc=channel_layout=stereo:sample_rate=48000",
                         "-i",
                         clip,
                         "-shortest",

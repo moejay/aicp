@@ -1,5 +1,6 @@
 import json
 import os
+from backend import settings
 from backend.models import AICPClip, AICPLayer, AICPMusicLayer, AICPOutline, AICPScene, AICPSequence, AICPShot, AICPVideoLayer, AICPVoiceoverLayer
 from generators.image import ImageGenerator
 from generators.voiceover import VoiceoverGenerator
@@ -175,36 +176,37 @@ def combine_clips(clips: list[str], output_path: str) -> str:
     ffmpeg.concatenate_clips(clips, output_path)
     return output_path
     
-def render_shot(shot: AICPShot, output_dir: str) -> str:
+def render_shot(shot: AICPShot, scene_id: str, sequence_id: str, project_id: str) -> str:
     """Render the shot."""
+    output_dir = os.path.join(settings.AICP_OUTPUT_DIR, project_id, "output", "sequences", sequence_id, "scenes", scene_id, "shots", shot.id)
+    os.makedirs(output_dir, exist_ok=True)
     return render_and_mix_layers(shot.layers, os.path.join(output_dir , shot.id + ".mp4"))
 
-def render_scene(scene: AICPScene, output_dir: str) -> str:
+def render_scene(scene: AICPScene, sequence_id: str, project_id: str) -> str:
     """Render the scene."""
     shot_paths = []
+    output_dir = os.path.join(settings.AICP_OUTPUT_DIR, project_id, "output", "sequences", sequence_id, "scenes", scene.id)
+    os.makedirs(output_dir, exist_ok=True)
     for shot in scene.shots:
-        shot_dir = os.path.join(output_dir, "shots", shot.id)
-        os.makedirs(shot_dir, exist_ok=True)
-        shot_paths.append(render_shot(shot, shot_dir))
+        shot_paths.append(render_shot(shot, scene.id, sequence_id, project_id))
     return combine_clips(shot_paths, os.path.join(output_dir, "scene.mp4"))
 
-def render_sequence(sequence: AICPSequence, output_dir: str) -> str:
+def render_sequence(sequence: AICPSequence, project_id: str) -> str:
     """Render the sequence."""
     scene_paths = []
+    output_dir = os.path.join(settings.AICP_OUTPUT_DIR, project_id, "output", "sequences", sequence.id)
+    os.makedirs(output_dir, exist_ok=True)
     for scene in sequence.scenes:
-        scene_dir = os.path.join(output_dir, "scenes", scene.id)
-        os.makedirs(scene_dir, exist_ok=True)
-        scene_paths.append(render_scene(scene, scene_dir))
+        scene_paths.append(render_scene(scene, sequence.id, project_id))
 
     return combine_clips(scene_paths, os.path.join(output_dir, "sequence.mp4"))
     
 
-def render_outline(outline: AICPOutline, output_dir: str) -> str:
+def render_outline(outline: AICPOutline, project_id: str) -> str:
     """Render the outline."""
     sequence_paths = []
+    output_dir = os.path.join(settings.AICP_OUTPUT_DIR, project_id, "output")
     for sequence in outline.sequences:
-        sequence_dir = os.path.join(output_dir, "sequences", sequence.id)
-        os.makedirs(sequence_dir, exist_ok=True)
-        sequence_paths.append(render_sequence(sequence, sequence_dir))
+        sequence_paths.append(render_sequence(sequence, project_id))
 
     return combine_clips(sequence_paths, os.path.join(output_dir, "outline.mp4"))

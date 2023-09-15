@@ -74,6 +74,7 @@ def render_outline(project_id: str):
     Renders the outline
     """
     outline = art_manager.get_outline(project_id)
+
     renderer.render_outline(outline, project_id)
 
 @router.post("/sequences/{sequence_id}/render", summary="Renders a sequence")
