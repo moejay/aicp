@@ -81,6 +81,7 @@ class ArtDirectorChain(Chain):
         for seq_idx, sequence in enumerate(script.sequences, start=1):
             if os.path.exists(os.path.join(self.tmp_path, f"seq-{seq_idx}.json")):
                 outline.sequences.append(AICPSequence.model_validate(json.load(open(os.path.join(self.tmp_path, f"seq-{seq_idx}.json")))))
+                continue
 
             sequence_json_dump = sequence.model_dump_json(indent=2)
             summary_input = f"""

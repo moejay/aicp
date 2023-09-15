@@ -312,7 +312,7 @@ def generate_speech_as_takes(
     history_prompt,
     text_temp,
     waveform_temp,
-    max_takes=100,
+    max_takes=10,
     speech_wpm=150,
     save_all_takes=False,
     output_dir=None,

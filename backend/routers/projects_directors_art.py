@@ -10,6 +10,7 @@ from backend.agents.art_director import ArtDirectorAgent
 from backend.agents.layer_videoclip import VideoclipLayerAgent
 from backend.agents.layer_voiceover import LayerVoiceoverAgent
 from backend.managers import director_art as art_manager, artists_storyboard as storyboard_manager, director_casting as casting_manager
+from backend.renderers import renderer
 
 router = APIRouter(
     prefix="/project/{project_id}/director/art",
@@ -65,3 +66,54 @@ def generate_layer(project_id: str, sequence_id: str, scene_id: str, shot_id: st
             raise HTTPException(status_code=400, detail=f"Character {shot.dialog_character} not found in cast")
         agent = LayerVoiceoverAgent()
         return agent.generate(project=project, shot=shot, cast=cast)
+    
+
+@router.post("/render", summary="Renders the outline")
+def render_outline(project_id: str):
+    """
+    Renders the outline
+    """
+    outline = art_manager.get_outline(project_id)
+    renderer.render_outline(outline, project_id)
+
+@router.post("/sequences/{sequence_id}/render", summary="Renders a sequence")
+def render_sequence(project_id: str, sequence_id: str):
+    """
+    Renders a sequence
+    """
+    outline = art_manager.get_outline(project_id)
+    sequence = outline.get_sequence_by_id(sequence_id)
+    renderer.render_sequence(sequence, project_id)
+
+@router.post("/sequences/{sequence_id}/scenes/{scene_id}/render", summary="Renders a scene")
+def render_scene(project_id: str, sequence_id: str, scene_id: str):
+    """
+    Renders a scene
+    """
+    outline = art_manager.get_outline(project_id)
+    sequence = outline.get_sequence_by_id(sequence_id)
+    scene = sequence.get_scene_by_id(scene_id)
+    renderer.render_scene(scene, project_id)
+
+@router.post("/sequences/{sequence_id}/scenes/{scene_id}/shots/{shot_id}/render", summary="Renders a shot")
+def render_shot(project_id: str, sequence_id: str, scene_id: str, shot_id: str):
+    """
+    Renders a shot
+    """
+    outline = art_manager.get_outline(project_id)
+    sequence = outline.get_sequence_by_id(sequence_id)
+    scene = sequence.get_scene_by_id(scene_id)
+    shot = scene.get_shot_by_id(shot_id)
+    renderer.render_shot(shot, project_id)
+
+@router.post("/sequences/{sequence_id}/scenes/{scene_id}/shots/{shot_id}/layers/{layer_id}/render", summary="Renders a layer")
+def render_layer(project_id: str, sequence_id: str, scene_id: str, shot_id: str, layer_id: str):
+    """
+    Renders a layer
+    """
+    outline = art_manager.get_outline(project_id)
+    sequence = outline.get_sequence_by_id(sequence_id)
+    scene = sequence.get_scene_by_id(scene_id)
+    shot = scene.get_shot_by_id(shot_id)
+    layer = shot.get_layer_by_id(layer_id)
+    renderer.render_layer(layer, project_id)
