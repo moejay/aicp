@@ -1,7 +1,7 @@
 import os
 from generators.base import Generator
 import soundfile as sf
-from utils.voice_gen import generate_speech_as_takes, save_audio_signal_wav, NEW_SAMPLE_RATE
+from utils.voice_gen import generate_long_sentence_as_takes, save_audio_signal_wav, NEW_SAMPLE_RATE
 import torch
 
 
@@ -25,14 +25,14 @@ class VoiceoverGenerator(Generator):
         #sr = self.model.generation_config.sample_rate
         #audio_to_save = audio_array.cpu().numpy().squeeze()
         #sf.write(output_path, audio_to_save, sr)
-        take_to_save = generate_speech_as_takes(prompt, 
+        audio_array= generate_long_sentence_as_takes(prompt, 
                                  speaker, 
                                  speech_wpm=75,
                                  output_dir=os.path.dirname(output_path),
                                  output_file_prefix="vo-take",
                                  text_temp=kwargs["speaker_text_temp"], 
                                  waveform_temp=kwargs["speaker_waveform_temp"])
-        save_audio_signal_wav(take_to_save[0], NEW_SAMPLE_RATE , output_path)
+        save_audio_signal_wav(audio_array, NEW_SAMPLE_RATE , output_path)
 
     def unload_model(self):
         if self.is_ready:

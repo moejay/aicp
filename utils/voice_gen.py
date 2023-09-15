@@ -1,5 +1,6 @@
 import os
 from typing import Optional, Union, Dict
+import nltk
 import numpy as np
 from bark.generation import generate_coarse, generate_fine
 import json
@@ -355,6 +356,40 @@ def generate_speech_as_takes(
         print(f"Best take: {take_to_save[2]}")
 
     return take_to_save
+
+def generate_long_sentence_as_takes(
+    sentence,
+    history_prompt,
+    text_temp,
+    waveform_temp,
+    max_takes=10,
+    speech_wpm=150,
+    save_all_takes=False,
+    output_dir=None,
+    output_file_prefix=None,
+):
+    
+    sentence_parts = nltk.sent_tokenize(sentence)
+
+    silence = np.zeros(int(0.25 * NEW_SAMPLE_RATE))
+    pieces = []
+    for idx, part in enumerate(sentence_parts):
+        best_take = generate_speech_as_takes(
+            part,
+            history_prompt,
+            text_temp,
+            waveform_temp,
+            max_takes,
+            speech_wpm,
+            save_all_takes,
+            output_dir,
+            output_file_prefix + f"-{idx}",
+        )
+
+        pieces += [best_take[0], silence]
+
+    
+    return np.concatenate(pieces)
 
 
 def save_audio_signal_wav(audio_signal, sample_rate, output_file):
