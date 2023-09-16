@@ -132,6 +132,6 @@ check-format:
 reformat:
 	@venv/bin/black .
 
-api:
+api: python-deps
 	@echo "Starting API..."
 	@venv/bin/uvicorn backend.main:app --reload 

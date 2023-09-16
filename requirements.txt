@@ -12,7 +12,6 @@ nltk==3.8.1
 xformers==0.0.20
 audiocraft==0.0.2
 pydub==0.25.1
-gradio==3.41.2
 revChatGPT==6.7.5
 pylint==2.17.4
 dacite==1.8.1
@@ -29,6 +28,6 @@ llama-cpp-python==0.1.74
 scikit-image==0.21.0
 matplotlib==3.7.1
 demucs==4.0.0
-pydantic==2.3.0
-fastapi==0.101.0
+pydantic
+fastapi==0.103.1
 uvicorn==0.23.2
