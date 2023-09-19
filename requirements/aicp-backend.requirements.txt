@@ -1,0 +1,5 @@
+pydantic==2.3.0
+Django==4.2.5
+django-ninja==1.0a1
+uvicorn==0.23.2
+debugpy==1.8.0

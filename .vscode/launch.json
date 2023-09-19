@@ -2,6 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}/frontend",
+            "name": "Node - Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "/app",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
             "name": "Python: Django",
             "type": "python",
             "request": "launch",
