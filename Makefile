@@ -135,3 +135,11 @@ reformat:
 api: python-deps
 	@echo "Starting API..."
 	@venv/bin/uvicorn backend.main:app --reload 
+
+docker-dev-deps:
+	@echo "Building docker images..."
+	@docker-compose -f docker-compose.yml -f docker-compose.dev.yml build
+
+docker-dev: docker-dev-deps
+	@echo "Starting development server..."
+	@docker-compose -f docker-compose.yml -f docker-compose.dev.yml up

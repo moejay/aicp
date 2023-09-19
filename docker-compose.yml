@@ -2,11 +2,13 @@ version: '3'
 
 services:
 
-  chatgpt-proxy:
+  backend:
     restart: always
-    image: chatgpt-proxy
+    image: aicp-backend
     build:
-      context: .
-      dockerfile: dockerfiles/chatgpt-proxy.Dockerfile
+      context: . 
+      dockerfile: dockerfiles/aicp-backend.Dockerfile
     ports:
-      - '127.0.0.1:9090:9090'
+      - '8000:80'
+    volumes:
+      - ./backend:/app
