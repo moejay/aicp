@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,11 @@ SECRET_KEY = "django-insecure-g0poyndmuj6^w1+9e%fewy!177l7x$p+(nd*7$u%)txcqdcad2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "backend"
+]
 
 
 # Application definition
@@ -121,3 +126,12 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+
+AICP_OUTPUT_DIR = os.environ.get(
+    "AICP_OUTPUT_DIR", os.path.join(os.path.dirname(__file__), "output")
+)
+AICP_YAMLS_DIR = os.environ.get(
+    "AICP_YAMLS_DIR", os.path.join(os.path.dirname(__file__), "..", "yamls")
+)

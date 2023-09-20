@@ -11,8 +11,11 @@ services:
     ports:
       - '8000:80'
       - '5678:5678'
+    environment:
+      - AICP_OUTPUT_DIR=/output
     volumes:
       - ./backend:/app
+      - ./output:/output
 
   frontend:
     command: npm run dev
