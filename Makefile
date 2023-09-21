@@ -132,9 +132,24 @@ check-format:
 reformat:
 	@venv/bin/black .
 
-api: python-deps
+backend-venv:
+	@echo "Setting up Python virtual environment..."
+	@if [ ! -d "backend/venv" ]; then \
+		echo "Creating virtual environment..."; \
+		python3 -m virtualenv backend/venv; \
+	fi
+
+backend-python-deps: backend-venv
+	@echo "Installing dependencies..."
+	@backend/venv/bin/pip install -r requirements/aicp-backend.requirements.txt --upgrade	
+
+api: backend-python-deps
 	@echo "Starting API..."
-	@venv/bin/uvicorn backend.main:app --reload 
+	@AICP_OUTPUT_DIR=${PWD}/output backend/venv/bin/python backend/manage.py runserver
+
+next:
+	@echo "Starting frontend..."
+	@cd frontend && npm run dev
 
 docker-dev-deps:
 	@echo "Building docker images..."
@@ -143,3 +158,10 @@ docker-dev-deps:
 docker-dev: docker-dev-deps
 	@echo "Starting development server..."
 	@docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+
+typings: backend-python-deps
+	@echo "Generating typings..."
+	@backend/venv/bin/python backend/manage.py export_openapi_schema --indent 2 --output backend/openapi.schema.json
+	@npx openapi-typescript backend/openapi.schema.json -o frontend/src/openapi.d.ts
+

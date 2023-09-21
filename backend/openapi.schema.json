@@ -1,0 +1,254 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "NinjaAPI",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "paths": {
+    "/api/projects": {
+      "get": {
+        "operationId": "videocreator_api_list_projects",
+        "summary": "List Projects",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AICPProject"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "description": "Returns a list of all projects."
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AICPActor": {
+        "description": "Class encapsulating the actor for an AICP video.",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          },
+          "catch_phrase": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catch Phrase"
+          },
+          "physical_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Physical Description"
+          },
+          "speaker": {
+            "title": "Speaker",
+            "type": "string"
+          },
+          "speaker_text_temp": {
+            "default": 0.7,
+            "title": "Speaker Text Temp",
+            "type": "number"
+          },
+          "speaker_waveform_temp": {
+            "default": 0.7,
+            "title": "Speaker Waveform Temp",
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "bio",
+          "catch_phrase",
+          "physical_description",
+          "speaker"
+        ],
+        "title": "AICPActor",
+        "type": "object"
+      },
+      "AICPProductionConfig": {
+        "description": "Class encapsulating the production config for an AICP video.",
+        "properties": {
+          "video_width": {
+            "default": 1920,
+            "title": "Video Width",
+            "type": "integer"
+          },
+          "video_height": {
+            "default": 1080,
+            "title": "Video Height",
+            "type": "integer"
+          },
+          "sd_base_image_width": {
+            "default": 768,
+            "title": "Sd Base Image Width",
+            "type": "integer"
+          },
+          "sd_base_image_height": {
+            "default": 432,
+            "title": "Sd Base Image Height",
+            "type": "integer"
+          },
+          "enable_subtitles": {
+            "default": false,
+            "title": "Enable Subtitles",
+            "type": "boolean"
+          },
+          "voiceline_synced_storyboard": {
+            "default": false,
+            "title": "Voiceline Synced Storyboard",
+            "type": "boolean"
+          },
+          "num_images_per_scene": {
+            "default": 1,
+            "title": "Num Images Per Scene",
+            "type": "integer"
+          }
+        },
+        "title": "AICPProductionConfig",
+        "type": "object"
+      },
+      "AICPProgram": {
+        "description": "Class encapsulating the program for an AICP video.",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "prompt_placeholder_text": {
+            "title": "Prompt Placeholder Text",
+            "type": "string"
+          },
+          "script_rules": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Script Rules"
+          },
+          "storyboard_rules": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Storyboard Rules"
+          },
+          "music_rules": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Music Rules"
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "prompt_placeholder_text"
+        ],
+        "title": "AICPProgram",
+        "type": "object"
+      },
+      "AICPProject": {
+        "description": "Class encapsulating the project for an AICP video.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "program": {
+            "$ref": "#/components/schemas/AICPProgram"
+          },
+          "production_config": {
+            "$ref": "#/components/schemas/AICPProductionConfig"
+          },
+          "actors": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/AICPActor"
+            },
+            "title": "Actors",
+            "type": "array"
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "program",
+          "production_config",
+          "seed"
+        ],
+        "title": "AICPProject",
+        "type": "object"
+      }
+    }
+  },
+  "servers": null
+}

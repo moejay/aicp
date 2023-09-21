@@ -1,10 +1,10 @@
 /* Projects list component */
 import React from "react";
-import { AICPProject } from "@/typings";
 import Link from "next/link";
+import { getProjects } from "@/api";
 
 export async function ProjectsList() {
-    let projects: [AICPProject] = await (await fetch('http://backend:80/api/projects', { cache: 'no-store' })).json();
+    let projects = await getProjects();
     return (<div>
         <div className="text-gray-900" >
             <h2 className="flex text-gray-900">Projects</h2>

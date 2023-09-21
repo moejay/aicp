@@ -26,5 +26,8 @@
     "server-only": "^0.0.1",
     "tailwindcss": "3.3.3",
     "typescript": "5.2.2"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^6.6.1"
   }
 }
