@@ -229,3 +229,21 @@ class AICPStoryboardArtist(BaseModel):
     positive_prompt: str
     negative_prompt: str
     ego_prompt: str
+
+class AICPUser(BaseModel):
+    """Class encapsulating the user for an AICP video."""
+
+    id: str
+    username: str
+    email: str | None = None
+    
+class AICPSignInCredentials(BaseModel):
+    """Class encapsulating the sign in credentials for an AICP video."""
+
+    username: str
+    password: str
+class AICPSignInResult(BaseModel):
+    """Class encapsulating the sign in result for an AICP video."""
+
+    user: AICPUser
+    token: str

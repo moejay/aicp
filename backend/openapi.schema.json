@@ -6,28 +6,189 @@
     "description": ""
   },
   "paths": {
-    "/api/projects": {
+    "/api/actors/{actor_id}": {
       "get": {
-        "operationId": "videocreator_api_list_projects",
-        "summary": "List Projects",
+        "operationId": "videocreator_routers_actors_get_actor",
+        "summary": "Get Actor",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "actor_id",
+            "schema": {
+              "title": "Actor Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get an actor\n    by reading yamls/cast/actors directory\n    the id is the filename",
+        "tags": [
+          "actors"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/actors/": {
+      "get": {
+        "operationId": "videocreator_routers_actors_get_actors",
+        "summary": "Get Actors",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/AICPProject"
-                  },
-                  "title": "Response",
-                  "type": "array"
-                }
-              }
-            }
+            "description": "OK"
           }
         },
-        "description": "Returns a list of all projects."
+        "description": "Get all actors\nby reading yamls/cast/actors directory",
+        "tags": [
+          "actors"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/programs/{program_id}": {
+      "get": {
+        "operationId": "videocreator_routers_programs_get_program",
+        "summary": "Get Program",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "program_id",
+            "schema": {
+              "title": "Program Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get a program\nby reading yamls/programs directory\nthe id is the filename",
+        "tags": [
+          "programs"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/programs/": {
+      "get": {
+        "operationId": "videocreator_routers_programs_get_programs",
+        "summary": "Get Programs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get all programs\nby reading yamls/programs directory",
+        "tags": [
+          "programs"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/projects/": {
+      "get": {
+        "operationId": "videocreator_routers_projects_get_projects",
+        "summary": "Get Projects",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get all projects\nby reading output/projects directory",
+        "tags": [
+          "projects"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "videocreator_routers_projects_create_project",
+        "summary": "Create Project",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Create a project\ncreate a directory output/projects/{project_id}",
+        "tags": [
+          "projects"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AICPProject"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/projects/{project_id}": {
+      "get": {
+        "operationId": "videocreator_routers_projects_get_project",
+        "summary": "Get Project",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "schema": {
+              "title": "Project Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get a project\nby reading output/projects/{project_id}",
+        "tags": [
+          "projects"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
       }
     }
   },
@@ -248,7 +409,13 @@
         "title": "AICPProject",
         "type": "object"
       }
+    },
+    "securitySchemes": {
+      "GlobalAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
     }
   },
-  "servers": null
+  "servers": []
 }

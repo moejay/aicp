@@ -5,12 +5,61 @@
 
 
 export interface paths {
-  "/api/projects": {
+  "/api/actors/{actor_id}": {
     /**
-     * List Projects
-     * @description Returns a list of all projects.
+     * Get Actor
+     * @description Get an actor
+     *     by reading yamls/cast/actors directory
+     *     the id is the filename
      */
-    get: operations["videocreator_api_list_projects"];
+    get: operations["videocreator_routers_actors_get_actor"];
+  };
+  "/api/actors/": {
+    /**
+     * Get Actors
+     * @description Get all actors
+     * by reading yamls/cast/actors directory
+     */
+    get: operations["videocreator_routers_actors_get_actors"];
+  };
+  "/api/programs/{program_id}": {
+    /**
+     * Get Program
+     * @description Get a program
+     * by reading yamls/programs directory
+     * the id is the filename
+     */
+    get: operations["videocreator_routers_programs_get_program"];
+  };
+  "/api/programs/": {
+    /**
+     * Get Programs
+     * @description Get all programs
+     * by reading yamls/programs directory
+     */
+    get: operations["videocreator_routers_programs_get_programs"];
+  };
+  "/api/projects/": {
+    /**
+     * Get Projects
+     * @description Get all projects
+     * by reading output/projects directory
+     */
+    get: operations["videocreator_routers_projects_get_projects"];
+    /**
+     * Create Project
+     * @description Create a project
+     * create a directory output/projects/{project_id}
+     */
+    post: operations["videocreator_routers_projects_create_project"];
+  };
+  "/api/projects/{project_id}": {
+    /**
+     * Get Project
+     * @description Get a project
+     * by reading output/projects/{project_id}
+     */
+    get: operations["videocreator_routers_projects_get_project"];
   };
 }
 
@@ -139,16 +188,115 @@ export type external = Record<string, never>;
 export interface operations {
 
   /**
-   * List Projects
-   * @description Returns a list of all projects.
+   * Get Actor
+   * @description Get an actor
+   *     by reading yamls/cast/actors directory
+   *     the id is the filename
    */
-  videocreator_api_list_projects: {
+  videocreator_routers_actors_get_actor: {
+    parameters: {
+      path: {
+        actor_id: string;
+      };
+    };
     responses: {
       /** @description OK */
       200: {
-        content: {
-          "application/json": components["schemas"]["AICPProject"][];
-        };
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Actors
+   * @description Get all actors
+   * by reading yamls/cast/actors directory
+   */
+  videocreator_routers_actors_get_actors: {
+    responses: {
+      /** @description OK */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Program
+   * @description Get a program
+   * by reading yamls/programs directory
+   * the id is the filename
+   */
+  videocreator_routers_programs_get_program: {
+    parameters: {
+      path: {
+        program_id: string;
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Programs
+   * @description Get all programs
+   * by reading yamls/programs directory
+   */
+  videocreator_routers_programs_get_programs: {
+    responses: {
+      /** @description OK */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Projects
+   * @description Get all projects
+   * by reading output/projects directory
+   */
+  videocreator_routers_projects_get_projects: {
+    responses: {
+      /** @description OK */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Create Project
+   * @description Create a project
+   * create a directory output/projects/{project_id}
+   */
+  videocreator_routers_projects_create_project: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AICPProject"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Project
+   * @description Get a project
+   * by reading output/projects/{project_id}
+   */
+  videocreator_routers_projects_get_project: {
+    parameters: {
+      path: {
+        project_id: string;
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: never;
       };
     };
   };

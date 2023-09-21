@@ -2,7 +2,7 @@
 import os
 import yaml
 from videocreator.utils.storage import read_file
-from videocreator.models import AICPProgram
+from videocreator.schema import AICPProgram
 from django.conf import settings
 
 PROGRAMS_PATH = os.path.join(settings.AICP_YAMLS_DIR, "programs")

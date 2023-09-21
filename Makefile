@@ -5,6 +5,9 @@ PUBLIC_KEY=$(shell cat $$HOME/.ssh/id_ed25519.pub)
 DOCKER_REPO=jwmarshall
 CHATGPT_BASE_URL=http://127.0.0.1:9090/api/
 
+export AICP_OUTPUT_DIR=${PWD}/output
+export AICP_YAMLS_DIR=${PWD}/yamls
+
 export GRADIO_ANALYTICS_ENABLED=0
 
 ifneq (,$(wildcard .env))
@@ -145,7 +148,19 @@ backend-python-deps: backend-venv
 
 api: backend-python-deps
 	@echo "Starting API..."
-	@AICP_OUTPUT_DIR=${PWD}/output backend/venv/bin/python backend/manage.py runserver
+	@backend/venv/bin/python backend/manage.py runserver
+
+api-setup: backend-python-deps
+	@echo "Starting API..."
+	@backend/venv/bin/python backend/manage.py createsuperuser 
+
+api-make-migrations: backend-python-deps
+	@echo "Starting API..."
+	@backend/venv/bin/python backend/manage.py makemigrations
+
+api-migrate: backend-python-deps
+	@echo "Starting API..."
+	@backend/venv/bin/python backend/manage.py migrate
 
 next:
 	@echo "Starting frontend..."

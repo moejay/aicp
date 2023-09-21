@@ -1,6 +1,6 @@
-from videocreator.schema import AICPProject
 from ninja import NinjaAPI, security
-from videocreator.managers import projects
+from videocreator.routers import actors as actors_router, programs as programs_router, projects as projects_router, auth as auth_router 
+
 
 class GlobalAuth(security.HttpBearer):
     def authenticate(self, request, token):
@@ -9,7 +9,7 @@ class GlobalAuth(security.HttpBearer):
 
 api = NinjaAPI()
 
-@api.get("/projects", response=list[AICPProject])
-def list_projects(request):
-    """Returns a list of all projects."""
-    return projects.list_projects()
+api.add_router("/actors", actors_router.router, auth=GlobalAuth())
+api.add_router("/programs", programs_router.router, auth=GlobalAuth())
+api.add_router("/projects", projects_router.router, auth=GlobalAuth())
+api.add_router("/auth", auth_router.router)
