@@ -9,6 +9,7 @@ from tools.animation_artist import AnimationArtistTool
 from tools.music_composer import MusicComposerTool
 from tools.producer import ProducerTool
 from tools.researcher import ResearcherTool
+from tools.story_writer import StoryWriterTool
 from tools.script_writer import ScriptWriterTool
 from tools.sound_engineer import SoundEngineerTool
 from tools.storyboard_artist import StoryBoardArtistTool
@@ -28,6 +29,7 @@ def make_video(video: Video, step: str, single_step: bool = False):
 
     all_tools = [
         ResearcherTool(video=video),
+        StoryWriterTool(video=video),
         ScriptWriterTool(video=video),
         VoiceOverArtistTool(video=video),
         StoryBoardArtistTool(video=video),

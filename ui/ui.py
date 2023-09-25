@@ -67,6 +67,7 @@ def make_ui(prep_video_params):
                 label="Start At",
                 choices=[
                     "Researcher",
+                    "Story Writer",
                     "Script Writer",
                     "Voiceover Artist",
                     "Storyboard Artist",

@@ -4,6 +4,8 @@ import os
 # Those are the creation paths (files that get created during a run)
 PATH_PREFIX = ""
 RESEARCH = "research.yaml"
+STORY = "story.txt"
+STORY_SUMMARY = "story_summary.txt"
 SCRIPT = "script.yaml"
 SCRIPT_SUMMARY = "script_summary.txt"
 STORYBOARD_PATH = "storyboard"
@@ -25,6 +27,7 @@ ACTOR_PATH = os.path.join(CAST_PATH_PREFIX, "actors")
 SPEAKER_PATH = "speakers"
 DIRECTOR_PATH = os.path.join(CAST_PATH_PREFIX, "directors")
 RESEARCHER_PATH = os.path.join(CAST_PATH_PREFIX, "researchers")
+STORY_WRITER_PATH = os.path.join(CAST_PATH_PREFIX, "story_writers")
 SCRIPT_WRITER_PATH = os.path.join(CAST_PATH_PREFIX, "script_writers")
 STORYBOARD_ARTIST_PATH = os.path.join(CAST_PATH_PREFIX, "storyboard_artists")
 THUMBNAIL_ARTIST_PATH = os.path.join(CAST_PATH_PREFIX, "thumbnail_artists")
@@ -41,6 +44,9 @@ programs = [
 
 researchers = [
     f.split(".")[0] for f in os.listdir(RESEARCHER_PATH) if f.endswith(".yaml")
+]
+story_writers = [
+    f.split(".")[0] for f in os.listdir(STORY_WRITER_PATH) if f.endswith(".yaml")
 ]
 script_writers = [
     f.split(".")[0] for f in os.listdir(SCRIPT_WRITER_PATH) if f.endswith(".yaml")
@@ -70,10 +76,12 @@ production_configs = [
 
 def set_prefix(prefix):
     """Set the prefix of the project."""
-    global PATH_PREFIX, RESEARCH, SCRIPT, STORYBOARD_PATH, VOICEOVER_PATH, VOICEOVER_WAV_FILE, FINAL_AUDIO_FILE, VOICEOVER_TIMECODES, VOICEOVER_SUBTITLES, ANIMATION_VIDEO_FILE, TEMP_VIDEO_FILE, FINAL_VIDEO_FILE, MUSIC_PATH, DISTRIBUTION_METADATA_FILE, THUMBNAILS_PATH, SCRIPT_SUMMARY
+    global PATH_PREFIX, RESEARCH, STORY, STORY_SUMMARY, SCRIPT, STORYBOARD_PATH, VOICEOVER_PATH, VOICEOVER_WAV_FILE, FINAL_AUDIO_FILE, VOICEOVER_TIMECODES, VOICEOVER_SUBTITLES, ANIMATION_VIDEO_FILE, TEMP_VIDEO_FILE, FINAL_VIDEO_FILE, MUSIC_PATH, DISTRIBUTION_METADATA_FILE, THUMBNAILS_PATH, SCRIPT_SUMMARY
 
     PATH_PREFIX = prefix
     RESEARCH = os.path.join(prefix, RESEARCH.split("/")[-1])
+    STORY = os.path.join(prefix, STORY.split("/")[-1])
+    STORY_SUMMARY = os.path.join(prefix, STORY_SUMMARY.split("/")[-1])
     SCRIPT = os.path.join(prefix, SCRIPT.split("/")[-1])
     SCRIPT_SUMMARY = os.path.join(prefix, SCRIPT_SUMMARY.split("/")[-1])
     VOICEOVER_WAV_FILE = os.path.join(prefix, VOICEOVER_WAV_FILE.split("/")[-1])

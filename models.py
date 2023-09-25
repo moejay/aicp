@@ -6,6 +6,7 @@ import yaml
 from utils.utils import (
     ACTOR_PATH,
     RESEARCHER_PATH,
+    STORY_WRITER_PATH,
     SCRIPT_WRITER_PATH,
     VOICEOVER_ARTIST_PATH,
     MUSIC_COMPOSER_PATH,
@@ -29,6 +30,11 @@ class CastMember:
 @dataclass
 class Researcher(CastMember):
     """An object representing a researcher."""
+
+
+@dataclass
+class StoryWriter(CastMember):
+    """An object representing a story writer."""
 
 
 @dataclass
@@ -122,6 +128,7 @@ class Director:
     """An object representing a director."""
 
     researcher: str
+    story_writer: str
     script_writer: str
     storyboard_artist: str
     animation_artist: str
@@ -154,6 +161,16 @@ class Director:
             data_class=Researcher,
             data=yaml.load(
                 open(os.path.join(RESEARCHER_PATH, f"{self.researcher}.yaml")),
+                Loader=yaml.FullLoader,
+            ),
+        )
+
+    def get_story_writer(self):
+        """Get the story writer."""
+        return from_dict(
+            data_class=StoryWriter,
+            data=yaml.load(
+                open(os.path.join(STORY_WRITER_PATH, f"{self.story_writer}.yaml")),
                 Loader=yaml.FullLoader,
             ),
         )
