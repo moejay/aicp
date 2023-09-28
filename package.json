@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@nextui-org/react": "^2.1.13",
+    "framer-motion": "^10.16.4",
+    "openapi-fetch": "^0.7.6"
+  }
+}
