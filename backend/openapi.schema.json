@@ -6,6 +6,72 @@
     "description": ""
   },
   "paths": {
+    "/api/users/sign-in": {
+      "post": {
+        "operationId": "users_api_sign_in",
+        "summary": "Sign In",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AICPSignInResult"
+                }
+              }
+            }
+          }
+        },
+        "description": "Sign in a user.",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AICPSignInCredentials"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/api/users/refresh": {
+      "post": {
+        "operationId": "users_api_refresh",
+        "summary": "Refresh",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AICPRefreshTokenResult"
+                }
+              }
+            }
+          }
+        },
+        "description": "Refreshes a token.",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AICPRefreshTokenRequest"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
     "/api/actors/{actor_id}": {
       "get": {
         "operationId": "videocreator_routers_actors_get_actor",
@@ -194,6 +260,111 @@
   },
   "components": {
     "schemas": {
+      "AICPSignInResult": {
+        "description": "Class encapsulating the sign in result for an AICP video.",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/AICPUser"
+          },
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "refresh_token": {
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user",
+          "access_token",
+          "refresh_token"
+        ],
+        "title": "AICPSignInResult",
+        "type": "object"
+      },
+      "AICPUser": {
+        "description": "Class encapsulating the user for an AICP video.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          }
+        },
+        "required": [
+          "id",
+          "username"
+        ],
+        "title": "AICPUser",
+        "type": "object"
+      },
+      "AICPSignInCredentials": {
+        "description": "Class encapsulating the sign in credentials for an AICP video.",
+        "properties": {
+          "username": {
+            "title": "Username",
+            "type": "string"
+          },
+          "password": {
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "AICPSignInCredentials",
+        "type": "object"
+      },
+      "AICPRefreshTokenResult": {
+        "description": "Class encapsulating the refresh token result for an AICP video.",
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "refresh_token": {
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "access_token",
+          "refresh_token"
+        ],
+        "title": "AICPRefreshTokenResult",
+        "type": "object"
+      },
+      "AICPRefreshTokenRequest": {
+        "description": "Class encapsulating the refresh token request for an AICP video.",
+        "properties": {
+          "refresh_token": {
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "refresh_token"
+        ],
+        "title": "AICPRefreshTokenRequest",
+        "type": "object"
+      },
       "AICPActor": {
         "description": "Class encapsulating the actor for an AICP video.",
         "properties": {

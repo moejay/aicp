@@ -5,6 +5,20 @@
 
 
 export interface paths {
+  "/api/users/sign-in": {
+    /**
+     * Sign In
+     * @description Sign in a user.
+     */
+    post: operations["users_api_sign_in"];
+  };
+  "/api/users/refresh": {
+    /**
+     * Refresh
+     * @description Refreshes a token.
+     */
+    post: operations["users_api_refresh"];
+  };
   "/api/actors/{actor_id}": {
     /**
      * Get Actor
@@ -67,6 +81,57 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    /**
+     * AICPSignInResult
+     * @description Class encapsulating the sign in result for an AICP video.
+     */
+    AICPSignInResult: {
+      user: components["schemas"]["AICPUser"];
+      /** Access Token */
+      access_token: string;
+      /** Refresh Token */
+      refresh_token: string;
+    };
+    /**
+     * AICPUser
+     * @description Class encapsulating the user for an AICP video.
+     */
+    AICPUser: {
+      /** Id */
+      id: string;
+      /** Username */
+      username: string;
+      /** Email */
+      email?: string | null;
+    };
+    /**
+     * AICPSignInCredentials
+     * @description Class encapsulating the sign in credentials for an AICP video.
+     */
+    AICPSignInCredentials: {
+      /** Username */
+      username: string;
+      /** Password */
+      password: string;
+    };
+    /**
+     * AICPRefreshTokenResult
+     * @description Class encapsulating the refresh token result for an AICP video.
+     */
+    AICPRefreshTokenResult: {
+      /** Access Token */
+      access_token: string;
+      /** Refresh Token */
+      refresh_token: string;
+    };
+    /**
+     * AICPRefreshTokenRequest
+     * @description Class encapsulating the refresh token request for an AICP video.
+     */
+    AICPRefreshTokenRequest: {
+      /** Refresh Token */
+      refresh_token: string;
+    };
     /**
      * AICPActor
      * @description Class encapsulating the actor for an AICP video.
@@ -187,6 +252,44 @@ export type external = Record<string, never>;
 
 export interface operations {
 
+  /**
+   * Sign In
+   * @description Sign in a user.
+   */
+  users_api_sign_in: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AICPSignInCredentials"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AICPSignInResult"];
+        };
+      };
+    };
+  };
+  /**
+   * Refresh
+   * @description Refreshes a token.
+   */
+  users_api_refresh: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AICPRefreshTokenRequest"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AICPRefreshTokenResult"];
+        };
+      };
+    };
+  };
   /**
    * Get Actor
    * @description Get an actor
