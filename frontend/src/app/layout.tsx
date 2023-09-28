@@ -1,8 +1,8 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { ResponsiveAppBar } from '@ui/app-bar/app-bar'
-import {NextAuthProvider } from "./providers"
+import { AICPNavBar } from '@ui/aicp-navbar/aicp-navbar'
+import {NextAuthProvider, UIProvider } from "./providers"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,10 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <UIProvider>
         <NextAuthProvider>
-        <ResponsiveAppBar />
+        <AICPNavBar />
          {children}
         </NextAuthProvider>
+        </UIProvider>
         </body>
     </html>
   )
