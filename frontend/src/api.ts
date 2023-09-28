@@ -1,4 +1,3 @@
-import { AICPProject } from "./typings";
 import createClient from "openapi-fetch";
 import { paths } from "@/openapi"
 import { getServerSession } from "next-auth/next";
@@ -17,8 +16,7 @@ export async function getProjects() {
         console.error(response.error);
         throw new Error("Failed to fetch projects")
     }
-    let projects: [AICPProject] = response.data; 
-    return projects;
+    return response.data
 }
 
 export async function authenticate(username: string, password: string) {
