@@ -5,10 +5,6 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { Session } from "@/app/types/next-auth"
 
 const jwt = async ({ token, user , account}: { token: JWT; user?: User ; account?: any}) => {
-  console.log("jwt function called")
-  console.log(token)
-  console.log(user)
-  console.log(account)
   // first call of jwt function just user object is provided
   if (user && account) {
     token["user"] = user;
@@ -17,9 +13,6 @@ const jwt = async ({ token, user , account}: { token: JWT; user?: User ; account
     token["ref"] = token["exp"]
     return token;
   }
-  console.log("checking token expiration")
-  console.log(token["exp"])
-  console.log(getCurrentEpochTime())
   if (getCurrentEpochTime() > token["exp"]) {
     // refresh token
     console.log("refreshing token")
@@ -31,8 +24,6 @@ const jwt = async ({ token, user , account}: { token: JWT; user?: User ; account
   };
 
 const session = ({ token }: { session: Session; token: JWT }): Promise<Session> => {
-  console.log("session function called")
-  console.log(token)
   return token
   };
 

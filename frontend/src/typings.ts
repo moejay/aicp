@@ -1,7 +1,7 @@
 /*Typings for the frontend*/
+import { components } from "@/openapi";
 
-export interface AICPProject {
-    id: string;
-    name: string;
-    description: string;
-}
+export type AICPProjectCreate = components["schemas"]["AICPProjectCreate"];
+// export type AICPProject = components["schemas"]["AICPProject"];
+export type AICPActor = components["schemas"]["AICPActor"];
+

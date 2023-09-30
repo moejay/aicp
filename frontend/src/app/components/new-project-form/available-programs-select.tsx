@@ -8,7 +8,7 @@ export default function AvailableProgramsSelect() {
         return <div>Loading...</div>;
     }
     return (
-        <Select placeholder="Select a program" >
+        <Select placeholder="Select a program" name="program_id" >
             {
                 programs.map((program) => (
                     <SelectItem key={program.id} value={program.id}>

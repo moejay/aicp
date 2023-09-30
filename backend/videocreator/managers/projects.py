@@ -5,7 +5,7 @@ import yaml
 from videocreator.utils.storage import read_file, write_file
 from videocreator.schema import AICPProject, AICPProjectCreate
 from django.conf import settings
-from videocreator.managers import programs as programs_manager
+from videocreator.managers import programs as programs_manager, production_configs as production_configs_manager
 
 
 def list_projects():
@@ -49,6 +49,9 @@ def create_project(new_project_request: AICPProjectCreate) -> AICPProject:
         name=new_project_request.name,
         description=new_project_request.description,
         program=programs_manager.get_program(new_project_request.program_id),
+        production_config=production_configs_manager.get_production_config(new_project_request.production_config_id),
+        actors=[],
+        seed=0
     )
     project_dir = os.path.join(settings.AICP_OUTPUT_DIR, f"{new_project.id}")
     os.makedirs(os.path.join(project_dir), exist_ok=False)

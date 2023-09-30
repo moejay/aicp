@@ -26,7 +26,7 @@ def list_programs():
 def get_program(program_id):
     """Get a program by id."""
 
-    file = read_file(os.path.join("programs", f"{program_id}.yaml"))
+    file = read_file(os.path.join(PROGRAMS_PATH, f"{program_id}.yaml"))
     program = yaml.load(file, Loader=yaml.FullLoader)
     program["id"] = program_id
     return AICPProgram.model_validate(program)
