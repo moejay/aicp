@@ -1,5 +1,5 @@
 from ninja import Router
-from videocreator.schema import AICPProject
+from videocreator.schema import AICPProject, AICPProjectCreate
 from videocreator.managers import projects
 
 router = Router(
@@ -24,9 +24,9 @@ def get_project(request, project_id: str) -> AICPProject:
 
 
 @router.post("/")
-def create_project(request, new_project: AICPProject) -> AICPProject:
+def create_project(request, new_project_request: AICPProjectCreate) -> AICPProject:
     """
     Create a project
     create a directory output/projects/{project_id}
     """
-    return projects.create_project(new_project)
+    return projects.create_project(new_project_request)

@@ -1,6 +1,6 @@
 from ninja import NinjaAPI, security
 from users.users import get_user_from_token
-from videocreator.routers import actors as actors_router, programs as programs_router, projects as projects_router
+from videocreator.routers import actors as actors_router, programs as programs_router, projects as projects_router, production_configs as production_configs_router
 
 class GlobalAuth(security.HttpBearer):
     def authenticate(self, request, token):
@@ -17,3 +17,4 @@ def add_routers(api: NinjaAPI):
     api.add_router("/actors", actors_router.router, auth=GlobalAuth())
     api.add_router("/programs", programs_router.router, auth=GlobalAuth())
     api.add_router("/projects", projects_router.router, auth=GlobalAuth())
+    api.add_router("/production_configs", production_configs_router.router, auth=GlobalAuth())

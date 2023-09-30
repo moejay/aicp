@@ -213,7 +213,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AICPProject"
+                "$ref": "#/components/schemas/AICPProjectCreate"
               }
             }
           },
@@ -249,6 +249,58 @@
         "description": "Get a project\nby reading output/projects/{project_id}",
         "tags": [
           "projects"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/production_configs/{production_config_id}": {
+      "get": {
+        "operationId": "videocreator_routers_production_configs_get_production_config",
+        "summary": "Get Production Config",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "production_config_id",
+            "schema": {
+              "title": "Production Config Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get a production_config\n    ",
+        "tags": [
+          "production_configs"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/production_configs/": {
+      "get": {
+        "operationId": "videocreator_routers_production_configs_get_production_configs",
+        "summary": "Get Production Configs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get all production_configs\n    ",
+        "tags": [
+          "production_configs"
         ],
         "security": [
           {
@@ -430,112 +482,9 @@
         "title": "AICPActor",
         "type": "object"
       },
-      "AICPProductionConfig": {
-        "description": "Class encapsulating the production config for an AICP video.",
-        "properties": {
-          "video_width": {
-            "default": 1920,
-            "title": "Video Width",
-            "type": "integer"
-          },
-          "video_height": {
-            "default": 1080,
-            "title": "Video Height",
-            "type": "integer"
-          },
-          "sd_base_image_width": {
-            "default": 768,
-            "title": "Sd Base Image Width",
-            "type": "integer"
-          },
-          "sd_base_image_height": {
-            "default": 432,
-            "title": "Sd Base Image Height",
-            "type": "integer"
-          },
-          "enable_subtitles": {
-            "default": false,
-            "title": "Enable Subtitles",
-            "type": "boolean"
-          },
-          "voiceline_synced_storyboard": {
-            "default": false,
-            "title": "Voiceline Synced Storyboard",
-            "type": "boolean"
-          },
-          "num_images_per_scene": {
-            "default": 1,
-            "title": "Num Images Per Scene",
-            "type": "integer"
-          }
-        },
-        "title": "AICPProductionConfig",
-        "type": "object"
-      },
-      "AICPProgram": {
-        "description": "Class encapsulating the program for an AICP video.",
-        "properties": {
-          "title": {
-            "title": "Title",
-            "type": "string"
-          },
-          "description": {
-            "title": "Description",
-            "type": "string"
-          },
-          "prompt_placeholder_text": {
-            "title": "Prompt Placeholder Text",
-            "type": "string"
-          },
-          "script_rules": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Script Rules"
-          },
-          "storyboard_rules": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Storyboard Rules"
-          },
-          "music_rules": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Music Rules"
-          }
-        },
-        "required": [
-          "title",
-          "description",
-          "prompt_placeholder_text"
-        ],
-        "title": "AICPProgram",
-        "type": "object"
-      },
-      "AICPProject": {
+      "AICPProjectCreate": {
         "description": "Class encapsulating the project for an AICP video.",
         "properties": {
-          "id": {
-            "title": "Id",
-            "type": "string"
-          },
           "name": {
             "title": "Name",
             "type": "string"
@@ -551,12 +500,6 @@
             ],
             "title": "Description"
           },
-          "program": {
-            "$ref": "#/components/schemas/AICPProgram"
-          },
-          "production_config": {
-            "$ref": "#/components/schemas/AICPProductionConfig"
-          },
           "actors": {
             "default": [],
             "items": {
@@ -568,16 +511,22 @@
           "seed": {
             "title": "Seed",
             "type": "integer"
+          },
+          "program_id": {
+            "title": "Program Id",
+            "type": "string"
+          },
+          "production_config_id": {
+            "title": "Production Config Id",
+            "type": "string"
           }
         },
         "required": [
-          "id",
           "name",
-          "program",
-          "production_config",
-          "seed"
+          "program_id",
+          "production_config_id"
         ],
-        "title": "AICPProject",
+        "title": "AICPProjectCreate",
         "type": "object"
       }
     },

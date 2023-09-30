@@ -171,6 +171,7 @@ class AICPScript(BaseModel):
 class AICPProgram(BaseModel):
     """Class encapsulating the program for an AICP video."""
 
+    id: str
     title: str
     description: str
     prompt_placeholder_text: str
@@ -203,6 +204,16 @@ class AICPProject(BaseModel):
     production_config: AICPProductionConfig
     actors: list[AICPActor] = []
     seed: int
+
+class AICPProjectCreate(BaseModel):
+    """Class encapsulating the project for an AICP video."""
+
+    name: str
+    description: str | None = None
+    actors: list[AICPActor] = []
+    seed: int = None
+    program_id: str
+    production_config_id: str
 
 
 class AICPResearcher(BaseModel):

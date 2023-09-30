@@ -17,7 +17,10 @@ const jwt = async ({ token, user , account}: { token: JWT; user?: User ; account
     token["ref"] = token["exp"]
     return token;
   }
-  if (getCurrentEpochTime() > token["ref"]) {
+  console.log("checking token expiration")
+  console.log(token["exp"])
+  console.log(getCurrentEpochTime())
+  if (getCurrentEpochTime() > token["exp"]) {
     // refresh token
     console.log("refreshing token")
     const res = await refresh(token["refresh_token"])
@@ -56,7 +59,7 @@ export const authOptions: AuthOptions = {
       
     }),
   ],
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 60 * 45 },
   callbacks: { jwt, session },
 }
 

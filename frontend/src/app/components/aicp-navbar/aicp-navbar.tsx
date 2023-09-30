@@ -29,9 +29,9 @@ export function AICPNavBar() {
   const photo = session?.user?.user?.photo
   return (
 
-    <Navbar>
-    <NavbarBrand>
-      <p className="font-bold text-inherit">AUTER AI</p>
+    <Navbar className='flex bg-neutral-600 justify-center'>
+    <NavbarBrand className='justify-self-start' >
+      <p className="font-bold text-inherit">AUTEUR AI</p>
     </NavbarBrand>
     <NavbarContent className="hidden sm:flex gap-4" justify="center">
       <NavbarItem>

@@ -1,9 +1,11 @@
 """Module to manage projects in the database."""
 import os
+import uuid
 import yaml
 from videocreator.utils.storage import read_file, write_file
-from videocreator.schema import AICPProject
+from videocreator.schema import AICPProject, AICPProjectCreate
 from django.conf import settings
+from videocreator.managers import programs as programs_manager
 
 
 def list_projects():
@@ -37,11 +39,17 @@ def get_project(project_id):
     return AICPProject.model_validate(project)
 
 
-def create_project(new_project: AICPProject) -> AICPProject:
+def create_project(new_project_request: AICPProjectCreate) -> AICPProject:
     """
     Create a project
     create a directory output/projects/{project_id}
     """
+    new_project = AICPProject(
+        id=str(uuid.uuid4()),
+        name=new_project_request.name,
+        description=new_project_request.description,
+        program=programs_manager.get_program(new_project_request.program_id),
+    )
     project_dir = os.path.join(settings.AICP_OUTPUT_DIR, f"{new_project.id}")
     os.makedirs(os.path.join(project_dir), exist_ok=False)
     # Write project as yaml to directory

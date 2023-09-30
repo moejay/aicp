@@ -75,6 +75,20 @@ export interface paths {
      */
     get: operations["videocreator_routers_projects_get_project"];
   };
+  "/api/production_configs/{production_config_id}": {
+    /**
+     * Get Production Config
+     * @description Get a production_config
+     */
+    get: operations["videocreator_routers_production_configs_get_production_config"];
+  };
+  "/api/production_configs/": {
+    /**
+     * Get Production Configs
+     * @description Get all production_configs
+     */
+    get: operations["videocreator_routers_production_configs_get_production_configs"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -159,84 +173,25 @@ export interface components {
       speaker_waveform_temp?: number;
     };
     /**
-     * AICPProductionConfig
-     * @description Class encapsulating the production config for an AICP video.
-     */
-    AICPProductionConfig: {
-      /**
-       * Video Width
-       * @default 1920
-       */
-      video_width?: number;
-      /**
-       * Video Height
-       * @default 1080
-       */
-      video_height?: number;
-      /**
-       * Sd Base Image Width
-       * @default 768
-       */
-      sd_base_image_width?: number;
-      /**
-       * Sd Base Image Height
-       * @default 432
-       */
-      sd_base_image_height?: number;
-      /**
-       * Enable Subtitles
-       * @default false
-       */
-      enable_subtitles?: boolean;
-      /**
-       * Voiceline Synced Storyboard
-       * @default false
-       */
-      voiceline_synced_storyboard?: boolean;
-      /**
-       * Num Images Per Scene
-       * @default 1
-       */
-      num_images_per_scene?: number;
-    };
-    /**
-     * AICPProgram
-     * @description Class encapsulating the program for an AICP video.
-     */
-    AICPProgram: {
-      /** Title */
-      title: string;
-      /** Description */
-      description: string;
-      /** Prompt Placeholder Text */
-      prompt_placeholder_text: string;
-      /** Script Rules */
-      script_rules?: string | null;
-      /** Storyboard Rules */
-      storyboard_rules?: string | null;
-      /** Music Rules */
-      music_rules?: string | null;
-    };
-    /**
-     * AICPProject
+     * AICPProjectCreate
      * @description Class encapsulating the project for an AICP video.
      */
-    AICPProject: {
-      /** Id */
-      id: string;
+    AICPProjectCreate: {
       /** Name */
       name: string;
       /** Description */
       description?: string | null;
-      program: components["schemas"]["AICPProgram"];
-      production_config: components["schemas"]["AICPProductionConfig"];
       /**
        * Actors
        * @default []
        */
       actors?: components["schemas"]["AICPActor"][];
       /** Seed */
-      seed: number;
+      seed?: number;
+      /** Program Id */
+      program_id: string;
+      /** Production Config Id */
+      production_config_id: string;
     };
   };
   responses: never;
@@ -375,7 +330,7 @@ export interface operations {
   videocreator_routers_projects_create_project: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["AICPProject"];
+        "application/json": components["schemas"]["AICPProjectCreate"];
       };
     };
     responses: {
@@ -396,6 +351,35 @@ export interface operations {
         project_id: string;
       };
     };
+    responses: {
+      /** @description OK */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Production Config
+   * @description Get a production_config
+   */
+  videocreator_routers_production_configs_get_production_config: {
+    parameters: {
+      path: {
+        production_config_id: string;
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Production Configs
+   * @description Get all production_configs
+   */
+  videocreator_routers_production_configs_get_production_configs: {
     responses: {
       /** @description OK */
       200: {
