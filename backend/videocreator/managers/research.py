@@ -1,9 +1,9 @@
 """Manages research for a project."""
 import os
 import yaml
-from backend.utils.storage import write_file, read_file
-from backend.models import AICPResearch, AICPResearcher
-from backend import settings
+from videocreator.utils.storage import write_file, read_file
+from videocreator.schema import AICPResearch, AICPResearcher
+from django.conf import settings
 
 
 def save_project_research(project_id: str, research: AICPResearch):

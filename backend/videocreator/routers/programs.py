@@ -1,4 +1,4 @@
-from ninja import Router 
+from ninja import Router
 from videocreator.schema import AICPProgram
 from videocreator.managers import programs
 

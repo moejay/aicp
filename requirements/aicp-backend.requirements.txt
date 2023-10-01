@@ -6,5 +6,9 @@ debugpy==1.8.0
 PyYAML==6.0.1 
 djangorestframework-simplejwt==5.3.0
 djangorestframework-jwt==1.11.0
+langchain==0.0.305
+python-dotenv==1.0.0
 #django-ninja-jwt==5.2.5 those won't work, will probably use once django ninja is out of beta
 #django-Ninja-Extra==0.19.3
+openai==0.28.1
+

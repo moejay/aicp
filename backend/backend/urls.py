@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from ninja import NinjaAPI
 
-from users.api import api as users_api 
+from users.api import api as users_api
 from videocreator.api import add_routers
 
 

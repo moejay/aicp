@@ -31,7 +31,9 @@ export function AICPNavBar() {
 
     <Navbar className='flex bg-neutral-600 justify-center'>
     <NavbarBrand className='justify-self-start' >
+      <Link href="/">
       <p className="font-bold text-inherit">AUTEUR AI</p>
+      </Link>
     </NavbarBrand>
     <NavbarContent className="hidden sm:flex gap-4" justify="center">
       <NavbarItem>

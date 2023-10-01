@@ -205,6 +205,7 @@ class AICPProject(BaseModel):
     actors: list[AICPActor] = []
     seed: int
 
+
 class AICPProjectCreate(BaseModel):
     """Class encapsulating the project for an AICP video."""
 

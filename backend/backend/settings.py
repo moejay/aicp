@@ -13,7 +13,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,11 +29,7 @@ SECRET_KEY = "django-insecure-g0poyndmuj6^w1+9e%fewy!177l7x$p+(nd*7$u%)txcqdcad2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "backend"
-]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "backend"]
 
 
 # Application definition
@@ -45,7 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "ninja",
     "users",
-    "videocreator"
+    "videocreator",
 ]
 
 AUTH_USER_MODEL = "users.User"
@@ -139,7 +137,6 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
-
 }
 
 AICP_OUTPUT_DIR = os.environ.get(

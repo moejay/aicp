@@ -12,6 +12,7 @@ type Props = {
 
 export function ProjectCard({project}: Props) {
     return (
+                <Link href={`/projects/${project.id}`}>
         <Card className="w-[400px] m-5 ">
             <CardHeader className="flex gap-3">
                 <h4>{project.name}</h4>
@@ -19,11 +20,7 @@ export function ProjectCard({project}: Props) {
             <CardBody>
                 <p>{project.description}</p>
             </CardBody>
-            <CardFooter>
-                <Link href={`/projects/${project.id}`}>
-                    View
-                </Link>
-            </CardFooter>
         </Card>
+        </Link>
 )
 }

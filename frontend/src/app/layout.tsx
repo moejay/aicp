@@ -18,11 +18,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className="dark text-foreground bg-background">
         <UIProvider>
         <NextAuthProvider>
         <AICPNavBar />
+        <div className='p-4'>
          {children}
+        </div>
         </NextAuthProvider>
         </UIProvider>
         </body>

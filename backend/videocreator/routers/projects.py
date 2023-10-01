@@ -29,6 +29,4 @@ def create_project(request, new_project_request: AICPProjectCreate) -> AICPProje
     Create a project
     create a directory output/projects/{project_id}
     """
-    print(request)
-    print(new_project_request)
     return projects.create_project(new_project_request)
