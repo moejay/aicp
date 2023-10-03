@@ -244,10 +244,12 @@ class SDAnimatorArtist(AICPBaseTool):
         )
         with open(video_list, "w") as f:
             for clip_dir in clip_directories:
+                # Paths are relative to video_list path, so, we remove the prefix
+                clip_dir = clip_dir.replace(utils.STORYBOARD_PATH, ".")
                 f.write(f"file '{clip_dir}/final.gif'\n")
 
-        command = f"ffmpeg -f concat -safe 0 -i {video_list} -c copy {utils.ANIMATION_VIDEO_FILE}"
-        return command
+        command = f"ffmpeg -f concat -safe 0 -i {video_list} -c:v libx264 -preset fast {utils.ANIMATION_VIDEO_FILE}"
+        os.system(command)
     def _run(
         self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
     ) -> str:
