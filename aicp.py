@@ -12,6 +12,7 @@ from tools.researcher import ResearcherTool
 from tools.script_writer import ScriptWriterTool
 from tools.sound_engineer import SoundEngineerTool
 from tools.storyboard_artist import StoryBoardArtistTool
+from tools.sd_animator_artist import SDAnimatorArtist
 from tools.thumbnail_artist import ThumbnailArtistTool
 from tools.voiceover_artist import VoiceOverArtistTool
 from tools.youtube_distributor import YoutubeDistributorTool
@@ -30,8 +31,9 @@ def make_video(video: Video, step: str, single_step: bool = False):
         ResearcherTool(video=video),
         ScriptWriterTool(video=video),
         VoiceOverArtistTool(video=video),
-        StoryBoardArtistTool(video=video),
-        AnimationArtistTool(video=video),
+        SDAnimatorArtist(video=video),
+        #StoryBoardArtistTool(video=video),
+        #AnimationArtistTool(video=video),
         MusicComposerTool(video=video),
         SoundEngineerTool(video=video),
         ProducerTool(video=video),
