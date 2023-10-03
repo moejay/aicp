@@ -135,3 +135,12 @@ reformat:
 api:
 	@echo "Starting API..."
 	@venv/bin/uvicorn backend.main:app --reload 
+
+terraform-init:
+	@cd terraform && terraform init
+
+terraform-plan: terraform-init
+	@cd terraform && terraform plan
+
+terraform-apply: terraform-init
+	@cd terraform && terraform apply

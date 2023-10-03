@@ -13,4 +13,5 @@ bin/runpodctl
 models/
 client_secrets.json
 oauth2.json
-
+terraform/.terraform
+terraform/.terraform.lock.hcl

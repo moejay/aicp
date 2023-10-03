@@ -161,3 +161,10 @@ if confirmed by the human, the Commentator will post the reply.
 This project uses the `black` code formatter. You can check your local environment by running `make check-format` and you can autoformat your code with `make reformat`. See `pyproject.toml` for configuration.
 
 Note: This code format is enforced for pull requests.
+
+
+## Terraform
+
+New infrastructure requirements will be coordinated with Terraform. This is a work in progress.
+
+- Cloud Pub/Sub -- Coordinating tasks with worker pools
