@@ -1,3 +1,3 @@
-project_name = "luser-space"
-project_id   = "luser-space-370805"
-bucket_name  = "worker-outputs-370805"
+project_name = "luser-space-content-producer"
+project_id   = "luser-space-content-producer"
+bucket_name  = "luser-space-worker-outputs"

@@ -187,3 +187,6 @@ terraform-plan: terraform-init
 
 terraform-apply: terraform-init
 	@cd terraform && terraform apply
+
+terraform-destroy: terraform-init
+	@cd terraform && terraform destroy
