@@ -14,12 +14,12 @@ resource "google_project_service" "pubsub" {
   service = "pubsub.googleapis.com"
 }
 
-resource "google_pubsub_topic" "StoryboardArtist" {
+resource "google_pubsub_topic" "StoryboardArtist_v1" {
   name = "StoryboardArtist_v1"
   depends_on = [google_project_service.pubsub]
 }
 
-resource "google_pubsub_topic" "MusicComposer" {
+resource "google_pubsub_topic" "MusicComposer_v1" {
   name = "MusicComposer_v1"
   depends_on = [google_project_service.pubsub]
 }
