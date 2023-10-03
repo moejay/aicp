@@ -17,3 +17,18 @@ variable "zone" {
   description = "The zone within the chosen region."
   default     = "us-east1-a"
 }
+
+variable "bucket_name" {
+  description = "The name of the storage bucket."
+  type        = string
+}
+
+variable "bucket_location" {
+  description = "The location of the storage bucket."
+  default     = "US"
+}
+
+variable "bucket_force_destroy" {
+  description = "A boolean that indicates all objects should be deleted when the bucket is destroyed."
+  default     = false
+}
