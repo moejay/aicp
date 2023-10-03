@@ -156,8 +156,8 @@ api-setup: backend-python-deps
 
 api-make-migrations: backend-python-deps
 	@echo "Starting API..."
-	@backend/venv/bin/python backend/manage.py makemigrations
-
+  @backend/venv/bin/python backend/manage.py makemigrations
+  
 api-migrate: backend-python-deps
 	@echo "Starting API..."
 	@backend/venv/bin/python backend/manage.py migrate
@@ -174,9 +174,19 @@ docker-dev: docker-dev-deps
 	@echo "Starting development server..."
 	@docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
-
 typings: backend-python-deps
 	@echo "Generating typings..."
 	@backend/venv/bin/python backend/manage.py export_openapi_schema --indent 2 --output backend/openapi.schema.json
 	@npx openapi-typescript backend/openapi.schema.json -o frontend/src/openapi.d.ts
+  
+terraform-init:
+	@cd terraform && terraform init
 
+terraform-plan: terraform-init
+	@cd terraform && terraform plan
+
+terraform-apply: terraform-init
+	@cd terraform && terraform apply
+
+terraform-destroy: terraform-init
+	@cd terraform && terraform destroy
