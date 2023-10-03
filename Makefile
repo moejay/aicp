@@ -5,6 +5,9 @@ PUBLIC_KEY=$(shell cat $$HOME/.ssh/id_ed25519.pub)
 DOCKER_REPO=jwmarshall
 CHATGPT_BASE_URL=http://127.0.0.1:9090/api/
 
+export AICP_OUTPUT_DIR=${PWD}/output
+export AICP_YAMLS_DIR=${PWD}/yamls
+
 export GRADIO_ANALYTICS_ENABLED=0
 
 ifneq (,$(wildcard .env))
@@ -132,10 +135,50 @@ check-format:
 reformat:
 	@venv/bin/black .
 
-api:
-	@echo "Starting API..."
-	@venv/bin/uvicorn backend.main:app --reload 
+backend-venv:
+	@echo "Setting up Python virtual environment..."
+	@if [ ! -d "backend/venv" ]; then \
+		echo "Creating virtual environment..."; \
+		python3 -m virtualenv backend/venv; \
+	fi
 
+backend-python-deps: backend-venv
+	@echo "Installing dependencies..."
+	@backend/venv/bin/pip install -r requirements/aicp-backend.requirements.txt --upgrade	
+
+api: backend-python-deps
+	@echo "Starting API..."
+	@backend/venv/bin/python backend/manage.py runserver
+
+api-setup: backend-python-deps
+	@echo "Starting API..."
+	@backend/venv/bin/python backend/manage.py createsuperuser 
+
+api-make-migrations: backend-python-deps
+	@echo "Starting API..."
+  @backend/venv/bin/python backend/manage.py makemigrations
+  
+api-migrate: backend-python-deps
+	@echo "Starting API..."
+	@backend/venv/bin/python backend/manage.py migrate
+
+next:
+	@echo "Starting frontend..."
+	@cd frontend && npm run dev
+
+docker-dev-deps:
+	@echo "Building docker images..."
+	@docker-compose -f docker-compose.yml -f docker-compose.dev.yml build
+
+docker-dev: docker-dev-deps
+	@echo "Starting development server..."
+	@docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+typings: backend-python-deps
+	@echo "Generating typings..."
+	@backend/venv/bin/python backend/manage.py export_openapi_schema --indent 2 --output backend/openapi.schema.json
+	@npx openapi-typescript backend/openapi.schema.json -o frontend/src/openapi.d.ts
+  
 terraform-init:
 	@cd terraform && terraform init
 

@@ -1,0 +1,541 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "NinjaAPI",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "paths": {
+    "/api/users/sign-in": {
+      "post": {
+        "operationId": "users_api_sign_in",
+        "summary": "Sign In",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AICPSignInResult"
+                }
+              }
+            }
+          }
+        },
+        "description": "Sign in a user.",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AICPSignInCredentials"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/api/users/refresh": {
+      "post": {
+        "operationId": "users_api_refresh",
+        "summary": "Refresh",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AICPRefreshTokenResult"
+                }
+              }
+            }
+          }
+        },
+        "description": "Refreshes a token.",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AICPRefreshTokenRequest"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/api/actors/{actor_id}": {
+      "get": {
+        "operationId": "videocreator_routers_actors_get_actor",
+        "summary": "Get Actor",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "actor_id",
+            "schema": {
+              "title": "Actor Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get an actor\n    by reading yamls/cast/actors directory\n    the id is the filename",
+        "tags": [
+          "actors"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/actors/": {
+      "get": {
+        "operationId": "videocreator_routers_actors_get_actors",
+        "summary": "Get Actors",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get all actors\nby reading yamls/cast/actors directory",
+        "tags": [
+          "actors"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/programs/{program_id}": {
+      "get": {
+        "operationId": "videocreator_routers_programs_get_program",
+        "summary": "Get Program",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "program_id",
+            "schema": {
+              "title": "Program Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get a program\nby reading yamls/programs directory\nthe id is the filename",
+        "tags": [
+          "programs"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/programs/": {
+      "get": {
+        "operationId": "videocreator_routers_programs_get_programs",
+        "summary": "Get Programs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get all programs\nby reading yamls/programs directory",
+        "tags": [
+          "programs"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/projects/": {
+      "get": {
+        "operationId": "videocreator_routers_projects_get_projects",
+        "summary": "Get Projects",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get all projects\nby reading output/projects directory",
+        "tags": [
+          "projects"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "videocreator_routers_projects_create_project",
+        "summary": "Create Project",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Create a project\ncreate a directory output/projects/{project_id}",
+        "tags": [
+          "projects"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AICPProjectCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/projects/{project_id}": {
+      "get": {
+        "operationId": "videocreator_routers_projects_get_project",
+        "summary": "Get Project",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "schema": {
+              "title": "Project Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get a project\nby reading output/projects/{project_id}",
+        "tags": [
+          "projects"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/production_configs/{production_config_id}": {
+      "get": {
+        "operationId": "videocreator_routers_production_configs_get_production_config",
+        "summary": "Get Production Config",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "production_config_id",
+            "schema": {
+              "title": "Production Config Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get a production_config\n    ",
+        "tags": [
+          "production_configs"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    },
+    "/api/production_configs/": {
+      "get": {
+        "operationId": "videocreator_routers_production_configs_get_production_configs",
+        "summary": "Get Production Configs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Get all production_configs\n    ",
+        "tags": [
+          "production_configs"
+        ],
+        "security": [
+          {
+            "GlobalAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AICPSignInResult": {
+        "description": "Class encapsulating the sign in result for an AICP video.",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/AICPUser"
+          },
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "refresh_token": {
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user",
+          "access_token",
+          "refresh_token"
+        ],
+        "title": "AICPSignInResult",
+        "type": "object"
+      },
+      "AICPUser": {
+        "description": "Class encapsulating the user for an AICP video.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          }
+        },
+        "required": [
+          "id",
+          "username"
+        ],
+        "title": "AICPUser",
+        "type": "object"
+      },
+      "AICPSignInCredentials": {
+        "description": "Class encapsulating the sign in credentials for an AICP video.",
+        "properties": {
+          "username": {
+            "title": "Username",
+            "type": "string"
+          },
+          "password": {
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "AICPSignInCredentials",
+        "type": "object"
+      },
+      "AICPRefreshTokenResult": {
+        "description": "Class encapsulating the refresh token result for an AICP video.",
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "refresh_token": {
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "access_token",
+          "refresh_token"
+        ],
+        "title": "AICPRefreshTokenResult",
+        "type": "object"
+      },
+      "AICPRefreshTokenRequest": {
+        "description": "Class encapsulating the refresh token request for an AICP video.",
+        "properties": {
+          "refresh_token": {
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "refresh_token"
+        ],
+        "title": "AICPRefreshTokenRequest",
+        "type": "object"
+      },
+      "AICPActor": {
+        "description": "Class encapsulating the actor for an AICP video.",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          },
+          "catch_phrase": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catch Phrase"
+          },
+          "physical_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Physical Description"
+          },
+          "speaker": {
+            "title": "Speaker",
+            "type": "string"
+          },
+          "speaker_text_temp": {
+            "default": 0.7,
+            "title": "Speaker Text Temp",
+            "type": "number"
+          },
+          "speaker_waveform_temp": {
+            "default": 0.7,
+            "title": "Speaker Waveform Temp",
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "bio",
+          "catch_phrase",
+          "physical_description",
+          "speaker"
+        ],
+        "title": "AICPActor",
+        "type": "object"
+      },
+      "AICPProjectCreate": {
+        "description": "Class encapsulating the project for an AICP video.",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "actors": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/AICPActor"
+            },
+            "title": "Actors",
+            "type": "array"
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          },
+          "program_id": {
+            "title": "Program Id",
+            "type": "string"
+          },
+          "production_config_id": {
+            "title": "Production Config Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "program_id",
+          "production_config_id"
+        ],
+        "title": "AICPProjectCreate",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "GlobalAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "servers": []
+}
