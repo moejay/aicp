@@ -64,109 +64,45 @@ class SDAnimatorArtist(AICPBaseTool):
             )
 
         prompts = []
-        if self.video.production_config.voiceline_synced_storyboard:
-            with open(utils.SCRIPT_SUMMARY, "r") as f:
-                script_summary = f.read()
+        scenes = parsers.get_scenes()
+        script_summary = ""
+        with open(utils.SCRIPT_SUMMARY, "r") as f:
+            script_summary = f.read()
 
-            # Do it per scene and provide the dialog lines
-            vo_lines = parsers.get_voiceover_lines()
-            # Group by scene
-            for scene_index, scene in enumerate(parsers.get_scenes()):
-                logger.info(f"Generating prompts for scene {scene_index}")
-                # If we already have prompts for this scene, load them
-                prompts_file = os.path.join(
-                    utils.STORYBOARD_PATH, f"scene_{scene_index}_prompts.yaml"
-                )
-                if os.path.exists(prompts_file):
-                    with open(prompts_file) as prompts:
-                        logger.info(
-                            f"Loading existing prompts from: scene_{scene_index}_prompts.yaml"
-                        )
-                        prompts = yaml.load(prompts.read().strip(), Loader=yaml.Loader)
-                        prompts.extend(prompts)
-                        continue
-
-                vo_lines_for_scene = [
-                    vo_line
-                    for vo_line in vo_lines
-                    if vo_line.scene_index == scene_index
-                ]
-
-                if len(vo_lines_for_scene) > 10:
-                    logger.info(
-                        f"Splitting scene {scene_index} into multiple prompts because it has {len(vo_lines_for_scene)} lines"
-                    )
-                    # Group and split by line_index as well
-                    # Get all the line indexes
-                    line_indexes = set(
-                        [vo_line.line_index for vo_line in vo_lines_for_scene]
-                    )
-                    # Group by line index
-                    vo_lines_for_scene = [
-                        [
-                            vo_line
-                            for vo_line in vo_lines_for_scene
-                            if vo_line.line_index == line_index
-                        ]
-                        for line_index in sorted(line_indexes)
-                    ]
-                    # call llm for each group
-                    scene_prompts = []
-                    for vo_lines_for_line_index in vo_lines_for_scene:
-                        logger.info(
-                            f"Generating prompts for scene {scene_index} line {vo_lines_for_line_index[0].line_index}"
-                        )
-                        params["input"] = yaml.dump(
-                            {
-                                "script_summary": script_summary,
-                                "scene_title": scene.scene_title,
-                                "scene_description": scene.description,
-                                "number_of_expected_prompts": len(
-                                    vo_lines_for_line_index
-                                ),
-                                "dialog_lines": [
-                                    {"actor": vo_line.actor.name, "line": vo_line.line}
-                                    for vo_line in vo_lines_for_line_index
-                                ],
-                            }
-                        )
-                        scene_prompts.extend(
-                            self._call_llm(params, len(vo_lines_for_line_index))
-                        )
-
-                else:
-                    logger.info(f"Generating prompts for scene {scene_index}")
-                    params["input"] = yaml.dump(
-                        {
-                            "script_summary": script_summary,
-                            "scene_title": scene.scene_title,
-                            "scene_description": scene.description,
-                            "number_of_expected_prompts": len(vo_lines_for_scene),
-                            "dialog_lines": [
-                                {"line": vo_line.line} for vo_line in vo_lines_for_scene
-                            ],
-                        }
-                    )
-                    scene_prompts = self._call_llm(params, len(vo_lines_for_scene))
-                prompts.extend(scene_prompts)
-                # Save the prompts so we don't recompute them if failure
-                with open(
-                    prompts_file,
-                    "w",
-                ) as f:
-                    f.write(yaml.dump(scene_prompts))
-        else:
-            params["input"] = yaml.dump(
-                [
-                    {
-                        "scene_title": s.scene_title,
-                        "scene_description": s.description,
-                    }
-                    for s in parsers.get_scenes()
-                ]
+        voicelines = parsers.get_voiceover_lines()
+        for idx, scene in enumerate(scenes, start=1):
+            # Check if scene prompts already exist
+            prompts_file = os.path.join(
+                utils.STORYBOARD_PATH, f"scene_{idx}_prompts.yaml"
             )
-            prompts = self._call_llm(params, len(parsers.get_scenes()))
+            if os.path.exists(prompts_file):
+                with open(prompts_file) as prompts:
+                    logger.info(
+                        f"Loading existing prompts from: scene_{idx}_prompts.yaml"
+                    )
+                    prompts = yaml.load(prompts.read().strip(), Loader=yaml.Loader)
+                    prompts.append(prompts)
+                    continue
+            vo_lines_for_scene = [vo_line for vo_line in voicelines if vo_line.scene_index == idx]
+            params["input"] = yaml.dump(
+            {
+                    "script_summary": script_summary,
+                    "scene_title": scene.scene_title,
+                    "scene_description": scene.description,
+                    "dialog_lines": [
+                        {"line": vo_line.line} for vo_line in vo_lines_for_scene
+                    ]
+                }
+            )
+            params["fps"] = 8 # TODO: Make this configurable
+            params["duration"] = round(scene.duration)
+            scene_prompts = self._call_llm(params )
+            # Save prompts file
+            with open(prompts_file, "w") as f:
+                f.write(yaml.dump(scene_prompts))
 
+            prompts.append(scene_prompts)
+   
         # Save the prompts
         with open(os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml"), "w") as f:
             f.write(yaml.dump(prompts))
@@ -178,7 +114,7 @@ class SDAnimatorArtist(AICPBaseTool):
         scenes = parsers.get_scenes()
         clip_directories = []
         for idx, scene in enumerate(self.scene_prompts):
-            logger.info(f"Generating scene {idx} with prompt: {scene['prompt']}")
+            logger.info(f"Generating scene {idx}")
             output_dir = os.path.join(utils.STORYBOARD_PATH, f"scene_{idx}")
             # If output_dir has a directory in it and inside that directory there is a final.gif, skip
             if os.path.exists(output_dir):
@@ -202,11 +138,13 @@ class SDAnimatorArtist(AICPBaseTool):
                 prompt_config = json.load(f)
             # Update the prompt
             prompt_config["path"] = prompt_config["path"] # The model path todo
-            prompt_config["head_prompt"] = self.positive_prompt 
+            prompt_config["head_prompt"] = f"{self.positive_prompt} {scene['prompt_head']}"
             # get length of scene/vo clip
             prompt_config["prompt_map"] = {
-                "0": scene["prompt"] 
             }
+            for kf in scene["keyframes"]:
+                prompt_config["prompt_map"][kf["frame"]] = kf["prompt"]
+            
             prompt_config["n_prompt"] = [
                 self.negative_prompt
             ]
@@ -245,7 +183,8 @@ class SDAnimatorArtist(AICPBaseTool):
         with open(video_list, "w") as f:
             for clip_dir in clip_directories:
                 # Paths are relative to video_list path, so, we remove the prefix
-                clip_dir = clip_dir.replace(utils.STORYBOARD_PATH, ".")
+                # TODO Fix clip_dir.replace since it's a Path, not a string
+                clip_dir = str(clip_dir).replace(utils.STORYBOARD_PATH, ".")
                 f.write(f"file '{clip_dir}/final.gif'\n")
 
         command = f"ffmpeg -f concat -safe 0 -i {video_list} -c:v libx264 -preset fast {utils.ANIMATION_VIDEO_FILE}"
@@ -268,7 +207,7 @@ class SDAnimatorArtist(AICPBaseTool):
         """Use the tool."""
         raise NotImplementedError("Async not implemented")
 
-    def _call_llm(self, params, expected_number_of_prompts):
+    def _call_llm(self, params):
         logger.debug("Calling LLM")
         logger.debug(params)
         retries = 3
@@ -283,11 +222,36 @@ class SDAnimatorArtist(AICPBaseTool):
                 logger.debug(response)
                 parsed = yaml.load(response, Loader=yaml.Loader)
                 ## Check if parsed has the same number of prompts as expected
-                if len(parsed) != expected_number_of_prompts:
-                    logger.info(
-                        f"Unexpected number of prompts: {len(parsed)} != {expected_number_of_prompts}"
-                    )
-                    raise Exception("Unexpected number of prompts")
+                ## Check if it has prompt_head (string) and keyframes (array)
+
+                if parsed["prompt_head"] is None or parsed["keyframes"] is None:
+                    raise Exception("Invalid prompt")
+                
+                # Check if keyframes is an array, and its elements have "frame" (int) and "prompt" (string)
+                if not isinstance(parsed["keyframes"], list):
+                    raise Exception("Invalid keyframes")
+                for keyframe in parsed["keyframes"]:
+                    if "frame" not in keyframe or "prompt" not in keyframe:
+                        raise Exception("Invalid keyframes")
+                    if not isinstance(keyframe["frame"], int):
+                        raise Exception("Invalid keyframes")
+                    if not isinstance(keyframe["prompt"], str):
+                        raise Exception("Invalid keyframes")
+                    
+                # Check if prompt_head is a string
+                if not isinstance(parsed["prompt_head"], str):
+                    raise Exception("Invalid prompt_head")
+                
+                # Check if the frame numbers are in ascending order starting from 0 and the last
+                # frame is less than duration * fps
+                if parsed["keyframes"][0]["frame"] != 0:
+                    raise Exception("Invalid keyframes")
+                for i in range(len(parsed["keyframes"]) - 1):
+                    if parsed["keyframes"][i]["frame"] >= parsed["keyframes"][i + 1]["frame"]:
+                        raise Exception("Invalid keyframes")
+                if parsed["keyframes"][-1]["frame"] > params["duration"] * params["fps"]:
+                    raise Exception("Invalid keyframes")
+
                 return parsed
             except Exception as e:
                 logger.warning(e)
