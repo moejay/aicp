@@ -34,5 +34,6 @@ opencv-contrib-python==4.8.0.74
 opencv-python==4.8.0.74
 onnx==1.14.1
 onnxruntime-gpu==1.16.0
-git+https://github.com/moejay/animatediff-cli-prompt-travel.git@dd7686621a68bd235d624017b044e4c6cecd7016#egg=animatediff
+git+https://github.com/moejay/animatediff-cli-prompt-travel.git@951c684d255094220e2beebccc60d92215890e59#egg=animatediff
+# -e /d/code/animatediff-cli-prompt-travel-moe
 pandas==2.1.1

@@ -137,7 +137,8 @@ class VoiceOverArtistTool(AICPBaseTool):
                             audio_array, _ = librosa.load(
                                 sentence_wav_file, sr=voice_gen.NEW_SAMPLE_RATE
                             )
-                            pieces += [audio_array, silence]
+
+                            pieces += [audio_array]
                             continue
 
                         take_to_save = voice_gen.generate_speech_as_takes(

@@ -96,6 +96,7 @@ class SDAnimatorArtist(AICPBaseTool):
             )
             params["fps"] = 8 # TODO: Make this configurable
             params["duration"] = round(scene.duration)
+            params["total_frames"] = params["duration"] * params["fps"]
             scene_prompts = self._call_llm(params )
             # Save prompts file
             with open(prompts_file, "w") as f:
@@ -109,72 +110,92 @@ class SDAnimatorArtist(AICPBaseTool):
 
         return prompts
 
+    def check_if_exists(self, idx, output_dir: str) -> tuple[bool, str|None]:
+        exists = False
+        final_scene_path = os.path.join(output_dir, "final.mp4")
+        # If output_dir has a directory in it and inside that directory there is a final.gif, skip
+        if os.path.exists(final_scene_path):
+            # Check if there is another directory inside
+            exists = True
+        return exists, final_scene_path
+
+    def generate_scene(self, idx, scene_prompt, scene, output_dir):
+        base_prompt_config = "data/prompt_travel.json"
+        # Read the base prompt config
+        with open(base_prompt_config) as f:
+            prompt_config = json.load(f)
+        # Update the prompt
+        prompt_config["path"] = prompt_config["path"] # The model path todo
+        prompt_config["head_prompt"] = f"{self.positive_prompt} {scene_prompt['prompt_head']}"
+        # get length of scene/vo clip
+        prompt_config["prompt_map"] = {
+        }
+        for kf in scene_prompt["keyframes"]:
+            prompt_config["prompt_map"][kf["frame"]] = kf["prompt"]
+        
+        prompt_config["n_prompt"] = [
+            self.negative_prompt
+        ]
+        prompt_config["output"]["fps"] = 8
+
+        clip_duration = scene.duration
+        clip_duration = round(clip_duration)
+        num_frames = clip_duration * prompt_config["output"]["fps"]
+        # Save the prompt config
+        prompt_config_path = os.path.join(
+            self.video.output_dir, f"scene_{idx}_prompt_config.json"
+        )
+        with open(prompt_config_path, "w") as f:
+            json.dump(prompt_config, f)
+
+        # Generate the clip
+        # save_dir is the same as output_dir
+        save_dir = cli.generate(
+            config_path=Path(prompt_config_path),
+            width=self.video.production_config.sd_base_image_width,
+            height=self.video.production_config.sd_base_image_height,
+            length=num_frames,
+            save_merged=False,
+            use_xformers=True,
+            out_dir=output_dir,
+            frame_dir="frames",
+            out_file="preview.mp4",
+        )
+        return save_dir, prompt_config_path
     def make_animated_clip(self):
-        vo_lines = parsers.get_voiceover_lines()
-        scenes = parsers.get_scenes()
         clip_directories = []
-        for idx, scene in enumerate(self.scene_prompts):
+        scenes = parsers.get_scenes()
+        for idx, scene_prompt in enumerate(self.scene_prompts):
             logger.info(f"Generating scene {idx}")
+            scene = scenes[idx]
             output_dir = os.path.join(utils.STORYBOARD_PATH, f"scene_{idx}")
-            # If output_dir has a directory in it and inside that directory there is a final.gif, skip
-            if os.path.exists(output_dir):
-                # Check if there is another directory inside
-                dirs = os.listdir(output_dir)
-                if len(dirs) > 0:
-                    # Check if there is a final.gif inside
-                    final_scene_path = os.path.join(output_dir, dirs[0])
-                    if "final.gif" in os.listdir(final_scene_path):
-                        logger.info(
-                            f"Skipping scene {idx} because it already exists in {final_scene_path}"
-                        )
-                        clip_directories.append(final_scene_path)
-                        continue
+            exists, existing_dir = self.check_if_exists(idx, output_dir)
+            if exists:
+                logger.info(f"Skipping scene {idx} as it already exists")
+                clip_directories.append(existing_dir)
+                continue
 
-
-
-            base_prompt_config = "data/prompt_travel.json"
-            # Read the base prompt config
-            with open(base_prompt_config) as f:
-                prompt_config = json.load(f)
-            # Update the prompt
-            prompt_config["path"] = prompt_config["path"] # The model path todo
-            prompt_config["head_prompt"] = f"{self.positive_prompt} {scene['prompt_head']}"
-            # get length of scene/vo clip
-            prompt_config["prompt_map"] = {
-            }
-            for kf in scene["keyframes"]:
-                prompt_config["prompt_map"][kf["frame"]] = kf["prompt"]
-            
-            prompt_config["n_prompt"] = [
-                self.negative_prompt
-            ]
-            prompt_config["output"]["fps"] = 8
-            clip_duration = 0
-            if self.video.production_config.voiceline_synced_storyboard:
-                vo_line = vo_lines[idx]
-                clip_duration = vo_line.duration
+            # Check if preview exists
+            if os.path.exists(os.path.join(output_dir, "preview.mp4")):
+                logger.info(f"Skipping scene {idx} as preview already exists")
+                prompt_config_path = os.path.join(
+                    self.video.output_dir, f"scene_{idx}_prompt_config.json"
+                )
+                save_dir = Path(output_dir)
             else:
-                clip_duration = scenes[idx].duration
+                save_dir, prompt_config_path = self.generate_scene(idx, scene_prompt, scene, Path(output_dir))
             
-            clip_duration = round(clip_duration)
-            num_frames = clip_duration * prompt_config["output"]["fps"]
-            # Save the prompt config
-            prompt_config_path = os.path.join(
-                self.video.output_dir, f"scene_{idx}_prompt_config.json"
-            )
-            with open(prompt_config_path, "w") as f:
-                json.dump(prompt_config, f)
-
-            # Generate the clip
-            save_dir = cli.generate(
+            logger.info(f"Upscaling scene {idx}")
+            upsacled_save_dir = cli.tile_upscale(
+                save_dir.joinpath("frames"),
                 config_path=Path(prompt_config_path),
-                width=self.video.production_config.sd_base_image_width,
-                height=self.video.production_config.sd_base_image_height,
-                length=num_frames,
-                save_merged=True,
+                width=self.video.production_config.video_width,
                 out_dir=Path(output_dir),
+                no_frames=True,
+                upscaled_frames_dir=Path(output_dir).joinpath("frames-upscaled"),
+                out_file=Path(output_dir).joinpath("final.mp4"),
             )
-            clip_directories.append(save_dir)
+            clip_directories.append(upsacled_save_dir)
         # Concatenate the clips and save the video
         # Write the video list
         video_list = os.path.join(
@@ -182,10 +203,11 @@ class SDAnimatorArtist(AICPBaseTool):
         )
         with open(video_list, "w") as f:
             for clip_dir in clip_directories:
+                # Find mp4 file
+                mp4_file = "final.mp4"
                 # Paths are relative to video_list path, so, we remove the prefix
-                # TODO Fix clip_dir.replace since it's a Path, not a string
-                clip_dir = str(clip_dir).replace(utils.STORYBOARD_PATH, ".")
-                f.write(f"file '{clip_dir}/final.gif'\n")
+                clip_dir = str(clip_dir).replace(utils.STORYBOARD_PATH, ".", 1)
+                f.write(f"file '{clip_dir}/{mp4_file}'\n")
 
         command = f"ffmpeg -f concat -safe 0 -i {video_list} -c:v libx264 -preset fast {utils.ANIMATION_VIDEO_FILE}"
         os.system(command)
