@@ -1,5 +1,6 @@
-video_width: 1920
-video_height: 1080
+video_width: 1440
+video_height: 810
+preview: True
 sd_base_image_width: 768
 sd_base_image_height: 432
 num_images_per_scene: 10

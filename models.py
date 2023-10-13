@@ -88,6 +88,7 @@ class ProductionConfig:
     sd_base_image_width: int
     sd_base_image_height: int
     num_images_per_scene: int = 10
+    preview: bool = False
 
     enable_subtitles: bool = False
     subtitles_alignment: int = 2

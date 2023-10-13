@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+import torch
 import yaml
 import logging
 
@@ -20,6 +21,17 @@ logger = logging.getLogger(__name__)
 
 logger.setLevel(logging.DEBUG)
 
+camera_motion_to_lora_map = {
+            "PanLeft": "models/motion_lora/v2_lora_PanLeft.ckpt",
+            "PanRight": "models/motion_lora/v2_lora_PanRight.ckpt",
+            "RollingAnticlockwise": "models/motion_lora/v2_lora_RollingAnticlockwise.ckpt",
+            "RollingClockwise": "models/motion_lora/v2_lora_RollingClockwise.ckpt",
+            "ZoomIn": "models/motion_lora/v2_lora_ZoomIn.ckpt",
+            "ZoomOut": "models/motion_lora/v2_lora_ZoomOut.ckpt",
+            "TiltUp": "models/motion_lora/v2_lora_TiltUp.ckpt",
+            "TiltDown": "models/motion_lora/v2_lora_TiltDown.ckpt",
+        }
+
 
 class SDAnimatorArtist(AICPBaseTool):
     name = "sdanimatorartist"
@@ -28,6 +40,7 @@ class SDAnimatorArtist(AICPBaseTool):
     scene_prompts = []
     positive_prompt = ""
     negative_prompt = ""
+    clip_file = "final.mp4" # We will change this to preview.mp4 if config.preview is true
 
     def initialize_agent(self):
         self.load_prompts()
@@ -112,7 +125,7 @@ class SDAnimatorArtist(AICPBaseTool):
 
     def check_if_exists(self, idx, output_dir: str) -> tuple[bool, str|None]:
         exists = False
-        final_scene_path = os.path.join(output_dir, "final.mp4")
+        final_scene_path = os.path.join(output_dir, self.clip_file)
         # If output_dir has a directory in it and inside that directory there is a final.gif, skip
         if os.path.exists(final_scene_path):
             # Check if there is another directory inside
@@ -131,7 +144,12 @@ class SDAnimatorArtist(AICPBaseTool):
         prompt_config["prompt_map"] = {
         }
         for kf in scene_prompt["keyframes"]:
-            prompt_config["prompt_map"][kf["frame"]] = kf["prompt"]
+            prompt_config["prompt_map"][kf["frame"]] = f"{kf['cameraShot']} {kf['prompt']} and background: {kf['background']}"
+
+        # Apply cameraMovement
+        prompt_config["motion_lora_map"]  = {
+            camera_motion_to_lora_map[scene_prompt["cameraMovement"]]: 1.0
+        }
         
         prompt_config["n_prompt"] = [
             self.negative_prompt
@@ -161,6 +179,9 @@ class SDAnimatorArtist(AICPBaseTool):
             frame_dir="frames",
             out_file="preview.mp4",
         )
+        # TODO Move this somewhere more appropriate
+        del cli.g_pipeline
+        del cli.last_model_path
         return save_dir, prompt_config_path
     def make_animated_clip(self):
         clip_directories = []
@@ -183,10 +204,16 @@ class SDAnimatorArtist(AICPBaseTool):
                 )
                 save_dir = Path(output_dir)
             else:
+                torch.cuda.empty_cache()
                 save_dir, prompt_config_path = self.generate_scene(idx, scene_prompt, scene, Path(output_dir))
             
+            clip_directories.append(output_dir)
+            if self.video.production_config.preview:
+                logger.info(f"Skipping upscaling scene {idx} as preview is enabled")
+                continue
             logger.info(f"Upscaling scene {idx}")
-            upsacled_save_dir = cli.tile_upscale(
+            torch.cuda.empty_cache()
+            cli.tile_upscale(
                 save_dir.joinpath("frames"),
                 config_path=Path(prompt_config_path),
                 width=self.video.production_config.video_width,
@@ -195,7 +222,6 @@ class SDAnimatorArtist(AICPBaseTool):
                 upscaled_frames_dir=Path(output_dir).joinpath("frames-upscaled"),
                 out_file=Path(output_dir).joinpath("final.mp4"),
             )
-            clip_directories.append(upsacled_save_dir)
         # Concatenate the clips and save the video
         # Write the video list
         video_list = os.path.join(
@@ -204,10 +230,9 @@ class SDAnimatorArtist(AICPBaseTool):
         with open(video_list, "w") as f:
             for clip_dir in clip_directories:
                 # Find mp4 file
-                mp4_file = "final.mp4"
                 # Paths are relative to video_list path, so, we remove the prefix
                 clip_dir = str(clip_dir).replace(utils.STORYBOARD_PATH, ".", 1)
-                f.write(f"file '{clip_dir}/{mp4_file}'\n")
+                f.write(f"file '{clip_dir}/{self.clip_file}'\n")
 
         command = f"ffmpeg -f concat -safe 0 -i {video_list} -c:v libx264 -preset fast {utils.ANIMATION_VIDEO_FILE}"
         os.system(command)
@@ -217,7 +242,7 @@ class SDAnimatorArtist(AICPBaseTool):
         """Use the tool."""
         # initialize agent
         self.initialize_agent()
-
+        self.clip_file = "final.mp4" if not self.video.production_config.preview else "preview.mp4"
         self.make_animated_clip()
 
         
@@ -246,7 +271,7 @@ class SDAnimatorArtist(AICPBaseTool):
                 ## Check if parsed has the same number of prompts as expected
                 ## Check if it has prompt_head (string) and keyframes (array)
 
-                if parsed["prompt_head"] is None or parsed["keyframes"] is None:
+                if parsed["prompt_head"] is None or parsed["keyframes"] is None or parsed["cameraMovement"] is None:
                     raise Exception("Invalid prompt")
                 
                 # Check if keyframes is an array, and its elements have "frame" (int) and "prompt" (string)
@@ -254,11 +279,15 @@ class SDAnimatorArtist(AICPBaseTool):
                     raise Exception("Invalid keyframes")
                 for keyframe in parsed["keyframes"]:
                     if "frame" not in keyframe or "prompt" not in keyframe:
-                        raise Exception("Invalid keyframes")
+                        raise Exception("Invalid keyframes missing frame or prompt")
                     if not isinstance(keyframe["frame"], int):
-                        raise Exception("Invalid keyframes")
+                        raise Exception("Invalid keyframes missing frame")
                     if not isinstance(keyframe["prompt"], str):
-                        raise Exception("Invalid keyframes")
+                        raise Exception("Invalid keyframes missing prompt")
+                    if not isinstance(keyframe["background"], str):
+                        raise Exception("Invalid keyframes missing background")
+                    if not isinstance(keyframe["cameraShot"], str):
+                        raise Exception("Invalid keyframes missing cameraShot")
                     
                 # Check if prompt_head is a string
                 if not isinstance(parsed["prompt_head"], str):
@@ -273,6 +302,9 @@ class SDAnimatorArtist(AICPBaseTool):
                         raise Exception("Invalid keyframes")
                 if parsed["keyframes"][-1]["frame"] > params["duration"] * params["fps"]:
                     raise Exception("Invalid keyframes")
+                
+                if parsed["cameraMovement"] not in ["PanLeft", "PanRight", "TiltLeft", "TiltRight", "RollingClockwise", "RollingAnticlockwise", "ZoomIn", "ZoomOut"]:
+                    raise Exception("Invalid cameraMovement")
 
                 return parsed
             except Exception as e:
