@@ -5,7 +5,7 @@ import uuid
 
 from langchain.prompts.base import StringPromptValue
 
-from backend.models import (
+from videocreator.schema import (
     AICPProject,
     AICPScript,
     AICPOutline,
@@ -14,8 +14,8 @@ from backend.models import (
     AICPShot,
     AICPActor,
 )
-from backend.utils import llms
-from utils import parsers
+from videocreator.utils import llms
+from videocreator.utils import parsers
 from typing import Any
 
 from pydantic import Extra

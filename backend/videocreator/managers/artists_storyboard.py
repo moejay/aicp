@@ -2,7 +2,7 @@ import os
 import yaml
 from django.conf import settings
 from videocreator.utils.storage import read_file, write_file
-from videocreator.models import AICPStoryboardArtist
+from videocreator.schema import AICPStoryboardArtist
 
 
 def get_storyboard(storyboard_id) -> AICPStoryboardArtist:

@@ -3,9 +3,9 @@
 import os
 import yaml
 
-from backend.utils.storage import read_file
-from backend.models import AICPScript, AICPScriptWriter
-from backend import settings
+from videocreator.utils.storage import read_file
+from videocreator.schema import AICPScript, AICPScriptWriter
+from django.conf import settings
 
 SCRIPTWRITERS_PATH = os.path.join(settings.AICP_YAMLS_DIR, "cast", "script_writers")
 

@@ -7,9 +7,9 @@ from langchain.callbacks.file import FileCallbackHandler
 from langchain.callbacks.stdout import StdOutCallbackHandler
 from langchain.prompts.base import StringPromptValue
 from tenacity import retry, stop_after_attempt, wait_fixed
-from backend import settings
+from django.conf import settings
 
-from backend.models import (
+from videocreator.schema import (
     AICPClip,
     AICPProject,
     AICPScript,
@@ -21,8 +21,7 @@ from backend.models import (
     AICPVideoLayer,
     AICPStoryboardArtist,
 )
-from backend.utils import llms
-from utils import parsers
+from videocreator.utils import llms, parsers
 from typing import Any
 
 from pydantic import Extra

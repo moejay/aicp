@@ -1,10 +1,10 @@
 """This is where the research happens."""
 
 import os
-from backend import settings
-from backend.models import AICPProject, AICPResearch
-from backend.utils import llms
-from utils import parsers
+from django.conf import settings
+from videocreator.schema import AICPProject, AICPResearch
+from videocreator.utils import llms
+from videocreator.utils import parsers
 
 from langchain.callbacks.file import FileCallbackHandler
 from langchain.callbacks.stdout import StdOutCallbackHandler

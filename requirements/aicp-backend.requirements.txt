@@ -11,4 +11,9 @@ python-dotenv==1.0.0
 #django-ninja-jwt==5.2.5 those won't work, will probably use once django ninja is out of beta
 #django-Ninja-Extra==0.19.3
 openai==0.28.1
-
+torch==2.0.1
+torchaudio==2.0.2
+torchvision==0.15.2
+diffusers==0.21.4
+transformers==4.33.3
+soundfile==0.12.1

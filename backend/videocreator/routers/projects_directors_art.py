@@ -1,29 +1,29 @@
+from http.client import HTTPException
 import json
-from fastapi import APIRouter, HTTPException
-from backend.models import AICPActor, AICPLayer, AICPOutline
-from backend.managers import (
+from ninja import Router
+from videocreator.schema import AICPActor, AICPLayer, AICPOutline
+from videocreator.managers import (
     actors,
     projects,
     script as script_manager,
 )
-from backend.agents.art_director import ArtDirectorAgent
-from backend.agents.layer_videoclip import VideoclipLayerAgent
-from backend.agents.layer_voiceover import LayerVoiceoverAgent
-from backend.managers import (
+from videocreator.agents.art_director import ArtDirectorAgent
+from videocreator.agents.layer_videoclip import VideoclipLayerAgent
+from videocreator.agents.layer_voiceover import LayerVoiceoverAgent
+from videocreator.managers import (
     director_art as art_manager,
     artists_storyboard as storyboard_manager,
     director_casting as casting_manager,
 )
-from backend.renderers import renderer
+from videocreator.renderers import renderer
 
-router = APIRouter(
-    prefix="/project/{project_id}/director/art",
+router = Router(
     tags=["directors"],
 )
 
 
 @router.post("/", summary="Run the art director on the script to generate the outline")
-def generate_outline(project_id: str) -> AICPOutline:
+def generate_outline(request, project_id: str) -> AICPOutline:
     """
     Generate outline based on script/actors/characters
     """
@@ -41,7 +41,7 @@ def generate_outline(project_id: str) -> AICPOutline:
 
 
 @router.put("/", summary="Updates the outline with the user's input")
-def update_outline(project_id: str, outline: AICPOutline):
+def update_outline(request, project_id: str, outline: AICPOutline):
     """
     Updates the outline with the user's input
     """
@@ -50,7 +50,7 @@ def update_outline(project_id: str, outline: AICPOutline):
 
 
 @router.get("/")
-def get_outline(project_id: str):
+def get_outline(request, project_id: str):
     return art_manager.get_outline(project_id)
 
 
@@ -59,6 +59,7 @@ def get_outline(project_id: str):
     summary="Generate a layer for a shot",
 )
 def generate_layer(
+    request,
     project_id: str,
     sequence_id: str,
     scene_id: str,
@@ -92,7 +93,7 @@ def generate_layer(
 
 
 @router.post("/render", summary="Renders the outline")
-def render_outline(project_id: str):
+def render_outline(request, project_id: str):
     """
     Renders the outline
     """
@@ -102,7 +103,7 @@ def render_outline(project_id: str):
 
 
 @router.post("/sequences/{sequence_id}/render", summary="Renders a sequence")
-def render_sequence(project_id: str, sequence_id: str):
+def render_sequence(request, project_id: str, sequence_id: str):
     """
     Renders a sequence
     """
@@ -114,7 +115,7 @@ def render_sequence(project_id: str, sequence_id: str):
 @router.post(
     "/sequences/{sequence_id}/scenes/{scene_id}/render", summary="Renders a scene"
 )
-def render_scene(project_id: str, sequence_id: str, scene_id: str):
+def render_scene(request, project_id: str, sequence_id: str, scene_id: str):
     """
     Renders a scene
     """
@@ -128,7 +129,7 @@ def render_scene(project_id: str, sequence_id: str, scene_id: str):
     "/sequences/{sequence_id}/scenes/{scene_id}/shots/{shot_id}/render",
     summary="Renders a shot",
 )
-def render_shot(project_id: str, sequence_id: str, scene_id: str, shot_id: str):
+def render_shot(request, project_id: str, sequence_id: str, scene_id: str, shot_id: str):
     """
     Renders a shot
     """
@@ -144,7 +145,7 @@ def render_shot(project_id: str, sequence_id: str, scene_id: str, shot_id: str):
     summary="Renders a layer",
 )
 def render_layer(
-    project_id: str, sequence_id: str, scene_id: str, shot_id: str, layer_id: str
+    request, project_id: str, sequence_id: str, scene_id: str, shot_id: str, layer_id: str
 ):
     """
     Renders a layer

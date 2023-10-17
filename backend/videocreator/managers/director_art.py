@@ -1,8 +1,8 @@
 import os
 import yaml
 from django.conf import settings
-from utils.storage import read_file, write_file
-from models import AICPOutline
+from videocreator.utils.storage import read_file, write_file
+from videocreator.schema import AICPOutline
 
 
 def get_outline(project_id) -> AICPOutline:

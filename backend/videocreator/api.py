@@ -6,6 +6,9 @@ from videocreator.routers import (
     projects as projects_router,
     production_configs as production_configs_router,
     projects_research as projects_research_router,
+    projects_script as projects_script_router,
+    #projects_directors_cast as projects_directors_cast_router,
+    #projects_directors_art as projects_directors_art_router,
 )
 
 
@@ -29,3 +32,19 @@ def add_routers(api: NinjaAPI):
         projects_research_router.router,
         auth=GlobalAuth(),
     )
+    api.add_router(
+        "/projects/{project_id}/script",
+        projects_script_router.router,
+        auth=GlobalAuth(),
+    )
+    # api.add_router(
+    #     "/projects/{project_id}/directors/cast",
+    #     projects_directors_cast_router.router,
+    #     auth=GlobalAuth(),
+    # )
+    # api.add_router(
+    #     "/projects/{project_id}/directors/art",
+    #     projects_directors_art_router.router,
+    #     auth=GlobalAuth(),
+    # )
+

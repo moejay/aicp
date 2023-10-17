@@ -8,10 +8,10 @@ from langchain.prompts.base import StringPromptValue
 from langchain.callbacks.file import FileCallbackHandler
 from langchain.callbacks.stdout import StdOutCallbackHandler
 from tenacity import retry, stop_after_attempt
-from backend import settings
-from backend.agents.layer_videoclip import VideoclipLayerAgent
-from backend.agents.layer_voiceover import LayerVoiceoverAgent
-from backend.models import (
+from django.conf import settings
+from videocreator.agents.layer_videoclip import VideoclipLayerAgent
+from videocreator.agents.layer_voiceover import LayerVoiceoverAgent
+from videocreator.schema import (
     AICPActor,
     AICPProject,
     AICPScript,
@@ -22,7 +22,7 @@ from backend.models import (
     AICPStoryboardArtist,
 )
 from typing import Any
-from backend.utils import llms
+from videocreator.utils import llms
 
 from pydantic import Extra
 

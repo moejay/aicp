@@ -1,4 +1,3 @@
-from typing import Annotated
 from ninja import Router
 from videocreator.agents.research import ResearchAgent
 from videocreator.managers import research as research_manager, projects

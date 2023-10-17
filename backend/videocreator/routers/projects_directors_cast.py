@@ -1,20 +1,20 @@
-from fastapi import APIRouter, HTTPException
-from backend.managers import (
+from http.client import HTTPException
+from ninja import Router
+from videocreator.managers import (
     actors,
     director_casting as casting_manager,
     projects,
     script as script_manager,
 )
-from backend.agents.casting_director import CastingDirectorAgent
+from videocreator.agents.casting_director import CastingDirectorAgent
 
-router = APIRouter(
-    prefix="/project/{project_id}/director/cast",
+router = Router(
     tags=["directors"],
 )
 
 
 @router.post("/", summary="Casts actors based on the project's script")
-def cast_actors(project_id: str):
+def cast_actors(request, project_id: str):
     """
     Generate cast based on script/actors/characters
     """
@@ -28,7 +28,7 @@ def cast_actors(project_id: str):
 
 
 @router.put("/", summary="Updates the cast with the user's input")
-def update_cast(project_id: str, cast: dict[str, str]):
+def update_cast(request, project_id: str, cast: dict[str, str]):
     """
     Updates the cast with the user's input
     """
@@ -40,5 +40,5 @@ def update_cast(project_id: str, cast: dict[str, str]):
 
 
 @router.get("/")
-def get_cast(project_id: str):
+def get_cast(request, project_id: str):
     return casting_manager.get_cast(project_id)
