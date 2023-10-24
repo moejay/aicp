@@ -180,8 +180,8 @@ class SDAnimatorArtist(AICPBaseTool):
             out_file="preview.mp4",
         )
         # TODO Move this somewhere more appropriate
-        del cli.g_pipeline
-        del cli.last_model_path
+        #del cli.g_pipeline
+        #del cli.last_model_path
         return save_dir, prompt_config_path
     def make_animated_clip(self):
         clip_directories = []
