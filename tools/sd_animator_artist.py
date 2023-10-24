@@ -190,10 +190,10 @@ class SDAnimatorArtist(AICPBaseTool):
             logger.info(f"Generating scene {idx}")
             scene = scenes[idx]
             output_dir = os.path.join(utils.STORYBOARD_PATH, f"scene_{idx}")
-            exists, existing_dir = self.check_if_exists(idx, output_dir)
+            exists, _ = self.check_if_exists(idx, output_dir)
             if exists:
                 logger.info(f"Skipping scene {idx} as it already exists")
-                clip_directories.append(existing_dir)
+                clip_directories.append(output_dir)
                 continue
 
             # Check if preview exists
