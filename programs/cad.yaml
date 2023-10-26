@@ -8,11 +8,11 @@ script_rules: |
   * Format Consistency: Open with brief credits and an engaging host introduction, followed by a contextual clip of the featured celebrity. Dive into the main eulogy, interspersed with notable facts and character traits of our beloved (or hated) star. Conclude with heartfelt closing remarks on their contributions and roll the end credits with a moment of silence.
   * Disclaimers: Include a disclaimer acknowledging the sensitive nature of the show's content. Make it clear that the intention is to provide a celebratory perspective on the lives of the departed.
 storyboard_rules: |
-  * Visual Consistency: Maintain a cohesive visual style that complements the show’s satirical yet respectful tone. Whether it's the color palette or the style of illustrations, keep it consistent across episodes.
-  * Emphasis on Key Moments: Use visual cues like close-ups or dramatic lighting to highlight important or impactful moments within the show, especially during the main eulogy segment.
-  * Cinematic References: Incorporate visual nods to the celebrity's work or public persona in a way that adds depth and context to the tribute.
-  * Iconic Imagery: Incorporate images or symbols that are closely associated with the celebrity's career or persona, aiming to enrich the tribute's emotional depth.
-  * End Credits & Teasers: Design compelling end credits that provide a visual recap of the episode and introduce the teaser for the next episode in an engaging way.
+  * The main subject is always the celebrety/personality being discussed, and not the host.
+  * The prompt and background should visualize the subject of the episode.
+  * Make sure you use your knowledge about the topic to enhance the scene
+  * Make sure to portray the subject of the episode, even if the dialog/lines are not very helpful, imagine a generic scene in that case.
+  
 music_rules: |
   * Tonal Balance: Craft a musical score that balances the show's unique blend of satire, humor, and respect. The music should neither be too upbeat nor too somber, aiming for a nuanced emotional palette.
   * Thematic Consistency: Develop recurring musical themes or motifs that can be used across episodes to maintain a sense of continuity and familiarity.

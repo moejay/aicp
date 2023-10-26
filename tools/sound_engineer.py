@@ -52,7 +52,7 @@ def combine_music_with_crossfade(music_paths, output_path, crossfade_duration=1.
     filter_complex_str = filter_complex_str.rstrip(";")
 
     # Building the final FFmpeg command
-    cmd = f'ffmpeg {input_str} -filter_complex "{filter_complex_str}" -map "[ac{len(music_paths) - 1}]" {output_path}'
+    cmd = f'ffmpeg -y {input_str} -filter_complex "{filter_complex_str}" -map "[ac{len(music_paths) - 1}]" {output_path}'
 
     # Run the FFmpeg command
     subprocess.run(cmd, shell=True)

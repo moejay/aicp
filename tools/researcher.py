@@ -2,6 +2,7 @@
 
 # ### Given a topic research the latest news
 
+import os
 from typing import Optional
 from dotenv import load_dotenv
 
@@ -24,6 +25,9 @@ class ResearcherTool(AICPBaseTool):
     ) -> str:
         """Use the tool."""
 
+        # Check if research file already exists, if so, just return
+        if os.path.exists(utils.RESEARCH):
+            return f"File already exists at {utils.RESEARCH}"
         cast_member = self.video.director.get_researcher()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
         prompt_params = parsers.get_params_from_prompt(cast_member.prompt)

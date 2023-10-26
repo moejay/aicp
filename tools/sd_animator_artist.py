@@ -78,9 +78,6 @@ class SDAnimatorArtist(AICPBaseTool):
 
         prompts = []
         scenes = parsers.get_scenes()
-        script_summary = ""
-        with open(utils.SCRIPT_SUMMARY, "r") as f:
-            script_summary = f.read()
 
         voicelines = parsers.get_voiceover_lines()
         for idx, scene in enumerate(scenes, start=1):
@@ -99,8 +96,6 @@ class SDAnimatorArtist(AICPBaseTool):
             vo_lines_for_scene = [vo_line for vo_line in voicelines if vo_line.scene_index == idx]
             params["input"] = yaml.dump(
             {
-                    "script_summary": script_summary,
-                    "scene_title": scene.scene_title,
                     "scene_description": scene.description,
                     "dialog_lines": [
                         {"line": vo_line.line} for vo_line in vo_lines_for_scene
