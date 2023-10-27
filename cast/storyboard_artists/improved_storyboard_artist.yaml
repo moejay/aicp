@@ -42,20 +42,20 @@ prompt: |
   The output should adhere to the following JSON schema:
 
   {{
-   "prompt_head": "[Scene Introduction]",
-   "cameraMovement": "PanLeft",
+   "prompt_head": "[Scene subject and composition]",
+   "cameraMovement": "[Movement type]",
    "prompt_tail": "[Describe the style of the clip to generate]"
    "keyframes": [
       {{
          "frame": 0,
          "prompt": "[First Keyframe Description]"
-         "cameraShot": "Close up",
+         "cameraShot": "[Movement type]",
          "background": "Short description of background"
       }},
       {{
          "frame": n,
          "prompt": "[Next Keyframe Description]",
-         "cameraShot": "Wide shot",
+         "cameraShot": "[Movement type]",
          "background":"Description of another background"
       }},
       ... (and so on for each key moment)
