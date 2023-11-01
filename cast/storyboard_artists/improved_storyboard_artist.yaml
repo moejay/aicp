@@ -1,6 +1,6 @@
 name: Improved StoryBoard Artist
 model: openai-gpt-4
-sd_model: SimianLuo/LCM_Dreamshaper_v7
+sd_model: SG161222/Realistic_Vision_V3.0
 prompt: |
   This template is a guide for an expert storyboard artist with proficiency in photography, graphic design, illustration, and art history to create prompts for a text-to-image AI model. The goal is to transform a given description and dialogue into a structured prompt.
 
