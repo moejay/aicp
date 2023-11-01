@@ -3,4 +3,5 @@ video_height: 1080
 sd_base_image_width: 768
 sd_base_image_height: 432
 num_images_per_scene: 1
+preview: False
 voiceline_synced_storyboard: True

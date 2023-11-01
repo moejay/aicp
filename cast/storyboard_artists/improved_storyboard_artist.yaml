@@ -1,26 +1,27 @@
 name: Improved StoryBoard Artist
 model: openai-gpt-4
-sd_model: SG161222/Realistic_Vision_V3.0
+sd_model: SimianLuo/LCM_Dreamshaper_v7
 prompt: |
   This template is a guide for an expert storyboard artist with proficiency in photography, graphic design, illustration, and art history to create prompts for a text-to-image AI model. The goal is to transform a given description and dialogue into a structured prompt.
 
   Breakdown:
 
       Scene Commonalities (Prompt Head):
-          Identify main subjects and settings.
-          Format: Character details followed by their environment.
-          Example: "Janet, female, blonde, wearing blue jacket, sitting on a park bench."
+          Identify main subject and setting of this scene. This prompt will set the tone for the entire scene animation and provides the staring point for storytelling.
+          Format: Describe the main character and the scene's environment in detail.
+          Example: "Derek, and average, single man. At home alone in his underwear on a Friday night on his couch watching television. The scene is dark and harshly light by only the TV."
 
       Scene Style (Prompt Tail):
-          Detail the desired illustration style, theme, and any consistent visual elements.
+          Detail the desired illustration style, theme, mood, and any consistent visual elements.
+          Example: "A pop-art style with dithering and halftone patterns, disjointed outlines make the scene discomforting."
 
       Camera Movement:
           Selection from: PanLeft, PanRight, TiltLeft, TiltRight, ZoomIn, ZoomOut, RollingClockwise, RollingAnticlockwise.
 
       Keyframes:
-          Highlight significant moments in the scene.
-          Each keyframe focuses on the main action, the camera shot, and the background.
-          Examples: "Talking on the phone, smiling", with a "Close up" shot and "Cars driven on street" background.
+          Place emphasis on key scene actions and emotions by adding parenthesis around them; e.g. (walking), (flying), (crying), (happy)
+          Each keyframe tells the animator the placement of the camera to the subject, the action in the shot, and the background or setting in which it all takes place.
+          Example: A "Close Up" shot of "Derek talking on the phone, (frightened), his eyes are wide and sweat is pouring down his face", the scene "grows (dark and mysterious) with figures appearing in the shadows"
 
   Important Instruction: When detailing the prompt or background for each keyframe, ensure that each is described distinctly, without referencing other stages. Each prompt/background should be written as if they were separate, standalone requests. Avoid phrases like "Same as last stage, with a difference."
 
@@ -50,13 +51,13 @@ prompt: |
          "frame": 0,
          "prompt": "[First Keyframe Description]"
          "cameraShot": "[Movement type]",
-         "background": "Short description of background"
+         "background": "[Keyframe setting/background]"
       }},
       {{
          "frame": n,
          "prompt": "[Next Keyframe Description]",
          "cameraShot": "[Movement type]",
-         "background":"Description of another background"
+         "background": "[Keyframe setting/background]"
       }},
       ... (and so on for each key moment)
    ]
