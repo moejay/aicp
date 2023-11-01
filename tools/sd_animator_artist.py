@@ -86,12 +86,12 @@ class SDAnimatorArtist(AICPBaseTool):
                 utils.STORYBOARD_PATH, f"scene_{idx}_prompts.yaml"
             )
             if os.path.exists(prompts_file):
-                with open(prompts_file) as prompts:
+                with open(prompts_file) as single_prompt:
                     logger.info(
                         f"Loading existing prompts from: scene_{idx}_prompts.yaml"
                     )
-                    prompts = yaml.load(prompts.read().strip(), Loader=yaml.Loader)
-                    prompts.append(prompts)
+                    existing_prompt = yaml.load(single_prompt.read().strip(), Loader=yaml.Loader)
+                    prompts.append(existing_prompt)
                     continue
             vo_lines_for_scene = [vo_line for vo_line in voicelines if vo_line.scene_index == idx]
             params["input"] = yaml.dump(
@@ -142,9 +142,16 @@ class SDAnimatorArtist(AICPBaseTool):
             prompt_config["prompt_map"][kf["frame"]] = f"{kf['cameraShot']} {kf['prompt']} and background: {kf['background']}"
 
         # Apply cameraMovement
-        prompt_config["motion_lora_map"]  = {
-            camera_motion_to_lora_map[scene_prompt["cameraMovement"]]: 1.0
+        movementStrengthMap = {
+            "none": "0.0",
+            "low": "0.25",
+            "medium": "0.5",
+            "high": "1.0",
         }
+        if scene_prompt["cameraMovement"] in camera_motion_to_lora_map:
+            prompt_config["motion_lora_map"]  = {
+                camera_motion_to_lora_map[scene_prompt["cameraMovement"]]: movementStrengthMap[scene_prompt["cameraMovementStrength"].lower()]
+            }
         
         prompt_config["n_prompt"] = [
             self.negative_prompt
@@ -239,7 +246,6 @@ class SDAnimatorArtist(AICPBaseTool):
         self.initialize_agent()
         self.clip_file = "final.mp4" if not self.video.production_config.preview else "preview.mp4"
         self.make_animated_clip()
-
         
         return "Done generating animated stuff"
 
@@ -298,7 +304,7 @@ class SDAnimatorArtist(AICPBaseTool):
                 if parsed["keyframes"][-1]["frame"] > params["duration"] * params["fps"]:
                     raise Exception("Invalid keyframes")
                 
-                if parsed["cameraMovement"] not in ["PanLeft", "PanRight", "TiltLeft", "TiltRight", "RollingClockwise", "RollingAnticlockwise", "ZoomIn", "ZoomOut"]:
+                if parsed["cameraMovement"] not in ["PanLeft", "PanRight", "TiltUp", "TiltDown", "RollingClockwise", "RollingAnticlockwise", "ZoomIn", "ZoomOut", None, "None"]:
                     raise Exception("Invalid cameraMovement")
 
                 return parsed
