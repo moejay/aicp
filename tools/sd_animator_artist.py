@@ -128,7 +128,7 @@ class SDAnimatorArtist(AICPBaseTool):
         return exists, final_scene_path
 
     def generate_scene(self, idx, scene_prompt, scene, output_dir):
-        base_prompt_config = "data/prompt_travel.json"
+        base_prompt_config = "./prompt_travel.json"
         # Read the base prompt config
         with open(base_prompt_config) as f:
             prompt_config = json.load(f)
