@@ -80,7 +80,7 @@ class SDAnimatorArtist(AICPBaseTool):
         scenes = parsers.get_scenes()
 
         voicelines = parsers.get_voiceover_lines()
-        for idx, scene in enumerate(scenes, start=1):
+        for idx, scene in enumerate(scenes, start=0):
             # Check if scene prompts already exist
             prompts_file = os.path.join(
                 utils.STORYBOARD_PATH, f"scene_{idx}_prompts.yaml"
@@ -111,7 +111,7 @@ class SDAnimatorArtist(AICPBaseTool):
                 f.write(yaml.dump(scene_prompts))
 
             prompts.append(scene_prompts)
-   
+
         # Save the prompts
         with open(os.path.join(utils.PATH_PREFIX, "storyboard_prompts.yaml"), "w") as f:
             f.write(yaml.dump(prompts))
@@ -152,7 +152,7 @@ class SDAnimatorArtist(AICPBaseTool):
             prompt_config["motion_lora_map"]  = {
                 camera_motion_to_lora_map[scene_prompt["cameraMovement"]]: movementStrengthMap[scene_prompt["cameraMovementStrength"].lower()]
             }
-        
+
         prompt_config["n_prompt"] = [
             self.negative_prompt
         ]
@@ -208,7 +208,7 @@ class SDAnimatorArtist(AICPBaseTool):
             else:
                 torch.cuda.empty_cache()
                 save_dir, prompt_config_path = self.generate_scene(idx, scene_prompt, scene, Path(output_dir))
-            
+
             clip_directories.append(output_dir)
             if self.video.production_config.preview:
                 logger.info(f"Skipping upscaling scene {idx} as preview is enabled")
@@ -246,7 +246,7 @@ class SDAnimatorArtist(AICPBaseTool):
         self.initialize_agent()
         self.clip_file = "final.mp4" if not self.video.production_config.preview else "preview.mp4"
         self.make_animated_clip()
-        
+
         return "Done generating animated stuff"
 
     def _arun(
@@ -274,7 +274,7 @@ class SDAnimatorArtist(AICPBaseTool):
 
                 if parsed["prompt_head"] is None or parsed["keyframes"] is None or parsed["cameraMovement"] is None:
                     raise Exception("Invalid prompt")
-                
+
                 # Check if keyframes is an array, and its elements have "frame" (int) and "prompt" (string)
                 if not isinstance(parsed["keyframes"], list):
                     raise Exception("Invalid keyframes")
@@ -289,11 +289,11 @@ class SDAnimatorArtist(AICPBaseTool):
                         raise Exception("Invalid keyframes missing background")
                     if not isinstance(keyframe["cameraShot"], str):
                         raise Exception("Invalid keyframes missing cameraShot")
-                    
+
                 # Check if prompt_head is a string
                 if not isinstance(parsed["prompt_head"], str):
                     raise Exception("Invalid prompt_head")
-                
+
                 # Check if the frame numbers are in ascending order starting from 0 and the last
                 # frame is less than duration * fps
                 if parsed["keyframes"][0]["frame"] != 0:
@@ -303,7 +303,7 @@ class SDAnimatorArtist(AICPBaseTool):
                         raise Exception("Invalid keyframes")
                 if parsed["keyframes"][-1]["frame"] > params["duration"] * params["fps"]:
                     raise Exception("Invalid keyframes")
-                
+
                 if parsed["cameraMovement"] not in ["PanLeft", "PanRight", "TiltUp", "TiltDown", "RollingClockwise", "RollingAnticlockwise", "ZoomIn", "ZoomOut", None, "None"]:
                     raise Exception("Invalid cameraMovement")
 
