@@ -30,7 +30,7 @@
   },
   "upscale_config": {
     "scheduler": "ddim",
-    "steps": 20,
+    "steps": 10,
     "strength": 0.5,
     "guidance_scale": 10,
     "controlnet_tile": {
