@@ -29,6 +29,9 @@ class ScriptWriterTool(AICPBaseTool):
         self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
     ) -> str:
         """Use the tool."""
+        # Check if script is already generated, if so, just return
+        if os.path.exists(utils.SCRIPT):
+            return f"File already exists at {utils.SCRIPT}"
         cast_member = self.video.director.get_script_writer()
         chain = llms.get_llm(model=cast_member.model, template=cast_member.prompt)
 

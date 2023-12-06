@@ -1,0 +1,6 @@
+video_width: 1440
+video_height: 810
+preview: False
+sd_base_image_width: 768
+sd_base_image_height: 432
+num_images_per_scene: 10

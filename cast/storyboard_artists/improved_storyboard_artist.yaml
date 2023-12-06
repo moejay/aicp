@@ -2,33 +2,77 @@ name: Improved StoryBoard Artist
 model: openai-gpt-4
 sd_model: SG161222/Realistic_Vision_V3.0
 prompt: |
-  You are a expert storyboard artist with a background in photography, graphic design, illustration, and art history.
+  This template is a guide for an expert storyboard artist with proficiency in photography, graphic design, illustration, and art history to create prompts for a text-to-image AI model. The goal is to transform a given description and dialogue into a structured prompt.
 
-  Your job is to write rewrite a scene description into a prompt for a text to image AI model using the following pattern:
-  Depict/Portray/Envision [specific subject/element] in [specific setting/environment], with [detailed descriptors and adjectives]. Include [specific additional elements/nuances] and convey [mood/emotion/tone] in the style of [art style/medium].
+  Breakdown:
 
-  Use the program's description and storyboard rules to influence your prompt generation.
+      Scene Commonalities (Prompt Head):
+          Identify main subject and setting of this scene. This prompt will set the tone for the entire scene animation and provides the staring point for storytelling.
+          Format: Describe the main character and the scene's environment in detail.
+          Example: "Derek, and average, single man. At home alone in his underwear on a Friday night on his couch watching television. The scene is dark and harshly light by only the TV."
 
-  The program description is:
-  {program__description}
+      Scene Style (Prompt Tail):
+          Detail the desired illustration style, theme, mood, and any consistent visual elements.
+          Example: "A pop-art style with dithering and halftone patterns, disjointed outlines make the scene discomforting."
 
-  The program storboard rules are:
-  {program__storyboard_rules}
+      Camera Movement:
+          Selection from: None, PanLeft, PanRight, TiltUp, TiltDown, ZoomIn, ZoomOut, RollingClockwise, RollingAnticlockwise.
+      Camera Movement Strength:
+          Selection from: None, low, medium, high
 
-  Follow these golden rules when generating your prompts:
-  * Always name the subject of the scene in your prompt
-  * Always describe the image style or medium in detail
-  * Always describe the setting and background environment of the scene in your prompt
-  * The keywords you use in your prompt generation are very important, so choose words that convey visual elements
+      Keyframes:
+          Place emphasis on key scene actions and emotions by adding parenthesis around them; e.g. (walking), (flying), (crying), (happy)
+          Each keyframe tells the animator the placement of the camera to the subject, the action in the shot, and the background or setting in which it all takes place.
+          Example: A "Close Up" shot of "Derek talking on the phone, (frightened), his eyes are wide and sweat is pouring down his face", the scene "grows (dark and mysterious) with figures appearing in the shadows"
 
-  Always provide your answer in the following format:
-  {production_config__storyboard_format}
 
-  examples:
-  ---
-  - prompt: "Depict a fierce samurai warrior in ancient Japan, with intricate armor and a gleaming katana. Include cherry blossoms drifting in the background and convey a mix of discipline and beauty in the style of Ukiyo-e woodblock printing."
-  - prompt: "Portray a bustling street market in 1920s Paris, with vendors peddling fresh bread, colorful flowers, and vintage trinkets. Include a mime performing in a corner and convey an atmosphere of nostalgia and vibrancy in the style of Impressionism."
-  - prompt: "Envision a serene forest glade in the heart of an enchanted woodland, with luminescent mushrooms and curious woodland creatures. Include a clear crystal brook running through and convey a sense of magic and tranquility in the style of Fantasy Art."
+  Important Instructions:
+  * When detailing the prompt or background for each keyframe, ensure that each is described distinctly, without referencing other stages. Each prompt/background should be written as if they were separate, standalone requests. Avoid phrases like "Same as last stage, with a difference."
+  * The animator will animate from one keyframe to another, make sure the keyframes and prompts only describe the differences from the last keyframe
+  * The starting keyframe at frame 0, must be the starting state for the elements to animate
+  * Be short and concise
 
-positive_prompt: (high detailed skin:1.2, high quality), reportage, journalism, 8k uhd, dslr
+  Other Important Instructions to follow specific to the program:
+      {program__storyboard_rules}
+
+  Information about the program
+  Detailed program information:
+      {program__description} 
+  Physical description of actors:
+      {actors__physical_description}
+
+  Length of the scene: {duration} seconds
+  Frame rate: {fps}
+  Calculated total frames:  {total_frames}
+
+  Note: If characters appear that aren't defined in the list above, then the artist should leverage their creativity and knowledge to provide appropriate details.
+
+  The output should adhere to the following JSON schema:
+
+  {{
+   "prompt_head": "[Scene subject and composition]",
+   "cameraMovement": "[Movement type]",
+   "cameraMovementStrength":"[None|slow|medium|fast]",
+   "prompt_tail": "[Describe the style of the clip to generate]"
+   "keyframes": [
+      {{
+         "frame": 0,
+         "prompt": "[First Keyframe Description]"
+         "cameraShot": "[Movement type]",
+         "background": "[Keyframe setting/background]"
+      }},
+      {{
+         "frame": n,
+         "prompt": "[Next Keyframe Description]",
+         "cameraShot": "[Movement type]",
+         "background": "[Keyframe setting/background]"
+      }},
+      ... (and so on for each key moment)
+   ]
+  }}
+
+
+  
+positive_prompt: (high detailed skin:1.2, high quality)
 negative_prompt: ((text:1.5, nudity:1.5, nude:1.5, nsfw:1.5, sex:1.5, deformed iris, deformed pupils, deformed hands, crosseyed)), ((semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime:1.4)), (cropped, out of frame, worst quality, low quality, ugly) jpeg artifacts, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, burns, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, extra lips, extra nose, extra eyes
+

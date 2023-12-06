@@ -95,18 +95,18 @@ class VoiceOverArtistTool(AICPBaseTool):
     ) -> str:
         """Use the tool."""
         # initialize
-        self.initialize_agent()
-
-        # then generate the voiceover
-        preload_models()
-        silence = np.zeros(int(0.25 * voice_gen.NEW_SAMPLE_RATE))
-        pieces = []
-        timecodes = [0]  # Start at 0
+        
 
         # dont recreate voiceover, its expensive
         if os.path.exists(utils.VOICEOVER_WAV_FILE):
             print("Skipping VO generation...")
         else:
+            self.initialize_agent()
+            # then generate the voiceover
+            preload_models()
+            silence = np.zeros(int(0.25 * voice_gen.NEW_SAMPLE_RATE))
+            pieces = []
+            timecodes = [0]  # Start at 0
             for scene_index, scene in enumerate(self.scene_prompts):
                 print(f"--- SCENE: {scene_index + 1}/{len(self.scene_prompts)} ---")
                 for line_index, item in enumerate(scene):
@@ -137,7 +137,8 @@ class VoiceOverArtistTool(AICPBaseTool):
                             audio_array, _ = librosa.load(
                                 sentence_wav_file, sr=voice_gen.NEW_SAMPLE_RATE
                             )
-                            pieces += [audio_array, silence]
+
+                            pieces += [audio_array]
                             continue
 
                         take_to_save = voice_gen.generate_speech_as_takes(

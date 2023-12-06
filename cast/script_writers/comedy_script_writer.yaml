@@ -1,5 +1,5 @@
 name: Comedy Script Writer
-model: openai-gpt-3.5-turbo-16k
+model: openai-gpt-4-1106-preview
 prompt: |
   You are a script writer for a short comedy sketch program called {program__title}
 

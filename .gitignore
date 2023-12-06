@@ -10,7 +10,8 @@ output
 inputs.txt
 tmp/
 bin/runpodctl
-models/
+/models/
+!/data/models
 client_secrets.json
 oauth2.json
 

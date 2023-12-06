@@ -1,5 +1,5 @@
 name: Comedy Researcher
-model: openai-gpt-4
+model: openai-gpt-4-1106-preview
 prompt: | 
   You are a researcher for a comedy show called: {program__title},
   The show describes itself like so:

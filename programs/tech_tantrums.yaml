@@ -15,7 +15,9 @@ script_rules: |
   * The last scene should be the host angrily asking the viewers to subscribe and to submit their rant ideas in the comments
 
 storyboard_rules: |
-  * The show's host is in every prompt
-  * The background the host is in should describe the scene/topic
+  * Create scenes using a vast digital tapestry backdrop, like putting the host inside of a holodeck- they can go anywhere in space and time.
+  * Put our host right in the action and environment related to the topic, make it exciting and visually stunning.
+  * Give the entire video an uncertain ethereral feel like anything could happen at anytime.
+  * Create visual components and emphasis for the puns and jokes in the script.
 
 prompt_placeholder_text: Write a topic for the AI to rant about

@@ -1,0 +1,76 @@
+{
+  "name": "aicp",
+  "path": "share/Stable-diffusion/realisticVisionV30_v30VAE.safetensors",
+  "vae_path": "share/VAE/vae-ft-mse-840000-ema-pruned.ckpt",
+  "motion_module": "models/motion-module/mm_sd_v15_v2.ckpt",
+  "compile": false,
+  "seed": [
+    -1
+  ],
+  "scheduler": "ddim",
+  "steps": 30,
+  "guidance_scale": 20,
+  "clip_skip": 2,
+  "head_prompt": "Terence McKenna is ",
+  "prompt_map": {
+    "0": "in the Amazon jungle, standing and smiling, Zoom out",
+    "32": "in the Amazon jungle eating a mushroom, close up",
+    "64": "getting into a rocket ship, close up",
+    "96": "inside the rocket ship that is launching, wide shot",
+    "128": "in the rocket ship in space talking to aliens, close up"
+  },
+  "tail_prompt": "",
+  "n_prompt": [
+    "(worst quality, low quality:1.4)"
+  ],
+  "lora_map": {},
+  "motion_lora_map": {
+    "models/motion_lora/v2_lora_RollingAnticlockwise.ckpt": 0.5,
+    "models/motion_lora/v2_lora_ZoomIn.ckpt": 0.5
+  },
+  "upscale_config": {
+    "scheduler": "ddim",
+    "steps": 10,
+    "strength": 0.5,
+    "guidance_scale": 10,
+    "controlnet_tile": {
+      "enable": true,
+      "controlnet_conditioning_scale": 1.0,
+      "guess_mode": false,
+      "control_guidance_start": 0.0,
+      "control_guidance_end": 1.0
+    },
+    "controlnet_line_anime": {
+      "enable": false,
+      "controlnet_conditioning_scale": 1.0,
+      "guess_mode": false,
+      "control_guidance_start": 0.0,
+      "control_guidance_end": 1.0
+    },
+    "controlnet_ip2p": {
+      "enable": false,
+      "controlnet_conditioning_scale": 0.5,
+      "guess_mode": false,
+      "control_guidance_start": 0.0,
+      "control_guidance_end": 1.0
+    },
+    "controlnet_ref": {
+      "enable": false,
+      "use_frame_as_ref_image": false,
+      "use_1st_frame_as_ref_image": false,
+      "ref_image": "ref_image/path_to_your_ref_img.jpg",
+      "attention_auto_machine_weight": 1.0,
+      "gn_auto_machine_weight": 1.0,
+      "style_fidelity": 0.25,
+      "reference_attn": true,
+      "reference_adain": false
+    }
+  },
+  "output": {
+    "format": "mp4",
+    "fps": 8,
+    "encode_param": {
+      "crf": 10
+    }
+  }
+}
